@@ -1,0 +1,9 @@
+{
+  "Database": {
+    "host": "localhost",
+    "user": "root",
+    "password": "root",
+    "database": "TimeWizeAI"
+  },
+  "Activation_Key": "1234"
+}
