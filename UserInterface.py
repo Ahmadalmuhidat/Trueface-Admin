@@ -6,6 +6,7 @@ import pages.Classes as Classes
 import pages.Courses as Courses
 import pages.Attendance as Attendance
 import pages.Absence as Absence
+import pages.Users as Users
 import pages.History as History
 import pages.Settings as Settings
 import threading
@@ -48,6 +49,10 @@ class UserInterface():
       AbsenceButton = customtkinter.CTkButton(navbar, text="Absence")
       AbsenceButton.configure(corner_radius=0, command=lambda: self.showPage("Absence"))
       AbsenceButton.pack(side=customtkinter.LEFT)
+
+      UsersButton = customtkinter.CTkButton(navbar, text="Users")
+      UsersButton.configure(corner_radius=0, command=lambda: self.showPage("Users"))
+      UsersButton.pack(side=customtkinter.LEFT)
 
       # HistoryButton = customtkinter.CTkButton(navbar, text="History")
       # HistoryButton.configure(corner_radius=0, command=lambda: self.showPage("History"))
@@ -92,6 +97,8 @@ class UserInterface():
         Attendance.Attendance().create(page)
       elif name == "Absence":
         Absence.Absence().create(page)
+      elif name == "Users":
+        Users.Users().create(page)
       elif name == "History":
         History.History().create(page)
       elif name == "Settings":
@@ -141,6 +148,7 @@ class UserInterface():
       self.createPage(self.window, "Courses")
       self.createPage(self.window, "Attendance")
       self.createPage(self.window, "Absence")
+      self.createPage(self.window, "Users")
       # self.createPage(self.window, "History")
       self.createPage(self.window, "Settings")
 
@@ -156,6 +164,5 @@ class UserInterface():
     except KeyboardInterrupt:
       pass
 
-if __name__ ==  "__main__":
-  StudentsFaceDetector = UserInterface()
-  StudentsFaceDetector.startTheProgram()
+if __name__ == "__main__":
+  UserInterface().startTheProgram()

@@ -29,8 +29,6 @@ class Classes(DatabaseManager):
       self.getClasses()
       self.getCourses()
 
-      self.course_id_title_map = {x[1]: x[0] for x in DatabaseManager.Courses}
-
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -87,7 +85,6 @@ class Classes(DatabaseManager):
 
   def saveClasses(self):
     try:
-      # if self.validateClassessData(ID, FN, MN, LN, Gender, self.ImagePath):
       self.insertClass(
         ID = self.ClasseIDEntry.get(),
         subject = self.SubjectEntry.get(),
@@ -124,9 +121,34 @@ class Classes(DatabaseManager):
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
+  
+  def delete(self, term):
+    try:
+      self.deleteClasse(term)
+      self.getClasses()
+      self.displayClassessTable()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def search(self, term):
+    try:
+      self.searchClasse(term)
+      self.displayClassessTable()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
 
   def addClasses(self):
     try:
+      self.course_id_title_map = {x[1]: x[0] for x in DatabaseManager.Courses}
+
       self.PopWindow = customtkinter.CTk()
       self.PopWindow.geometry("515x800")
       self.PopWindow.title("Add New Class")
@@ -424,7 +446,6 @@ class Classes(DatabaseManager):
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type,fname,exc_tb.tb_lineno)
       print(exc_obj)
-    
 
   def create(self,parent):
     try:
@@ -448,7 +469,7 @@ class Classes(DatabaseManager):
         pady=10,
         padx=5
       )
-      search_button.configure(command=lambda: self.searchClassess(search_bar.get()))
+      search_button.configure(command=lambda: self.search(search_bar.get()))
 
       search_bar = customtkinter.CTkEntry(search_bar_frame)
       search_bar.grid(
@@ -474,7 +495,7 @@ class Classes(DatabaseManager):
         pady=10,
         padx=5
       )
-      delete_button.configure(command=lambda: self.deleteClasses(delete_bar.get()))
+      delete_button.configure(command=lambda: self.delete(delete_bar.get()))
 
       delete_bar = customtkinter.CTkEntry(
         search_bar_frame,

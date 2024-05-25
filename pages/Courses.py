@@ -91,7 +91,6 @@ class Courses(DatabaseManager):
 
   def saveCourse(self):
     try:
-      # if self.validateCoursessData(ID, FN, MN, LN, Gender, self.ImagePath):
       self.insertCourse(
         ID = self.CourseIDEntry.get(),
         title = self.CourseTitleEntry.get(),
@@ -121,6 +120,29 @@ class Courses(DatabaseManager):
       self.CourseComponentEntry.delete(0, customtkinter.END)
 
       self.refresh()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def delete(self, term):
+    try:
+      self.deleteCourses(term)
+      self.getCourses()
+      self.displayCoursessTable()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def search(self, term):
+    try:
+      self.searchCourses(term)
+      self.displayCoursessTable()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -244,7 +266,7 @@ class Courses(DatabaseManager):
 
       search_button = customtkinter.CTkButton(search_bar_frame, text="Search")
       search_button.grid(row=0, column=0, sticky="nsew", pady=10, padx=5)
-      search_button.configure(command=lambda: self.searchCoursess(search_bar.get()))
+      search_button.configure(command=lambda: self.search(search_bar.get()))
 
       search_bar = customtkinter.CTkEntry(search_bar_frame)
       search_bar.grid(row=0, column=1, sticky="nsew", pady=10)
@@ -252,7 +274,7 @@ class Courses(DatabaseManager):
 
       delete_button = customtkinter.CTkButton(search_bar_frame, width=100, text="Delete")
       delete_button.grid(row=0, column=2, sticky="nsew", pady=10, padx=5)
-      delete_button.configure(command=lambda: self.deleteCourses(delete_bar.get()))
+      delete_button.configure(command=lambda: self.delete(delete_bar.get()))
 
       delete_bar = customtkinter.CTkEntry(search_bar_frame, width=100, placeholder_text="ID")
       delete_bar.grid(row=0, column=3, sticky="nsew", pady=10)

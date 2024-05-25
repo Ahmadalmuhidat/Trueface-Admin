@@ -147,7 +147,6 @@ class Students(DatabaseManager):
         self.StudentFirstNameEntry.delete(0, customtkinter.END)
         self.StudentMiddleNameEntry.delete(0, customtkinter.END)
         self.StudentLastNameEntry.delete(0, customtkinter.END)
-        self.StudentGenderEntry.delete(0, customtkinter.END)
         self.StudentImageEntry.delete(0, customtkinter.END)
 
         self.refresh()
