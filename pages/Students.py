@@ -22,9 +22,9 @@ class Students(DatabaseManager):
         "Create Date",
       ]
 
-      # self.getSettings()
-      # self.connect()
-      self.checkCustomerLicenseStatus()
+      self.getSettings()
+      self.connect()
+      # self.checkCustomerLicenseStatus()
       self.getStudents()
 
     except Exception as e:

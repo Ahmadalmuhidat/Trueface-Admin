@@ -51,23 +51,6 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def connect(self):
-    try:
-      DatabaseManager.db = pymysql.connect(
-        host = self.Host,
-        user = self.User,
-        password = self.User,
-        database = self.Database
-      )
-
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-
   def getUsers(self):
     try:
       query = '''
@@ -488,6 +471,44 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
+  def searchAttendance(self, term):
+    try:
+      data = (term,term)
+      query = '''
+        SELECT 
+          Students.StudentID, 
+          Students.StudentFirstName, 
+          Students.StudentMiddleName, 
+          Students.StudentLastName, 
+          Classes.ClassSubjectArea, 
+          Attendance.AttendanceTime
+        FROM 
+          Attendance
+        LEFT JOIN 
+          Students
+        ON 
+          Students.StudentID = Attendance.AttendanceStudentID
+        LEFT JOIN 
+          Classes
+        ON
+          Attendance.AttendanceClassID = Classes.ClasseID
+        WHERE 
+          Attendance.AttendanceDate = CURDATE();
+        AND
+          Attendance.AttendanceStudentID = %s;
+        OR
+          Classes.ClassSubjectArea = %s;
+      '''
+      DatabaseManager.cursor.execute(query, data)
+      self.Attendance = DatabaseManager.cursor.fetchall()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
   def getAbsence(self):
     try:
       query = '''
@@ -511,6 +532,41 @@ class DatabaseManager(Configrations):
           )
         '''
       DatabaseManager.cursor.execute(query)
+      self.Absence = DatabaseManager.cursor.fetchall()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
+  def searchAbsence(self, term):
+    try:
+      data = (term,)
+      query = '''
+        SELECT
+          StudentID,
+          StudentFirstName,
+          StudentMiddleName,
+          StudentLastName
+        FROM
+          Students
+        WHERE
+          StudentID
+        NOT IN 
+          (
+          SELECT
+            Attendance.AttendanceStudentID
+          FROM
+            Attendance
+          WHERE
+            DATE(Attendance.AttendanceDate) = CURDATE()
+          AND
+            Students.StudentID = %s
+          )
+        '''
+      DatabaseManager.cursor.execute(query, data)
       self.Absence = DatabaseManager.cursor.fetchall()
 
     except Exception as e:

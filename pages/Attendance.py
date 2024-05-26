@@ -61,10 +61,22 @@ class Attendance(DatabaseManager):
   
   def refresh(self):
     try:
-      while True:
-        self.getAttendance()
-        self.displayAttendanceTable()
-        time.sleep(5)
+      self.getAttendance()
+      self.displayAttendanceTable()
+
+      self.results_count.configure(text="Results: " + str(len(self.Attendance)))
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def search(self, term):
+    try:
+      self.searchAttendance(term)
+
+      self.results_count.configure(text="Results: " + str(len(self.Attendance)))
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -94,7 +106,7 @@ class Attendance(DatabaseManager):
         pady=10,
         padx=5
       )
-      # search_button.configure(command=lambda: self.se(search_bar.get()))
+      search_button.configure(command=lambda: self.search(search_bar.get()))
 
       search_bar = customtkinter.CTkEntry(search_bar_frame)
       search_bar.grid(
@@ -105,7 +117,7 @@ class Attendance(DatabaseManager):
       )
       search_bar.configure(
         width=400,
-        placeholder_text="Search for Students..."
+        placeholder_text="Search by Student ID or Class Subject..."
       )
 
       refresh_button = customtkinter.CTkButton(
@@ -129,6 +141,7 @@ class Attendance(DatabaseManager):
         padx=10,
         pady=5
       )
+      self.results_count.configure(text="Results: " + str(len(self.Students)))
 
       self.attendance_table_frame = customtkinter.CTkScrollableFrame(parent)
       self.attendance_table_frame.pack(

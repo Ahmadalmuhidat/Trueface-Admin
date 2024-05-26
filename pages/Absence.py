@@ -62,10 +62,18 @@ class Absence(DatabaseManager):
   
   def refresh(self):
     try:
-      while True:
-        self.getAbsence()
-        self.displayAbsenceTable()
-        time.sleep(5)
+      self.getAbsence()
+      self.displayAbsenceTable()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def search(self, term):
+    try:
+      self.searchAbsence(term)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -95,7 +103,7 @@ class Absence(DatabaseManager):
         pady=10,
         padx=5
       )
-      # search_button.configure(command=lambda: self.se(search_bar.get()))
+      search_button.configure(command=lambda: self.search(search_bar.get()))
 
       search_bar = customtkinter.CTkEntry(search_bar_frame)
       search_bar.grid(
@@ -106,7 +114,7 @@ class Absence(DatabaseManager):
       )
       search_bar.configure(
         width=400,
-        placeholder_text="Search for Students..."
+        placeholder_text="Search by Student ID..."
       )
 
       refresh_button = customtkinter.CTkButton(
