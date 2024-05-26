@@ -1,6 +1,8 @@
 import os
 import sys
 import customtkinter
+import threading
+
 import pages.Students as Students
 import pages.Classes as Classes
 import pages.Courses as Courses
@@ -9,7 +11,6 @@ import pages.Absence as Absence
 import pages.Users as Users
 import pages.History as History
 import pages.Settings as Settings
-import threading
 
 class UserInterface():
   def __init__(self):

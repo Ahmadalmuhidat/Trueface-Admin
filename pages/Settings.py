@@ -1,6 +1,6 @@
-import customtkinter
 import sys
 import os
+import customtkinter
 import json
 import threading
 

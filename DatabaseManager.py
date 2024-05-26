@@ -1,6 +1,6 @@
-import mysql.connector
 import sys
 import os
+import pymysql
 import shutil
 import face_recognition
 import pickle
@@ -53,7 +53,7 @@ class DatabaseManager(Configrations):
 
   def connect(self):
     try:
-      DatabaseManager.db = mysql.connector.connect(
+      DatabaseManager.db = pymysql.connect(
         host = self.Host,
         user = self.User,
         password = self.User,
@@ -212,6 +212,42 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
+  def checkDuplicatedID(self, id):
+    try:
+      data = (id,)
+      query = "SELECT StudentID FROM Students WHERE StudentID=%s"
+      DatabaseManager.cursor.execute(query, data)
+      result = DatabaseManager.cursor.fetchall()
+
+      if len(result) > 0:
+        return True
+      else:
+        return False
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
+  def connect(self):
+    try:
+      DatabaseManager.db = pymysql.connect(
+        host = self.Host,
+        user = self.User,
+        password = self.User,
+        database = self.Database
+      )
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+  
   def checkCustomerLicenseStatus(self):
     try:
       data = (self.ActivationKey,)

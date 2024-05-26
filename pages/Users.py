@@ -1,10 +1,7 @@
-import customtkinter
 import sys
 import os
-import datetime
-import tkinter
+import customtkinter
 
-from PIL import Image
 from DatabaseManager import DatabaseManager
 
 class Users(DatabaseManager):
