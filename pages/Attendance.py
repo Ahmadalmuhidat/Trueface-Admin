@@ -21,6 +21,8 @@ class Attendance(DatabaseManager):
         "Attendance Time"
       ]
 
+      self.getAttendance()
+
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -141,7 +143,9 @@ class Attendance(DatabaseManager):
         padx=10,
         pady=5
       )
-      self.results_count.configure(text="Results: " + str(len(self.Students)))
+      self.results_count.configure(
+        text="Results: " + str(len(self.Students))
+      )
 
       self.attendance_table_frame = customtkinter.CTkScrollableFrame(parent)
       self.attendance_table_frame.pack(
@@ -167,6 +171,8 @@ class Attendance(DatabaseManager):
           col,
           weight=1
         )
+
+      self.displayAttendanceTable()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

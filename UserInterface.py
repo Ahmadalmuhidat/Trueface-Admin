@@ -151,7 +151,7 @@ class UserInterface():
       self.createPage(self.window, "Absence")
       self.createPage(self.window, "Users")
       # self.createPage(self.window, "History")
-      self.createPage(self.window, "Settings")
+      # self.createPage(self.window, "Settings")
 
       self.showPage("Students")
 
