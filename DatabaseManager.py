@@ -1,6 +1,6 @@
 import sys
 import os
-import pymysql
+import mysql.connector
 import shutil
 import face_recognition
 import pickle
@@ -233,7 +233,7 @@ class DatabaseManager(Configrations):
 
   def connect(self):
     try:
-      DatabaseManager.db = pymysql.connect(
+      DatabaseManager.db = mysql.connector.connect(
         host = self.Host,
         user = self.User,
         password = self.User,

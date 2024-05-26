@@ -22,8 +22,8 @@ class Students(DatabaseManager):
         "Create Date",
       ]
 
-      self.getSettings()
-      self.connect()
+      # self.getSettings()
+      # self.connect()
       self.checkCustomerLicenseStatus()
       self.getStudents()
 
@@ -159,7 +159,8 @@ class Students(DatabaseManager):
 
   def addStudent(self):
     try:
-      self.PopWindow = customtkinter.CTk()
+      self.PopWindow = customtkinter.CTkToplevel()
+      self.PopWindow.grab_set()
       self.PopWindow.geometry("490x400")
       self.PopWindow.title("Add New Student")
       self.PopWindow.resizable(False, False)

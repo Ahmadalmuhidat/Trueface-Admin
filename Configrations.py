@@ -20,13 +20,27 @@ class Configrations:
   
   def getSettings(self):
     try:
-      with open('configrations.json', 'r') as file:
-        Settings = json.load(file)
-        self.Host = Settings['Database']['host']
-        self.User = Settings['Database']['user']
-        self.Password = Settings['Database']['password']
-        self.Database = Settings['Database']['database']
-        self.ActivationKey = Settings['Activation_Key']
+      # path = os.path.join(
+      #   os.environ.get(
+      #     "_MEIPASS2",
+      #      os.path.abspath(".")
+      #   ),
+      #   "Configrations.py"
+      # )
+
+      # with open(path, 'r') as file:
+      #   Settings = json.load(file)
+      #   self.Host = Settings['Database']['host']
+      #   self.User = Settings['Database']['user']
+      #   self.Password = Settings['Database']['password']
+      #   self.Database = Settings['Database']['database']
+      #   self.ActivationKey = Settings['Activation_Key']
+
+      self.Host = "34.83.216.163"
+      self.User = "root"
+      self.Password = "root"
+      self.Database = "TimeWizeAI"
+      self.ActivationKey = "123"
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

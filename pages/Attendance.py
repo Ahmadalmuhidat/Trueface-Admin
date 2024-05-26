@@ -100,7 +100,7 @@ class Attendance(DatabaseManager):
           weight=1
         )
       
-      threading.Thread(target=self.refresh).start()
+      # threading.Thread(target=self.refresh).start()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

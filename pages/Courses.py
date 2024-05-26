@@ -152,8 +152,9 @@ class Courses(DatabaseManager):
 
   def addCourses(self):
     try:
-      self.PopWindow = customtkinter.CTk()
-      self.PopWindow.geometry("525x750")
+      self.PopWindow = customtkinter.CTkToplevel()
+      self.PopWindow.grab_set()
+      self.PopWindow.geometry("525x510")
       self.PopWindow.title("Add New Course")
       self.PopWindow.resizable(False, False)
 
@@ -165,7 +166,7 @@ class Courses(DatabaseManager):
         row=0,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.CourseIDEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -175,7 +176,7 @@ class Courses(DatabaseManager):
         row=0,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       CourseTitleLabel = customtkinter.CTkLabel(
@@ -186,7 +187,7 @@ class Courses(DatabaseManager):
         row=1, 
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.CourseTitleEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -196,61 +197,61 @@ class Courses(DatabaseManager):
         row=1, 
         column=1, 
         padx=10, 
-        pady=15
+        pady=5
       )
 
       CourseCreditLabel = customtkinter.CTkLabel(self.PopWindow, text="Credit:")
-      CourseCreditLabel.grid(row=2, column=0, padx=10, pady=15)
+      CourseCreditLabel.grid(row=2, column=0, padx=10, pady=5)
       self.CourseCreditEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseCreditEntry.grid(row=2, column=1, padx=10, pady=15)
+      self.CourseCreditEntry.grid(row=2, column=1, padx=10, pady=5)
 
       CourseMaximumUnitsLabel = customtkinter.CTkLabel(self.PopWindow, text="Maximum Units:")
-      CourseMaximumUnitsLabel.grid(row=3, column=0, padx=10, pady=15)
+      CourseMaximumUnitsLabel.grid(row=3, column=0, padx=10, pady=5)
       self.CourseMaximumUnitsEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseMaximumUnitsEntry.grid(row=3, column=1, padx=10, pady=15)
+      self.CourseMaximumUnitsEntry.grid(row=3, column=1, padx=10, pady=5)
 
       CourseLongCourseTitleLabel = customtkinter.CTkLabel(self.PopWindow, text="Long Course Title:")
-      CourseLongCourseTitleLabel.grid(row=4, column=0, padx=10, pady=15)
+      CourseLongCourseTitleLabel.grid(row=4, column=0, padx=10, pady=5)
       self.CourseLongCourseTitleEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseLongCourseTitleEntry.grid(row=4, column=1, padx=10, pady=15)
+      self.CourseLongCourseTitleEntry.grid(row=4, column=1, padx=10, pady=5)
 
       CourseOfferingNBRLabel = customtkinter.CTkLabel(self.PopWindow, text="Offering NBR:")
-      CourseOfferingNBRLabel.grid(row=5, column=0, padx=10, pady=15)
+      CourseOfferingNBRLabel.grid(row=5, column=0, padx=10, pady=5)
       self.CourseOfferingNBREntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseOfferingNBREntry.grid(row=5, column=1, padx=10, pady=15)
+      self.CourseOfferingNBREntry.grid(row=5, column=1, padx=10, pady=5)
 
       CourseAcademicGroupLabel = customtkinter.CTkLabel(self.PopWindow, text="Academic Group:")
-      CourseAcademicGroupLabel.grid(row=6, column=0, padx=10, pady=15)
+      CourseAcademicGroupLabel.grid(row=6, column=0, padx=10, pady=5)
       self.CourseAcademicGroupEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseAcademicGroupEntry.grid(row=6, column=1, padx=10, pady=15)
+      self.CourseAcademicGroupEntry.grid(row=6, column=1, padx=10, pady=5)
 
       CourseSubjectAreaLabel = customtkinter.CTkLabel(self.PopWindow, text="Subject Area:")
-      CourseSubjectAreaLabel.grid(row=7, column=0, padx=10, pady=15)
+      CourseSubjectAreaLabel.grid(row=7, column=0, padx=10, pady=5)
       self.CourseSubjectAreaEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseSubjectAreaEntry.grid(row=7, column=1, padx=10, pady=15)
+      self.CourseSubjectAreaEntry.grid(row=7, column=1, padx=10, pady=5)
 
       CourseCatalogNBRLabel = customtkinter.CTkLabel(self.PopWindow, text="Catalog NBR:")
-      CourseCatalogNBRLabel.grid(row=8, column=0, padx=10, pady=15)
+      CourseCatalogNBRLabel.grid(row=8, column=0, padx=10, pady=5)
       self.CourseCatalogNBREntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseCatalogNBREntry.grid(row=8, column=1, padx=10, pady=15)
+      self.CourseCatalogNBREntry.grid(row=8, column=1, padx=10, pady=5)
 
       CourseCampusLabel = customtkinter.CTkLabel(self.PopWindow, text="Campus:")
-      CourseCampusLabel.grid(row=9, column=0, padx=10, pady=15)
+      CourseCampusLabel.grid(row=9, column=0, padx=10, pady=5)
       self.CourseCampusEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseCampusEntry.grid(row=9, column=1, padx=10, pady=15)
+      self.CourseCampusEntry.grid(row=9, column=1, padx=10, pady=5)
 
       CourseAcademicOrganizationLabel = customtkinter.CTkLabel(self.PopWindow, text="Academic Organization:")
-      CourseAcademicOrganizationLabel.grid(row=10, column=0, padx=10, pady=15)
+      CourseAcademicOrganizationLabel.grid(row=10, column=0, padx=10, pady=5)
       self.CourseAcademicOrganizationEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseAcademicOrganizationEntry.grid(row=10, column=1, padx=10, pady=15)
+      self.CourseAcademicOrganizationEntry.grid(row=10, column=1, padx=10, pady=5)
 
       CourseComponentLabel = customtkinter.CTkLabel(self.PopWindow, text="Component:")
-      CourseComponentLabel.grid(row=11, column=0, padx=10, pady=15)
+      CourseComponentLabel.grid(row=11, column=0, padx=10, pady=5)
       self.CourseComponentEntry = customtkinter.CTkEntry(self.PopWindow, width=350)
-      self.CourseComponentEntry.grid(row=11, column=1, padx=10, pady=15)
+      self.CourseComponentEntry.grid(row=11, column=1, padx=10, pady=5)
 
       SaveButton = customtkinter.CTkButton(self.PopWindow, width=350)
-      SaveButton.grid(row=12, columnspan=2, sticky="nsew", padx=10, pady=15)
+      SaveButton.grid(row=12, columnspan=2, sticky="nsew", padx=10, pady=5)
       SaveButton.configure(text="Save Course", command=self.saveCourse)
 
     except Exception as e:

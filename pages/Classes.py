@@ -149,8 +149,9 @@ class Classes(DatabaseManager):
     try:
       self.course_id_title_map = {x[1]: x[0] for x in DatabaseManager.Courses}
 
-      self.PopWindow = customtkinter.CTk()
-      self.PopWindow.geometry("515x800")
+      self.PopWindow = customtkinter.CTkToplevel()
+      self.PopWindow.grab_set()
+      self.PopWindow.geometry("515x550")
       self.PopWindow.title("Add New Class")
       self.PopWindow.resizable(False, False)
 
@@ -162,7 +163,7 @@ class Classes(DatabaseManager):
         row=0,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.ClasseIDEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -172,7 +173,7 @@ class Classes(DatabaseManager):
         row=0,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       SubjectLabel = customtkinter.CTkLabel(
@@ -183,7 +184,7 @@ class Classes(DatabaseManager):
         row=1,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.SubjectEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -193,7 +194,7 @@ class Classes(DatabaseManager):
         row=1,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       CatalogNBRLabel = customtkinter.CTkLabel(
@@ -204,7 +205,7 @@ class Classes(DatabaseManager):
         row=2,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.CatalogNBREntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -214,7 +215,7 @@ class Classes(DatabaseManager):
         row=2,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       AcademicCareerLabel = customtkinter.CTkLabel(
@@ -225,7 +226,7 @@ class Classes(DatabaseManager):
         row=4,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.AcademicCareerEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -235,7 +236,7 @@ class Classes(DatabaseManager):
         row=4,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       OfferingNBRLabel = customtkinter.CTkLabel(
@@ -246,7 +247,7 @@ class Classes(DatabaseManager):
         row=5,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.OfferingNBREntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -256,7 +257,7 @@ class Classes(DatabaseManager):
         row=5,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       StartTimeLabel = customtkinter.CTkLabel(
@@ -267,7 +268,7 @@ class Classes(DatabaseManager):
         row=6,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.StartTimeEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -277,7 +278,7 @@ class Classes(DatabaseManager):
         row=6,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       EndTimeLabel = customtkinter.CTkLabel(
@@ -288,7 +289,7 @@ class Classes(DatabaseManager):
         row=7,
         column=0,
         padx=10,
-        pady=15)
+        pady=5)
       self.EndTimeEntry = customtkinter.CTkEntry(
         self.PopWindow,
         width=350
@@ -297,7 +298,7 @@ class Classes(DatabaseManager):
         row=7,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       SectionLabel = customtkinter.CTkLabel(
@@ -308,7 +309,7 @@ class Classes(DatabaseManager):
         row=8,
         column=0,
         padx=10,
-        pady=15
+        pady=5
         )
       self.SectionEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -318,7 +319,7 @@ class Classes(DatabaseManager):
         row=8,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       ComponentLabel = customtkinter.CTkLabel(
@@ -329,7 +330,7 @@ class Classes(DatabaseManager):
         row=9,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.ComponentEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -339,7 +340,7 @@ class Classes(DatabaseManager):
         row=9,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       CampusLabel = customtkinter.CTkLabel(
@@ -350,7 +351,7 @@ class Classes(DatabaseManager):
         row=10,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.CampusEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -360,7 +361,7 @@ class Classes(DatabaseManager):
         row=10,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       InstructorIDLabel = customtkinter.CTkLabel(
@@ -371,7 +372,7 @@ class Classes(DatabaseManager):
         row=11,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.InstructorIDEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -381,7 +382,7 @@ class Classes(DatabaseManager):
         row=11,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       InstructorTypeLabel = customtkinter.CTkLabel(
@@ -392,7 +393,7 @@ class Classes(DatabaseManager):
         row=12,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.InstructorTypeEntry = customtkinter.CTkEntry(
         self.PopWindow,
@@ -402,7 +403,7 @@ class Classes(DatabaseManager):
         row=12,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
 
       ClassesCourseLabel = customtkinter.CTkLabel(
@@ -413,7 +414,7 @@ class Classes(DatabaseManager):
         row=13,
         column=0,
         padx=10,
-        pady=15
+        pady=5
       )
       self.ClassesCourseEntry = customtkinter.CTkComboBox(
         self.PopWindow,
@@ -424,7 +425,7 @@ class Classes(DatabaseManager):
         row=13,
         column=1,
         padx=10,
-        pady=15
+        pady=5
       )
       self.ClassesCourseEntry.set(DatabaseManager.Courses[0][1])
 
@@ -434,7 +435,7 @@ class Classes(DatabaseManager):
         columnspan=2,
         sticky="nsew",
         padx=10,
-        pady=15
+        pady=5
       )
       SaveButton.configure(
         text="Save Class",
