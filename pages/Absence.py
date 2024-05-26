@@ -75,6 +75,54 @@ class Absence(DatabaseManager):
 
   def create(self, parent):
     try:
+      search_bar_frame = customtkinter.CTkFrame(
+        parent,
+        bg_color="transparent"
+      )
+      search_bar_frame.pack(
+        fill="x",
+        expand=False
+      )
+
+      search_button = customtkinter.CTkButton(
+        search_bar_frame,
+        text="Search"
+      )
+      search_button.grid(
+        row=0,
+        column=0,
+        sticky="nsew",
+        pady=10,
+        padx=5
+      )
+      # search_button.configure(command=lambda: self.se(search_bar.get()))
+
+      search_bar = customtkinter.CTkEntry(search_bar_frame)
+      search_bar.grid(
+        row=0,
+        column=1,
+        sticky="nsew",
+        pady=10
+      )
+      search_bar.configure(
+        width=400,
+        placeholder_text="Search for Students..."
+      )
+
+      refresh_button = customtkinter.CTkButton(
+        search_bar_frame,
+        width=100,
+        text="Refresh"
+      )
+      refresh_button.grid(
+        row=0,
+        column=2,
+        sticky="nsew",
+        pady=10,
+        padx=5
+      )
+      refresh_button.configure(command=self.refresh)
+
       self.absence_table_frame = customtkinter.CTkScrollableFrame(parent)
       self.absence_table_frame.pack(
         fill="both",
@@ -96,8 +144,6 @@ class Absence(DatabaseManager):
 
       for col in range(len(self.headers)):
         self.absence_table_frame.columnconfigure(col, weight=1)
-      
-      # threading.Thread(target=self.refresh).start()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
