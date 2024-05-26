@@ -59,9 +59,9 @@ class UserInterface():
       # HistoryButton.configure(corner_radius=0, command=lambda: self.showPage("History"))
       # HistoryButton.pack(side=customtkinter.LEFT)
 
-      SettingsButton = customtkinter.CTkButton(navbar, text="Settings")
-      SettingsButton.configure(corner_radius=0, command=lambda: self.showPage("Settings"))
-      SettingsButton.pack(side=customtkinter.LEFT)
+      # SettingsButton = customtkinter.CTkButton(navbar, text="Settings")
+      # SettingsButton.configure(corner_radius=0, command=lambda: self.showPage("Settings"))
+      # SettingsButton.pack(side=customtkinter.LEFT)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
