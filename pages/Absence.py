@@ -1,8 +1,6 @@
 import sys
 import os
 import customtkinter
-import threading
-import time
 
 from DatabaseManager import DatabaseManager
 
@@ -33,28 +31,28 @@ class Absence(DatabaseManager):
         label.destroy()
 
       if len(self.Absence) > 0:
-        for row, log in enumerate(self.Absence, start=1):
-          StudentID, StudentFirstName, StudentMiddleName, StudentLastName = log
-          absence_data = [
+        for row, Student in enumerate(self.Absence, start=1):
+          StudentID, StudentFirstName, StudentMiddleName, StudentLastName = Student
+          AbsenceData = [
             StudentID,
             StudentFirstName,
             StudentMiddleName,
             StudentLastName
           ]
 
-          for col, data in enumerate(absence_data):
-            data_label = customtkinter.CTkLabel(
-              self.absence_table_frame,
-              text=data,
-              padx=10,
-              pady=5
-            )
-            data_label.grid(
+          for col, data in enumerate(AbsenceData):
+            DataLabel = customtkinter.CTkLabel(self.AbsenceTableFrame)
+            DataLabel.grid(
               row=row,
               column=col,
               sticky="nsew"
             )
-            self.AbsenceLabels.append(data_label)
+            DataLabel.configure(
+              text=data,
+              padx=10,
+              pady=5
+            )
+            self.AbsenceLabels.append(DataLabel)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -85,75 +83,73 @@ class Absence(DatabaseManager):
 
   def create(self, parent):
     try:
-      search_bar_frame = customtkinter.CTkFrame(
-        parent,
-        bg_color="transparent"
-      )
-      search_bar_frame.pack(
+      SearchBarFrame = customtkinter.CTkFrame(parent)
+      SearchBarFrame.pack(
         fill="x",
         expand=False
       )
+      SearchBarFrame.configure(bg_color="transparent")
 
-      search_button = customtkinter.CTkButton(
-        search_bar_frame,
-        text="Search"
-      )
-      search_button.grid(
+      SearchButton = customtkinter.CTkButton(SearchBarFrame)
+      SearchButton.grid(
         row=0,
         column=0,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      search_button.configure(command=lambda: self.search(search_bar.get()))
+      SearchButton.configure(
+        command=lambda: self.search(SearchBar.get()),
+        text="Search"
+      )
 
-      search_bar = customtkinter.CTkEntry(search_bar_frame)
-      search_bar.grid(
+      SearchBar = customtkinter.CTkEntry(SearchBarFrame)
+      SearchBar.grid(
         row=0,
         column=1,
         sticky="nsew",
         pady=10
       )
-      search_bar.configure(
+      SearchBar.configure(
         width=400,
         placeholder_text="Search by Student ID..."
       )
 
-      refresh_button = customtkinter.CTkButton(
-        search_bar_frame,
-        width=100,
-        text="Refresh"
-      )
-      refresh_button.grid(
+      RefreshButton = customtkinter.CTkButton(SearchBarFrame)
+      RefreshButton.grid(
         row=0,
         column=2,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      refresh_button.configure(command=self.refresh)
+      RefreshButton.configure(
+        command=self.refresh,
+        width=100,
+        text="Refresh"
+      )
 
-      self.absence_table_frame = customtkinter.CTkScrollableFrame(parent)
-      self.absence_table_frame.pack(
+      self.AbsenceTableFrame = customtkinter.CTkScrollableFrame(parent)
+      self.AbsenceTableFrame.pack(
         fill="both",
         expand=True
       )
 
       for col, header in enumerate(self.headers):
-        header_label = customtkinter.CTkLabel(
-          self.absence_table_frame,
-          text=header,
-          padx=10,
-          pady=10
-        )
-        header_label.grid(
+        HeaderLabel = customtkinter.CTkLabel(self.AbsenceTableFrame)
+        HeaderLabel.grid(
           row=0,
           column=col,
           sticky="nsew"
         )
+        HeaderLabel.configure(
+          text=header,
+          padx=10,
+          pady=10      
+        )
 
       for col in range(len(self.headers)):
-        self.absence_table_frame.columnconfigure(col, weight=1)
+        self.AbsenceTableFrame.columnconfigure(col, weight=1)
       
       self.displayAbsenceTable()
 

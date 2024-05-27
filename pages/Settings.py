@@ -18,7 +18,6 @@ class Settings(DatabaseManager):
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
-  
 
   def refreshSettings(self):
     try:
@@ -30,7 +29,6 @@ class Settings(DatabaseManager):
         Settings['Database']['database'] = self.DatabaseEntry.get()
         Settings['Activation_Key'] = self.ActivationKeyEntry.get()
 
-       
       with open('configrations.json', 'w') as file:
         json.dump(Settings, file, indent=2)
 
@@ -59,110 +57,115 @@ class Settings(DatabaseManager):
         pady=20
       )
 
-      Hostlabel = customtkinter.CTkLabel(
-        ContentFrame,
-        text="Host:"
+      Hostlabel = customtkinter.CTkLabel(ContentFrame)
+      Hostlabel.grid(
+        row=0,
+        column=0,
+        padx=10,
+        pady=10
       )
-      Hostlabel.grid(row=0, column=0, padx=10, pady=10)
-      self.HostEntry = customtkinter.CTkEntry(
-        ContentFrame,
-        width=400
-      )
+      Hostlabel.configure( text="Host:")
+
+      self.HostEntry = customtkinter.CTkEntry(ContentFrame)
       self.HostEntry.grid(
         row=0,
         column=1,
         padx=10,
         pady=10
       )
-      self.HostEntry.insert(0, self.Host)
-
-      Userlabel = customtkinter.CTkLabel(
-        ContentFrame,
-        text="User:"
+      self.HostEntry.configure(width=400)
+      self.HostEntry.insert(
+        0,
+        self.Host
       )
+
+      Userlabel = customtkinter.CTkLabel(ContentFrame)
       Userlabel.grid(
         row=1,
         column=0,
         padx=10,
         pady=10
       )
-      self.UserEntry = customtkinter.CTkEntry(
-        ContentFrame,
-        width=400
-      )
+      Userlabel.configure(text="User:")
+
+      self.UserEntry = customtkinter.CTkEntry(ContentFrame)
       self.UserEntry.grid(
         row=1,
         column=1,
         padx=10,
         pady=10
       )
-      self.UserEntry.insert(0, self.User)
-
-      Passwordlabel = customtkinter.CTkLabel(
-        ContentFrame,
-        text="Password:"
+      self.UserEntry.configure(width=400)
+      self.UserEntry.insert(
+        0,
+        self.User
       )
+
+      Passwordlabel = customtkinter.CTkLabel(ContentFrame)
       Passwordlabel.grid(
         row=2,
         column=0,
         padx=10,
         pady=10
       )
-      self.PasswordEntry = customtkinter.CTkEntry(
-        ContentFrame,
-        width=400
-      )
+      Passwordlabel.configure(text="Password:")
+
+      self.PasswordEntry = customtkinter.CTkEntry(ContentFrame)
       self.PasswordEntry.grid(
         row=2,
         column=1,
         padx=10,
         pady=10
       )
-      self.PasswordEntry.insert(0, self.Password)
-
-      Databaselabel = customtkinter.CTkLabel(
-        ContentFrame,
-        text="Database:"
+      self.PasswordEntry.configure(width=400)
+      self.PasswordEntry.insert(
+        0,
+        self.Password
       )
+
+      Databaselabel = customtkinter.CTkLabel(ContentFrame)
       Databaselabel.grid(
         row=3,
         column=0,
         padx=10,
         pady=10
       )
-      self.DatabaseEntry = customtkinter.CTkEntry(
-        ContentFrame,
-        width=400
-      )
+      Databaselabel.configure(text="Database:")
+
+      self.DatabaseEntry = customtkinter.CTkEntry(ContentFrame)
       self.DatabaseEntry.grid(
         row=3,
         column=1,
         padx=10,
         pady=10
       )
-      self.DatabaseEntry.insert(0, self.Database)
-
-      ActivationKeylabel = customtkinter.CTkLabel(
-        ContentFrame,
-        text="Activation Key:"
+      self.DatabaseEntry.configure(width=400)
+      self.DatabaseEntry.insert(
+        0,
+        self.Database
       )
+
+      ActivationKeylabel = customtkinter.CTkLabel(ContentFrame)
       ActivationKeylabel.grid(
         row=4,
         column=0,
         padx=10,
         pady=10
       )
-      self.ActivationKeyEntry = customtkinter.CTkEntry(
-        ContentFrame,
-        width=400
-      )
+      ActivationKeylabel.configure(text="Activation Key:")
+
+      self.ActivationKeyEntry = customtkinter.CTkEntry(ContentFrame)
       self.ActivationKeyEntry.grid(
         row=4,
         column=1,
         padx=10,
         pady=10
       )
-      self.ActivationKeyEntry.insert(0, self.ActivationKey)
+      self.ActivationKeyEntry.configure(width=400)
+      self.ActivationKeyEntry.insert(
+        0,
+        self.ActivationKey
+      )
 
       save_button = customtkinter.CTkButton(ContentFrame)
       save_button.grid(

@@ -27,7 +27,9 @@ class History(DatabaseManager):
       ]
 
       with open('configrations.json', 'r') as file:
-        self.WorkingHourAbsence = self.parseTimedelta(json.load(file)['Working_Hours']['absence'])
+        self.WorkingHourAbsence = self.parseTimedelta(
+          json.load(file)['Working_Hours']['absence']
+        )
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -64,10 +66,15 @@ class History(DatabaseManager):
           AttendTime = str(item[2]).split(":")
           AttendUpdatedTime = f"{AttendTime[0]}:{AttendTime[1]}:{AttendTime[2]}"
 
-
           updated_history.append((item[0], item[1], AttendUpdatedTime))
 
-        results = pandas.DataFrame(updated_history, columns=['Student Name', 'Date', 'Attend Time'])
+        results = pandas.DataFrame(
+          updated_history, columns=[
+          'Student Name',
+          'Date',
+          'Attend Time'
+          ]
+        )
 
         DownloadsFolder = os.path.join(os.path.expanduser("~"), "Downloads")
         FileName = date + "_Attendance.xlsx"
@@ -126,7 +133,7 @@ class History(DatabaseManager):
         self.getAbsenceHistoryByDate(date)
         self.displayAbsenceHistoryTable()
 
-      self.results_count.configure(text="Results: " + str(len(self.History)))
+      self.ResultsCount.configure(text="Results: " + str(len(self.History)))
     
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -152,20 +159,22 @@ class History(DatabaseManager):
     try:
         if arg == "Absence":
           for col, header in enumerate(self.AbsenceHeaders):
-            header_label = customtkinter.CTkLabel(self.history_table_frame, text=header, padx=10, pady=5)
-            header_label.grid(row=0, column=col, sticky="nsew")
-            self.HeadersLabels.append(header_label)
+            HeaderLabel = customtkinter.CTkLabel(self.HistoryTableFrame)
+            HeaderLabel.grid(row=0, column=col, sticky="nsew")
+            HeaderLabel.configure(text=header, padx=10, pady=5)
+            
+            self.HeadersLabels.append(HeaderLabel)
 
           for col in range(len(self.AbsenceHeaders)):
-            self.history_table_frame.columnconfigure(col, weight=1)
+            self.HistoryTableFrame.columnconfigure(col, weight=1)
         else:
           for col, header in enumerate(self.AttendanceHeaders):
-            header_label = customtkinter.CTkLabel(self.history_table_frame, text=header, padx=10, pady=5)
-            header_label.grid(row=0, column=col, sticky="nsew")
-            self.HeadersLabels.append(header_label)
+            HeaderLabel = customtkinter.CTkLabel(self.HistoryTableFrame, text=header, padx=10, pady=5)
+            HeaderLabel.grid(row=0, column=col, sticky="nsew")
+            self.HeadersLabels.append(HeaderLabel)
 
           for col in range(len(self.AttendanceHeaders)):
-            self.history_table_frame.columnconfigure(col, weight=1)          
+            self.HistoryTableFrame.columnconfigure(col, weight=1)          
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -189,9 +198,14 @@ class History(DatabaseManager):
           ]
 
           for col, data in enumerate(history_data):
-            data_label = customtkinter.CTkLabel(self.history_table_frame, text=data, padx=10, pady=5)
-            data_label.grid(row=row, column=col, sticky="nsew")
-            self.HistoryLabels.append(data_label)
+            DataLabel = customtkinter.CTkLabel(self.HistoryTableFrame)
+            DataLabel.grid(row=row, column=col, sticky="nsew")
+            DataLabel.configure(
+              text=data,
+              padx=10,
+              pady=5
+            )
+            self.HistoryLabels.append(DataLabel)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -215,13 +229,13 @@ class History(DatabaseManager):
 
           for col, data in enumerate(history_data):
             if history_attend_time < self.WorkingHourAbsence:
-              data_label = customtkinter.CTkLabel(self.history_table_frame, text=data, padx=10, pady=5)
-              data_label.grid(row=row, column=col, sticky="nsew")
-              self.HistoryLabels.append(data_label)
+              DataLabel = customtkinter.CTkLabel(self.HistoryTableFrame, text=data, padx=10, pady=5)
+              DataLabel.grid(row=row, column=col, sticky="nsew")
+              self.HistoryLabels.append(DataLabel)
             else:
-              data_label = customtkinter.CTkLabel(self.history_table_frame, text=data, padx=10, pady=5, text_color="red")
-              data_label.grid(row=row, column=col, sticky="nsew")
-              self.HistoryLabels.append(data_label)
+              DataLabel = customtkinter.CTkLabel(self.HistoryTableFrame, text=data, padx=10, pady=5, text_color="red")
+              DataLabel.grid(row=row, column=col, sticky="nsew")
+              self.HistoryLabels.append(DataLabel)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -254,11 +268,11 @@ class History(DatabaseManager):
       generate_report_button.grid(row=0, column=3, sticky="nsew", pady=10, padx=5)
       generate_report_button.configure(command=self.generateReport)
 
-      self.results_count = customtkinter.CTkLabel(search_bar_frame, text="Results: 0")
-      self.results_count.grid(row=0, column=4, padx=10, pady=10)
+      self.ResultsCount = customtkinter.CTkLabel(search_bar_frame, text="Results: 0")
+      self.ResultsCount.grid(row=0, column=4, padx=10, pady=10)
       
-      self.history_table_frame = customtkinter.CTkScrollableFrame(parent)
-      self.history_table_frame.pack(fill="both", expand=True)
+      self.HistoryTableFrame = customtkinter.CTkScrollableFrame(parent)
+      self.HistoryTableFrame.pack(fill="both", expand=True)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

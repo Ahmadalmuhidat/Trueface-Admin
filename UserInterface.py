@@ -31,36 +31,68 @@ class UserInterface():
       navbar = customtkinter.CTkFrame(window)
       navbar.pack(fill=customtkinter.X)
 
-      StudentsButton = customtkinter.CTkButton(navbar, text="Students")
-      StudentsButton.configure(corner_radius=0, command=lambda: self.showPage("Students"))
+      StudentsButton = customtkinter.CTkButton(navbar)
+      StudentsButton.configure(
+        corner_radius=0,
+        command=lambda: self.showPage("Students"),
+        text="Students"
+      )
       StudentsButton.pack(side=customtkinter.LEFT)
 
-      ClassesButton = customtkinter.CTkButton(navbar, text="Classes")
-      ClassesButton.configure(corner_radius=0, command=lambda: self.showPage("Classes"))
+      ClassesButton = customtkinter.CTkButton(navbar)
+      ClassesButton.configure(
+        corner_radius=0,
+        command=lambda: self.showPage("Classes"),
+        text="Classes"
+      )
       ClassesButton.pack(side=customtkinter.LEFT)
 
-      CoursesButton = customtkinter.CTkButton(navbar, text="Courses")
-      CoursesButton.configure(corner_radius=0, command=lambda: self.showPage("Courses"))
+      CoursesButton = customtkinter.CTkButton(navbar)
+      CoursesButton.configure(
+        corner_radius=0,
+        command=lambda: self.showPage("Courses"),
+        text="Courses"
+      )
       CoursesButton.pack(side=customtkinter.LEFT)
 
-      AttendanceButton = customtkinter.CTkButton(navbar, text="Attendance")
-      AttendanceButton.configure(corner_radius=0, command=lambda: self.showPage("Attendance"))
+      AttendanceButton = customtkinter.CTkButton(navbar)
+      AttendanceButton.configure(
+        corner_radius=0,
+        command=lambda: self.showPage("Attendance"),
+        text="Attendance"
+      )
       AttendanceButton.pack(side=customtkinter.LEFT)
 
-      AbsenceButton = customtkinter.CTkButton(navbar, text="Absence")
-      AbsenceButton.configure(corner_radius=0, command=lambda: self.showPage("Absence"))
+      AbsenceButton = customtkinter.CTkButton(navbar)
+      AbsenceButton.configure(
+        corner_radius=0,
+        command=lambda: self.showPage("Absence"),
+        text="Absence"
+      )
       AbsenceButton.pack(side=customtkinter.LEFT)
 
-      UsersButton = customtkinter.CTkButton(navbar, text="Users")
-      UsersButton.configure(corner_radius=0, command=lambda: self.showPage("Users"))
+      UsersButton = customtkinter.CTkButton(navbar)
+      UsersButton.configure(
+        corner_radius=0,
+        command=lambda: self.showPage("Users"),
+        text="Users"
+      )
       UsersButton.pack(side=customtkinter.LEFT)
 
-      # HistoryButton = customtkinter.CTkButton(navbar, text="History")
-      # HistoryButton.configure(corner_radius=0, command=lambda: self.showPage("History"))
+      # HistoryButton = customtkinter.CTkButton(navbar)
+      # HistoryButton.configure(
+      #   corner_radius=0,
+      #   command=lambda: self.showPage("History"),
+      #   text="History"
+      # )
       # HistoryButton.pack(side=customtkinter.LEFT)
 
-      # SettingsButton = customtkinter.CTkButton(navbar, text="Settings")
-      # SettingsButton.configure(corner_radius=0, command=lambda: self.showPage("Settings"))
+      # SettingsButton = customtkinter.CTkButton(navbar)
+      # SettingsButton.configure(
+      #   corner_radius=0,
+      #   command=lambda: self.showPage("Settings"),
+      #   text="Settings"
+      # )
       # SettingsButton.pack(side=customtkinter.LEFT)
 
     except Exception as e:
@@ -75,7 +107,10 @@ class UserInterface():
         self.CurrentPage.pack_forget()
 
       self.CurrentPage = self.pages[name]
-      self.CurrentPage.pack(fill=customtkinter.BOTH, expand=True)
+      self.CurrentPage.pack(
+        fill=customtkinter.BOTH,
+        expand=True
+      )
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -115,13 +150,15 @@ class UserInterface():
     try:
       self.window.destroy()
 
-      threadsToTerminate = [thread for thread in threading.enumerate() if thread.ident != threading.get_ident()]
+      threadsToTerminate = [
+        thread for thread in 
+          threading.enumerate() if
+            thread.ident != threading.get_ident()
+      ]
 
       for thread in threadsToTerminate:
         if thread.is_alive():
           thread.join(timeout=1)
-      
-      print("Done Closing")
 
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -164,6 +201,3 @@ class UserInterface():
       print(exc_obj)
     except KeyboardInterrupt:
       pass
-
-if __name__ == "__main__":
-  UserInterface().startTheProgram()

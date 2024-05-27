@@ -63,7 +63,7 @@ class Students(DatabaseManager):
 
       if len(self.Students) > 0:
         for row, Students in enumerate(self.Students, start=1):
-          StudentID, StudentFirstName, StudentMiddleName, StudentLastName, StudentGender, StudentFaceID, StudentCreateDate = Students
+          StudentID, StudentFirstName, StudentMiddleName, StudentLastName, StudentGender, StudentCreateDate = Students
           Students_data = [
             StudentID,
             StudentFirstName,
@@ -74,20 +74,20 @@ class Students(DatabaseManager):
           ]
 
           for col, data in enumerate(Students_data):
-            data_label = customtkinter.CTkLabel(
-              self.Students_table_frame,
-              text=data,
-              padx=10,
-              pady=5
-            )
-            data_label.grid(
+            DataLabel = customtkinter.CTkLabel(self.StudentsTableFrame)
+            DataLabel.grid(
               row=row,
               column=col,
               sticky="nsew"
             )
-            self.StudentsLabels.append(data_label)
+            DataLabel.configure(
+              text=data,
+              padx=10,
+              pady=5
+            )
+            self.StudentsLabels.append(DataLabel)
 
-      self.results_count.configure(text="Results: " + str(len(self.Students)))
+      self.ResultsCount.configure(text="Results: " + str(len(self.Students)))
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -132,7 +132,14 @@ class Students(DatabaseManager):
       Gender = self.StudentGenderEntry.get()
       TodayDate = datetime.date.today()
 
-      if self.validateStudentsData(ID, FN, MN, LN, Gender, self.ImagePath):
+      if self.validateStudentsData(
+        ID,
+        FN,
+        MN,
+        LN,
+        Gender,
+        self.ImagePath
+      ):
         self.insertStudent(
           ID = ID,
           FN = FN,
@@ -143,11 +150,26 @@ class Students(DatabaseManager):
           TodayDate = TodayDate
         )
 
-        self.StudentIDEntry.delete(0, customtkinter.END)
-        self.StudentFirstNameEntry.delete(0, customtkinter.END)
-        self.StudentMiddleNameEntry.delete(0, customtkinter.END)
-        self.StudentLastNameEntry.delete(0, customtkinter.END)
-        self.StudentImageEntry.delete(0, customtkinter.END)
+        self.StudentIDEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.StudentFirstNameEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.StudentMiddleNameEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.StudentLastNameEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.StudentImageEntry.delete(
+          0,
+          customtkinter.END
+        )
 
         self.refresh()
 
@@ -161,127 +183,117 @@ class Students(DatabaseManager):
     try:
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
+
       self.PopWindow.geometry("490x400")
-      self.PopWindow.title("Add New Student")
       self.PopWindow.resizable(False, False)
 
-      StudentIDLabel = customtkinter.CTkLabel(
-        self.PopWindow,
-        text="Student ID:"
-      )
+      self.PopWindow.title("Add New Student")
+
+      StudentIDLabel = customtkinter.CTkLabel(self.PopWindow)
       StudentIDLabel.grid(
         row=0,
         column=0,
         padx=10,
         pady=15
       )
-      self.StudentIDEntry = customtkinter.CTkEntry(
-        self.PopWindow,
-        width=350
-      )
+      StudentIDLabel.configure(text="Student ID:")
+
+      self.StudentIDEntry = customtkinter.CTkEntry(self.PopWindow)
       self.StudentIDEntry.grid(
         row=0,
         column=1,
         padx=10,
         pady=15
       )
+      self.StudentIDEntry.configure(width=350)
 
-      StudentFirstNameLabel = customtkinter.CTkLabel(
-        self.PopWindow, 
-        text="First Name:"
-      )
+      StudentFirstNameLabel = customtkinter.CTkLabel(self.PopWindow)
       StudentFirstNameLabel.grid(
         row=1, 
         column=0,
         padx=10,
         pady=15
       )
-      self.StudentFirstNameEntry = customtkinter.CTkEntry(
-        self.PopWindow,
-        width=350
-      )
+      StudentFirstNameLabel.configure(text="First Name:")
+
+      self.StudentFirstNameEntry = customtkinter.CTkEntry(self.PopWindow)
       self.StudentFirstNameEntry.grid(
         row=1,
         column=1,
         padx=10,
         pady=15
       )
+      self.StudentFirstNameEntry.configure(width=350)
 
-      StudentMiddleNameLabel = customtkinter.CTkLabel(
-        self.PopWindow,
-        text="Middle Name:"
-      )
+      StudentMiddleNameLabel = customtkinter.CTkLabel(self.PopWindow)
       StudentMiddleNameLabel.grid(
         row=2,
         column=0,
         padx=10,
         pady=15
       )
-      self.StudentMiddleNameEntry = customtkinter.CTkEntry(
-        self.PopWindow,
-        width=350
-      )
+      StudentMiddleNameLabel.configure(text="Middle Name:")
+
+      self.StudentMiddleNameEntry = customtkinter.CTkEntry(self.PopWindow)
       self.StudentMiddleNameEntry.grid(
         row=2,
         column=1,
         padx=10,
         pady=15
       )
+      self.StudentMiddleNameEntry.configure(width=350)
 
-      StudentLastNameLabel = customtkinter.CTkLabel(
-        self.PopWindow,
-        text="last Name:"
-      )
+      StudentLastNameLabel = customtkinter.CTkLabel(self.PopWindow)
       StudentLastNameLabel.grid(
         row=3,
         column=0,
         padx=10,
         pady=15
       )
-      self.StudentLastNameEntry = customtkinter.CTkEntry(
-        self.PopWindow,
-        width=350
-      )
+      StudentLastNameLabel.configure(text="last Name:")
+
+      self.StudentLastNameEntry = customtkinter.CTkEntry(self.PopWindow)
       self.StudentLastNameEntry.grid(
         row=3,
         column=1,
         padx=10,
         pady=15
       )
+      self.StudentLastNameEntry.configure(width=350)
 
-      StudentGenderLabel = customtkinter.CTkLabel(
-        self.PopWindow,
-        text="Gender:"
-      )
+      StudentGenderLabel = customtkinter.CTkLabel(self.PopWindow)
       StudentGenderLabel.grid(
         row=4,
         column=0,
         padx=10,
         pady=15
       )
-      self.StudentGenderEntry = customtkinter.CTkComboBox(
-        self.PopWindow,
-        values=["Male", "Female"],
-        width=350
-      )
+      StudentGenderLabel.configure(text="Gender:")
+
+      self.StudentGenderEntry = customtkinter.CTkComboBox(self.PopWindow)
       self.StudentGenderEntry.grid(
         row=4,
         column=1,
         padx=10,
         pady=15
       )
-      self.StudentGenderEntry.set("Male")
-
-      self.StudentImageEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.StudentGenderEntry.configure(
+        values=[
+          "Male",
+          "Female"
+        ],
         width=350
       )
+      self.StudentGenderEntry.set("Male")
+
+      self.StudentImageEntry = customtkinter.CTkEntry(self.PopWindow)
       self.StudentImageEntry.grid(
         row=5,
         column=1,
         padx=10,
         pady=15
       )
+      self.StudentImageEntry.configure(width=350)
 
       UploadButton = customtkinter.CTkButton(self.PopWindow)
       UploadButton.grid(
@@ -297,10 +309,7 @@ class Students(DatabaseManager):
         command=self.uploadImage
       )
 
-      SaveButton = customtkinter.CTkButton(
-        self.PopWindow,
-        width=350
-      )
+      SaveButton = customtkinter.CTkButton(self.PopWindow)
       SaveButton.grid(
         row=7,
         columnspan=2,
@@ -310,7 +319,8 @@ class Students(DatabaseManager):
       )
       SaveButton.configure(
         text="Save Students",
-        command=self.saveStudent
+        command=self.saveStudent,
+        width=350
         )
 
     except Exception as e:
@@ -322,124 +332,121 @@ class Students(DatabaseManager):
 
   def create(self, parent):
     try:
-      search_bar_frame = customtkinter.CTkFrame(
-        parent,
-        bg_color="transparent"
-      )
-      search_bar_frame.pack(
+      SearchBarFrame = customtkinter.CTkFrame(parent)
+      SearchBarFrame.pack(
         fill="x",
         expand=False
       )
+      SearchBarFrame.configure(bg_color="transparent")
 
-      search_button = customtkinter.CTkButton(
-        search_bar_frame,
-        text="Search"
-      )
-      search_button.grid(
+      SearchButton = customtkinter.CTkButton(SearchBarFrame)
+      SearchButton.grid(
         row=0,
         column=0,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      search_button.configure(command=lambda: self.searchStudents(search_bar.get()))
+      SearchButton.configure(
+        command=lambda: self.searchStudents(SearchBar.get()),
+        text="Search"
+      )
 
-      search_bar = customtkinter.CTkEntry(search_bar_frame)
-      search_bar.grid(
+      SearchBar = customtkinter.CTkEntry(SearchBarFrame)
+      SearchBar.grid(
         row=0,
         column=1,
         sticky="nsew",
         pady=10
       )
-      search_bar.configure(
+      SearchBar.configure(
         width=400,
         placeholder_text="Search for Students..."
       )
 
-      delete_button = customtkinter.CTkButton(
-        search_bar_frame,
-        width=100,
-        text="Delete"
-      )
-      delete_button.grid(
+      DeleteButton = customtkinter.CTkButton(SearchBarFrame)
+      DeleteButton.grid(
         row=0,
         column=2,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      delete_button.configure(command=lambda: self.deleteStudent(delete_bar.get()))
-
-      delete_bar = customtkinter.CTkEntry(
-        search_bar_frame,
+      DeleteButton.configure(
+        command=lambda: self.deleteStudent(DeleteBar.get()),
         width=100,
-        placeholder_text="ID",
-        
+        text="Delete"
       )
-      delete_bar.grid(
+
+      DeleteBar = customtkinter.CTkEntry(SearchBarFrame)
+      DeleteBar.grid(
         row=0,
         column=3,
         sticky="nsew",
         pady=10
       )
-
-      refresh_button = customtkinter.CTkButton(
-        search_bar_frame,
+      DeleteBar.configure(
         width=100,
-        text="Refresh"
+        placeholder_text="ID", 
       )
-      refresh_button.grid(
+
+      RefreshButton = customtkinter.CTkButton(SearchBarFrame)
+      RefreshButton.grid(
         row=0,
         column=4,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      refresh_button.configure(command=self.refresh)
-
-      add_Student_button = customtkinter.CTkButton(
-        search_bar_frame,
+      RefreshButton.configure(
+        command=self.refresh,
         width=100,
-        text="Add Student"
+        text="Refresh"
       )
-      add_Student_button.grid(
+
+      AddStudentButton = customtkinter.CTkButton(SearchBarFrame)
+      AddStudentButton.grid(
         row=0,
         column=5,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      add_Student_button.configure(command=self.addStudent)
+      AddStudentButton.configure(
+        command=self.addStudent,
+        width=100,
+        text="Add Student"
+      )
 
-      self.results_count = customtkinter.CTkLabel(search_bar_frame)
-      self.results_count.grid(
+      self.ResultsCount = customtkinter.CTkLabel(SearchBarFrame)
+      self.ResultsCount.grid(
         row=0,
         column=6,
         padx=10,
         pady=5
       )
 
-      self.Students_table_frame = customtkinter.CTkFrame(parent)
-      self.Students_table_frame.pack(
+      self.StudentsTableFrame = customtkinter.CTkFrame(parent)
+      self.StudentsTableFrame.pack(
         fill="x",
         expand=False
       )
 
       for col, header in enumerate(self.headers):
-        header_label = customtkinter.CTkLabel(
-          self.Students_table_frame,
-          text=header,
-          padx=10,
-          pady=10
-        )
-        header_label.grid(
+        HeaderLabel = customtkinter.CTkLabel(self.StudentsTableFrame)
+        HeaderLabel.grid(
           row=0,
           column=col,
           sticky="nsew"
         )
+        HeaderLabel.configure(
+          text=header,
+          padx=10,
+          pady=10
+        )
   
       for col in range(len(self.headers)):
-        self.Students_table_frame.columnconfigure(col, weight=1)
+        self.StudentsTableFrame.columnconfigure(col, weight=1)
 
       self.displayStudentsTable()
 

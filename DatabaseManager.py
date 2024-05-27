@@ -778,7 +778,17 @@ class DatabaseManager(Configrations):
 
   def getStudents(self):
     try:
-      query = "SELECT * FROM Students"
+      query = '''
+        SELECT
+          StudentID,
+          StudentFirstName,
+          StudentMiddleName,
+          StudentLastName,
+          StudentGender,
+          StudentCreateDate
+        FROM
+          Students
+      '''
       DatabaseManager.cursor.execute(query)
       self.Students = DatabaseManager.cursor.fetchall()
 

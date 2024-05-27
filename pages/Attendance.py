@@ -1,7 +1,6 @@
 import sys
 import os
 import customtkinter
-import time
 
 from datetime import timedelta
 from DatabaseManager import DatabaseManager
@@ -31,7 +30,10 @@ class Attendance(DatabaseManager):
   
   def parseTimedelta(self, time):
     hours, minutes = map(int, time.split(':'))
-    return timedelta(hours=hours, minutes=minutes)
+    return timedelta(
+      hours=hours,
+      minutes=minutes
+    )
 
   def displayAttendanceTable(self):
     try:
@@ -39,9 +41,9 @@ class Attendance(DatabaseManager):
         label.destroy()
 
       if len(self.Attendance) > 0:
-        for row, log in enumerate(self.Attendance, start=1):
-          StudentID, StudentFirstName, StudentMiddleName, StudentLastName, ClassSubjectArea, AttendanceTime = log
-          attendance_data = [
+        for row, Attendance in enumerate(self.Attendance, start=1):
+          StudentID, StudentFirstName, StudentMiddleName, StudentLastName, ClassSubjectArea, AttendanceTime = Attendance
+          AttendanceData = [
             StudentID,
             StudentFirstName,
             StudentMiddleName,
@@ -50,10 +52,19 @@ class Attendance(DatabaseManager):
             AttendanceTime
           ]
 
-          for col, data in enumerate(attendance_data):
-            data_label = customtkinter.CTkLabel(self.attendance_table_frame, text=data, padx=10, pady=5)
-            data_label.grid(row=row, column=col, sticky="nsew")
-            self.AttendanceLabels.append(data_label)
+          for col, data in enumerate(AttendanceData):
+            DataLabel = customtkinter.CTkLabel(self.AttendanceTableFrame)
+            DataLabel.grid(
+              row=row,
+              column=col,
+              sticky="nsew"
+            )
+            DataLabel.configure(
+              text=data,
+              padx=10,
+              pady=5
+            )
+            self.AttendanceLabels.append(DataLabel)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -66,7 +77,9 @@ class Attendance(DatabaseManager):
       self.getAttendance()
       self.displayAttendanceTable()
 
-      self.results_count.configure(text="Results: " + str(len(self.Attendance)))
+      self.ResultsCount.configure(
+        text="Results: " + str(len(self.Attendance))
+      )
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -78,7 +91,9 @@ class Attendance(DatabaseManager):
     try:
       self.searchAttendance(term)
 
-      self.results_count.configure(text="Results: " + str(len(self.Attendance)))
+      self.ResultsCount.configure(
+        text="Results: " + str(len(self.Attendance))
+      )
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -88,86 +103,84 @@ class Attendance(DatabaseManager):
 
   def create(self, parent):
     try:
-      search_bar_frame = customtkinter.CTkFrame(
-        parent,
-        bg_color="transparent"
-      )
-      search_bar_frame.pack(
+      SearchBarFrame = customtkinter.CTkFrame(parent)
+      SearchBarFrame.pack(
         fill="x",
         expand=False
       )
+      SearchBarFrame.configure(bg_color="transparent")
 
-      search_button = customtkinter.CTkButton(
-        search_bar_frame,
-        text="Search"
-      )
-      search_button.grid(
+      SearchButton = customtkinter.CTkButton(SearchBarFrame)
+      SearchButton.grid(
         row=0,
         column=0,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      search_button.configure(command=lambda: self.search(search_bar.get()))
+      SearchButton.configure(
+        command=lambda: self.search(SearchBar.get()),
+        text="Search"
+      )
 
-      search_bar = customtkinter.CTkEntry(search_bar_frame)
-      search_bar.grid(
+      SearchBar = customtkinter.CTkEntry(SearchBarFrame)
+      SearchBar.grid(
         row=0,
         column=1,
         sticky="nsew",
         pady=10
       )
-      search_bar.configure(
+      SearchBar.configure(
         width=400,
         placeholder_text="Search by Student ID or Class Subject..."
       )
 
-      refresh_button = customtkinter.CTkButton(
-        search_bar_frame,
-        width=100,
-        text="Refresh"
-      )
-      refresh_button.grid(
+      RefreshButton = customtkinter.CTkButton(SearchBarFrame)
+      RefreshButton.grid(
         row=0,
         column=2,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      refresh_button.configure(command=self.refresh)
+      RefreshButton.configure(
+        command=self.refresh,
+        width=100,
+        text="Refresh"
+      )
 
-      self.results_count = customtkinter.CTkLabel(search_bar_frame)
-      self.results_count.grid(
+      self.ResultsCount = customtkinter.CTkLabel(SearchBarFrame)
+      self.ResultsCount.grid(
         row=0,
         column=3,
         padx=10,
         pady=5
       )
-      self.results_count.configure(
+      self.ResultsCount.configure(
         text="Results: " + str(len(self.Students))
       )
 
-      self.attendance_table_frame = customtkinter.CTkScrollableFrame(parent)
-      self.attendance_table_frame.pack(
+      self.AttendanceTableFrame = customtkinter.CTkScrollableFrame(parent)
+      self.AttendanceTableFrame.pack(
         fill="both",
         expand=True
       )
 
       for col, header in enumerate(self.headers):
-        header_label = customtkinter.CTkLabel(
-          self.attendance_table_frame,
-          text=header,
-          padx=10,
-          pady=10
-        )
-        header_label.grid(
+        HeaderLabel = customtkinter.CTkLabel(self.AttendanceTableFrame)
+        HeaderLabel.grid(
           row=0,
           column=col,
           sticky="nsew"
         )
+        HeaderLabel.configure(
+          text=header,
+          padx=10,
+          pady=10  
+        )
 
       for col in range(len(self.headers)):
-        self.attendance_table_frame.columnconfigure(
+        self.AttendanceTableFrame.columnconfigure(
           col,
           weight=1
         )

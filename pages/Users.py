@@ -42,8 +42,8 @@ class Users(DatabaseManager):
         label.destroy()
 
       if len(self.Users) > 0:
-        for row, Users in enumerate(self.Users, start=1):
-          UsersID, UserName, UsesEmail, UserRole = Users
+        for row, User in enumerate(self.Users, start=1):
+          UsersID, UserName, UsesEmail, UserRole = User
           Users_data = [
             UsersID,
             UserName,
@@ -52,20 +52,22 @@ class Users(DatabaseManager):
           ]
 
           for col, data in enumerate(Users_data):
-            data_label = customtkinter.CTkLabel(
-              self.Users_table_frame,
-              text=data,
-              padx=10,
-              pady=5
-            )
-            data_label.grid(
+            DataLabel = customtkinter.CTkLabel(self.UsersTableFrame)
+            DataLabel.grid(
               row=row,
               column=col,
               sticky="nsew"
             )
-            self.UsersLabels.append(data_label)
+            DataLabel.configure(
+              text=data,
+              padx=10,
+              pady=5
+            )
+            self.UsersLabels.append(DataLabel)
 
-      self.results_count.configure(text="Results: " + str(len(self.Users)))
+      self.ResultsCount.configure(
+        text="Results: " + str(len(self.Users))
+      )
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -86,42 +88,40 @@ class Users(DatabaseManager):
 
   def create(self, parent):
     try:
-      search_bar_frame = customtkinter.CTkFrame(
-        parent,
-        bg_color="transparent"
-      )
-      search_bar_frame.pack(
+      SearchBarFrame = customtkinter.CTkFrame(parent)
+      SearchBarFrame.pack(
         fill="x",
         expand=False
       )
+      SearchBarFrame.configure(bg_color="transparent")
 
-      search_button = customtkinter.CTkButton(
-        search_bar_frame,
-        text="Search"
-      )
-      search_button.grid(
+      SearchButton = customtkinter.CTkButton(SearchBarFrame)
+      SearchButton.grid(
         row=0,
         column=0,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      search_button.configure(command=lambda: self.search(search_bar.get()))
+      SearchButton.configure(
+        command=lambda: self.search(SearchBar.get()),
+        text="Search"
+      )
 
-      search_bar = customtkinter.CTkEntry(search_bar_frame)
-      search_bar.grid(
+      SearchBar = customtkinter.CTkEntry(SearchBarFrame)
+      SearchBar.grid(
         row=0,
         column=1,
         sticky="nsew",
         pady=10
       )
-      search_bar.configure(
+      SearchBar.configure(
         width=400,
         placeholder_text="Search for Users..."
       )
 
       # delete_button = customtkinter.CTkButton(
-      #   search_bar_frame,
+      #   SearchBarFrame,
       #   width=100,
       #   text="Delete"
       # )
@@ -134,75 +134,75 @@ class Users(DatabaseManager):
       # )
       # delete_button.configure(command=lambda: self.deleteUsers(delete_bar.get()))
 
-      # delete_bar = customtkinter.CTkEntry(
-      #   search_bar_frame,
-      #   width=100,
-      #   placeholder_text="ID",
-      # )
-      # delete_bar.grid(
+      # DeleteBar = customtkinter.CTkEntry(SearchBarFrame)
+      # DeleteBar.grid(
       #   row=0,
       #   column=3,
       #   sticky="nsew",
       #   pady=10
       # )
+      # DeleteBar.configure(
+      #   width=100,
+      #   placeholder_text="ID",
+      # )
 
-      refresh_button = customtkinter.CTkButton(
-        search_bar_frame,
-        width=100,
-        text="Refresh"
-      )
-      refresh_button.grid(
+      RefreshButton = customtkinter.CTkButton(SearchBarFrame)
+      RefreshButton.grid(
         row=0,
         column=4,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      refresh_button.configure(command=self.refresh)
+      RefreshButton.configure(
+        command=self.refresh,
+        width=100,
+        text="Refresh"
+      )
 
-      # add_Users_button = customtkinter.CTkButton(
-      #   search_bar_frame,
-      #   width=100,
-      #   text="Add Users"
-      # )
-      # add_Users_button.grid(
+      # AddUsersButton = customtkinter.CTkButton(SearchBarFrame)
+      # AddUsersButton.grid(
       #   row=0,
       #   column=5,
       #   sticky="nsew",
       #   pady=10,
       #   padx=5
       # )
-      # add_Users_button.configure(command=self.addUsers)
+      # AddUsersButton.configure(
+      #   command=self.addUsers,
+      #   width=100,
+      #   text="Add Users"
+      # )
 
-      self.results_count = customtkinter.CTkLabel(search_bar_frame)
-      self.results_count.grid(
+      self.ResultsCount = customtkinter.CTkLabel(SearchBarFrame)
+      self.ResultsCount.grid(
         row=0,
         column=6,
         padx=10,
         pady=5
       )
 
-      self.Users_table_frame = customtkinter.CTkFrame(parent)
-      self.Users_table_frame.pack(
+      self.UsersTableFrame = customtkinter.CTkFrame(parent)
+      self.UsersTableFrame.pack(
         fill="x",
         expand=False
       )
 
       for col, header in enumerate(self.headers):
-        header_label = customtkinter.CTkLabel(
-          self.Users_table_frame,
-          text=header,
-          padx=10,
-          pady=10
-        )
-        header_label.grid(
+        HeaderLabel = customtkinter.CTkLabel(self.UsersTableFrame)
+        HeaderLabel.grid(
           row=0,
           column=col,
           sticky="nsew"
         )
+        HeaderLabel.configure(
+          text=header,
+          padx=10,
+          pady=10
+        )
   
       for col in range(len(self.headers)):
-        self.Users_table_frame.columnconfigure(col, weight=1)
+        self.UsersTableFrame.columnconfigure(col, weight=1)
 
       self.displayUsersTable()
 
