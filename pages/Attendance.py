@@ -157,7 +157,7 @@ class Attendance(DatabaseManager):
         pady=5
       )
       self.ResultsCount.configure(
-        text="Results: " + str(len(self.Students))
+        text="Results: " + str(len(self.Attendance))
       )
 
       self.AttendanceTableFrame = customtkinter.CTkScrollableFrame(parent)

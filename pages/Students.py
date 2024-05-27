@@ -24,7 +24,7 @@ class Students(DatabaseManager):
 
       self.getSettings()
       self.connect()
-      # self.checkCustomerLicenseStatus()
+      # self.checkLicenseStatus()
       self.getStudents()
 
     except Exception as e:

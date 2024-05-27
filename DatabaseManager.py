@@ -272,7 +272,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
   
-  def checkCustomerLicenseStatus(self):
+  def checkLicenseStatus(self):
     try:
       data = (self.ActivationKey,)
       query = "SELECT LicenseActive FROM Licenses WHERE LicenseActivationKey=%s"

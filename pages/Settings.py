@@ -41,7 +41,7 @@ class Settings(DatabaseManager):
       self.ActivationKeyEntry.configure(placeholder_text= self.ActivationKey)
 
       threading.Thread(target=self.connect).start()
-      threading.Thread(target=self.checkCustomerLicenseStatus).start()
+      threading.Thread(target=self.checkLicenseStatus).start()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
