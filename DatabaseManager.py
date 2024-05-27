@@ -9,6 +9,7 @@ import re
 
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
+from datetime import date
 
 class DatabaseManager(Configrations):
   cursor = None
@@ -515,6 +516,7 @@ class DatabaseManager(Configrations):
 
   def getAttendance(self):
     try:
+      data = (date.today(),)
       query = '''
         SELECT 
           Students.StudentID, 
@@ -534,12 +536,12 @@ class DatabaseManager(Configrations):
         ON
           Attendance.AttendanceClassID = Classes.ClasseID
         WHERE 
-          Attendance.AttendanceDate = CURDATE();
+          Attendance.AttendanceDate = %s
       '''
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
 
-      DatabaseManager.cursor.execute(query)
+      DatabaseManager.cursor.execute(query, data)
       self.Attendance = DatabaseManager.cursor.fetchall()
 
       DatabaseManager.cursor.close()
@@ -553,7 +555,11 @@ class DatabaseManager(Configrations):
 
   def searchAttendance(self, term):
     try:
-      data = (term,term)
+      data = (
+        date.today(),
+        term,
+        term
+      )
       query = '''
         SELECT 
           Students.StudentID, 
@@ -573,11 +579,11 @@ class DatabaseManager(Configrations):
         ON
           Attendance.AttendanceClassID = Classes.ClasseID
         WHERE 
-          Attendance.AttendanceDate = CURDATE();
+          Attendance.AttendanceDate = %s
         AND
-          Attendance.AttendanceStudentID = %s;
+          Attendance.AttendanceStudentID = %s
         OR
-          Classes.ClassSubjectArea = %s;
+          Classes.ClassSubjectArea = %s
       '''
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
@@ -596,6 +602,7 @@ class DatabaseManager(Configrations):
 
   def getAbsence(self):
     try:
+      data = (date.today(),)
       query = '''
         SELECT
           StudentID,
@@ -613,13 +620,13 @@ class DatabaseManager(Configrations):
           FROM
             Attendance
           WHERE
-            DATE(Attendance.AttendanceDate) = CURDATE()
+            DATE(Attendance.AttendanceDate) = %s
           )
         '''
       
       DatabaseManager.cursor = DatabaseManager.db.cursor()
 
-      DatabaseManager.cursor.execute(query)
+      DatabaseManager.cursor.execute(query, data)
       self.Absence = DatabaseManager.cursor.fetchall()
 
       DatabaseManager.cursor.close()
@@ -633,7 +640,7 @@ class DatabaseManager(Configrations):
 
   def searchAbsence(self, term):
     try:
-      data = (term,)
+      data = (date.today(), term)
       query = '''
         SELECT
           StudentID,
@@ -651,7 +658,7 @@ class DatabaseManager(Configrations):
           FROM
             Attendance
           WHERE
-            DATE(Attendance.AttendanceDate) = CURDATE()
+            DATE(Attendance.AttendanceDate) = %s
           AND
             Students.StudentID = %s
           )
