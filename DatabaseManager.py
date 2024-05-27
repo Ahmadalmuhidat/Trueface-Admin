@@ -1,7 +1,6 @@
 import sys
 import os
 import mysql.connector
-import shutil
 import face_recognition
 import pickle
 import numpy
