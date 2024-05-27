@@ -90,30 +90,30 @@ class Absence(DatabaseManager):
       )
       SearchBarFrame.configure(bg_color="transparent")
 
-      SearchButton = customtkinter.CTkButton(SearchBarFrame)
-      SearchButton.grid(
-        row=0,
-        column=0,
-        sticky="nsew",
-        pady=10,
-        padx=5
-      )
-      SearchButton.configure(
-        command=lambda: self.search(SearchBar.get()),
-        text="Search"
-      )
+      # SearchButton = customtkinter.CTkButton(SearchBarFrame)
+      # SearchButton.grid(
+      #   row=0,
+      #   column=0,
+      #   sticky="nsew",
+      #   pady=10,
+      #   padx=5
+      # )
+      # SearchButton.configure(
+      #   command=lambda: self.search(SearchBar.get()),
+      #   text="Search"
+      # )
 
-      SearchBar = customtkinter.CTkEntry(SearchBarFrame)
-      SearchBar.grid(
-        row=0,
-        column=1,
-        sticky="nsew",
-        pady=10
-      )
-      SearchBar.configure(
-        width=400,
-        placeholder_text="Search by Student ID..."
-      )
+      # SearchBar = customtkinter.CTkEntry(SearchBarFrame)
+      # SearchBar.grid(
+      #   row=0,
+      #   column=1,
+      #   sticky="nsew",
+      #   pady=10
+      # )
+      # SearchBar.configure(
+      #   width=400,
+      #   placeholder_text="Search by Student ID..."
+      # )
 
       RefreshButton = customtkinter.CTkButton(SearchBarFrame)
       RefreshButton.grid(

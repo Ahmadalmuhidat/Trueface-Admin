@@ -32,12 +32,34 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
+  def connect(self):
+    try:
+      DatabaseManager.db = mysql.connector.connect(
+        host = self.Host,
+        user = self.User,
+        password = self.User,
+        database = self.Database
+      )
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
   def checkDuplicatedID(self, id):
     try:
       data = (id,)
       query = "SELECT StudentID FROM Students WHERE StudentID=%s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       result = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
       if len(result) > 0:
         return True
@@ -63,8 +85,12 @@ class DatabaseManager(Configrations):
         Users
       '''
 
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       self.Users = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e: 
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -83,8 +109,12 @@ class DatabaseManager(Configrations):
       WHERE UserEmail=%s
       '''
 
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       User = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
       if len(User) == 1:
         if str(User[0][1]) == str(password):
@@ -119,8 +149,12 @@ class DatabaseManager(Configrations):
           ClasseID=%s
       '''
 
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       self.Classes = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -133,8 +167,13 @@ class DatabaseManager(Configrations):
     try:
       data = (term,)
       query = "DELETE FROM Classes WHERE ClasseID=%s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -157,8 +196,13 @@ class DatabaseManager(Configrations):
          WHERE
           UserID=%s
         '''
+      
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       self.Users = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -171,8 +215,13 @@ class DatabaseManager(Configrations):
     try:
       data = (term,)
       query = "SELECT * FROM Courses WHERE CourseID=%s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.Courses = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -185,8 +234,13 @@ class DatabaseManager(Configrations):
     try:
       data = (term,)
       query = "DELETE FROM Courses WHERE CourseID=%s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -199,8 +253,13 @@ class DatabaseManager(Configrations):
     try:
       data = (id,)
       query = "SELECT StudentID FROM Students WHERE StudentID=%s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       result = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
       if len(result) > 0:
         return True
@@ -213,30 +272,18 @@ class DatabaseManager(Configrations):
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
       pass
-
-  def connect(self):
-    try:
-      DatabaseManager.db = mysql.connector.connect(
-        host = self.Host,
-        user = self.User,
-        password = self.User,
-        database = self.Database
-      )
-
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
   
   def checkCustomerLicenseStatus(self):
     try:
       data = (self.ActivationKey,)
       query = "SELECT LicenseActive FROM Licenses WHERE LicenseActivationKey=%s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       CustomerLicenseStatus = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
       if len(CustomerLicenseStatus) > 0:
         if CustomerLicenseStatus[0][0] == "inactive":
@@ -278,8 +325,13 @@ class DatabaseManager(Configrations):
         ON
           Courses.CourseID = Classes.ClasseCourseID
       '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       self.Classes = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -291,8 +343,13 @@ class DatabaseManager(Configrations):
   def getCourses(self):
     try:
       query = "SELECT * FROM Courses"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       DatabaseManager.Courses = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -319,9 +376,13 @@ class DatabaseManager(Configrations):
       )
 
       query = "INSERT INTO Courses VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
 
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -348,8 +409,13 @@ class DatabaseManager(Configrations):
         IT
       )
       query = "INSERT INTO Classes VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -387,8 +453,13 @@ class DatabaseManager(Configrations):
           WHERE
             AttendanceDate = %s
           '''
+        
+        DatabaseManager.cursor = DatabaseManager.db.cursor()
+
         DatabaseManager.cursor.execute(query, data)
         self.History = DatabaseManager.cursor.fetchall()
+
+        DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -428,8 +499,13 @@ class DatabaseManager(Configrations):
               DATE(Attendance.AttendanceDate) = %s
             )
           '''
+        
+        DatabaseManager.cursor = DatabaseManager.db.cursor()
+
         DatabaseManager.cursor.execute(query, data)
         self.History = DatabaseManager.cursor.fetchall()
+
+        DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -461,8 +537,13 @@ class DatabaseManager(Configrations):
         WHERE 
           Attendance.AttendanceDate = CURDATE();
       '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       self.Attendance = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -499,8 +580,13 @@ class DatabaseManager(Configrations):
         OR
           Classes.ClassSubjectArea = %s;
       '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       self.Attendance = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -531,8 +617,13 @@ class DatabaseManager(Configrations):
             DATE(Attendance.AttendanceDate) = CURDATE()
           )
         '''
+      
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       self.Absence = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -566,8 +657,13 @@ class DatabaseManager(Configrations):
             Students.StudentID = %s
           )
         '''
+      
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       self.Absence = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -721,22 +817,13 @@ class DatabaseManager(Configrations):
       )
 
       query = "INSERT INTO Students VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
 
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-      pass
-
-  def removeStudentImage(self, term):
-    try:
-      if os.path.exists("Students") and os.path.isdir("Students"):
-        for filename in os.listdir("Students"):
-          if filename.lower().startswith(term + "."):
-            os.remove(os.path.join("Students", filename))
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -744,30 +831,18 @@ class DatabaseManager(Configrations):
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
       pass
-
-  def storeStudentImage(self, id, path):
-    try:
-      image_filename = os.path.basename(path).split(".")
-      image_filename = id + "." + image_filename[1]
-      destination_path = os.path.join("Students", image_filename)
-      shutil.copyfile(path, destination_path)
-
-      return destination_path
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
 
   def removeStudent(self, term):
     try:
       data = (term,)
-
       query = "DELETE FROM Students WHERE StudentID = %s"
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
-      # self.removeStudentImage(term)
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -789,8 +864,13 @@ class DatabaseManager(Configrations):
         FROM
           Students
       '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       self.Students = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -803,8 +883,13 @@ class DatabaseManager(Configrations):
     try:
       data = (term,)
       query = "SELECT * FROM Students WHERE StudentID = %s"
+      
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query, data)
       self.Students = DatabaseManager.cursor.fetchall()
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
