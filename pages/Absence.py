@@ -32,7 +32,11 @@ class Absence(DatabaseManager):
 
       if len(self.Absence) > 0:
         for row, Student in enumerate(self.Absence, start=1):
-          StudentID, StudentFirstName, StudentMiddleName, StudentLastName = Student
+          StudentID, \
+          StudentFirstName, \
+          StudentMiddleName, \
+          StudentLastName = Student
+
           AbsenceData = [
             StudentID,
             StudentFirstName,

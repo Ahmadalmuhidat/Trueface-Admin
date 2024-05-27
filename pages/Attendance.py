@@ -42,7 +42,13 @@ class Attendance(DatabaseManager):
 
       if len(self.Attendance) > 0:
         for row, Attendance in enumerate(self.Attendance, start=1):
-          StudentID, StudentFirstName, StudentMiddleName, StudentLastName, ClassSubjectArea, AttendanceTime = Attendance
+          StudentID, \
+          StudentFirstName, \
+          StudentMiddleName, \
+          StudentLastName, \
+          ClassSubjectArea, \
+          AttendanceTime = Attendance
+
           AttendanceData = [
             StudentID,
             StudentFirstName,

@@ -623,7 +623,7 @@ class DatabaseManager(Configrations):
             DATE(Attendance.AttendanceDate) = %s
           )
         '''
-      
+
       DatabaseManager.cursor = DatabaseManager.db.cursor()
 
       DatabaseManager.cursor.execute(query, data)

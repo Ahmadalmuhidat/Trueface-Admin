@@ -43,7 +43,10 @@ class Users(DatabaseManager):
 
       if len(self.Users) > 0:
         for row, User in enumerate(self.Users, start=1):
-          UsersID, UserName, UsesEmail, UserRole = User
+          UsersID, \
+          UserName, \
+          UsesEmail, \
+          UserRole = User
           Users_data = [
             UsersID,
             UserName,

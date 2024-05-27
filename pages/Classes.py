@@ -42,7 +42,21 @@ class Classes(DatabaseManager):
 
       if len(self.Classes) > 0:
         for row, Classes in enumerate(self.Classes, start=1):
-          ClasseID, ClassSubjectArea, ClasseCatalogNBR,	ClasseAcademicCareer, ClasseCourseID,	ClasseCourseOfferingNBR,	ClasseSessionStartTime,	ClasseSessionEndTime,	ClasseSection,	ClasseComponent,	ClasseCampus,	ClasseInstructorID,	ClasseInstructorType, CourseTitle = Classes          
+          ClasseID, \
+          ClassSubjectArea, \
+          ClasseCatalogNBR, \
+          ClasseAcademicCareer, \
+          ClasseCourseID, \
+          ClasseCourseOfferingNBR, \
+          ClasseSessionStartTime, \
+          ClasseSessionEndTime, \
+          ClasseSection, \
+          ClasseComponent, \
+          ClasseCampus, \
+          ClasseInstructorID, \
+          ClasseInstructorType, \
+          CourseTitle = Classes          
+
           Classess_data = [
             ClasseID,
             ClassSubjectArea,

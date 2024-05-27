@@ -63,7 +63,13 @@ class Students(DatabaseManager):
 
       if len(self.Students) > 0:
         for row, Students in enumerate(self.Students, start=1):
-          StudentID, StudentFirstName, StudentMiddleName, StudentLastName, StudentGender, StudentCreateDate = Students
+          StudentID, \
+          StudentFirstName, \
+          StudentMiddleName, \
+          StudentLastName, \
+          StudentGender, \
+          StudentCreateDate = Students
+
           Students_data = [
             StudentID,
             StudentFirstName,

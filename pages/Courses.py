@@ -40,7 +40,19 @@ class Courses(DatabaseManager):
 
       if len(DatabaseManager.Courses) > 0:
         for row, Courses in enumerate(DatabaseManager.Courses, start=1):
-          CourseID, CourseTitle, CourseCredit, CourseMaximumUnits, CourseLongCourseTitle,	CourseOfferingNBR, CourseAcademicGroup,	CourseSubjectArea, CourseCatalogNBR, CourseCampus, CourseAcademicOrganizatio, CourseComponent = Courses
+          CourseID, \
+          CourseTitle, \
+          CourseCredit, \
+          CourseMaximumUnits, \
+          CourseLongCourseTitle, \
+          CourseOfferingNBR, \
+          CourseAcademicGroup, \
+          CourseSubjectArea, \
+          CourseCatalogNBR, \
+          CourseCampus, \
+          CourseAcademicOrganizatio, \
+          CourseComponent = Courses
+
           Coursess_data = [
             CourseID,
             CourseTitle,
