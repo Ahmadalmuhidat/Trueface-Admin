@@ -365,21 +365,31 @@ class DatabaseManager(Configrations):
   def checkLicenseStatus(self):
     try:
       data = (self.ActivationKey,)
-      query = "SELECT LicenseActive FROM Licenses WHERE LicenseActivationKey=%s"
+      query = '''
+        SELECT
+          LicenseActive
+        FROM
+          Licenses
+        WHERE
+          LicenseActivationKey = %s
+      '''
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
 
       DatabaseManager.cursor.execute(query, data)
       CustomerLicenseStatus = DatabaseManager.cursor.fetchall()
 
-      DatabaseManager.cursor.close()
-
       if len(CustomerLicenseStatus) > 0:
-        if CustomerLicenseStatus[0][0] == "inactive":
+        if CustomerLicenseStatus[0][0] == 0:
           title="License not active"
           message="Please Renew your License"
           icon="cancel"
-          msg = CTkMessagebox(title=title, message=message,icon=icon, option_1="ok")
+          msg = CTkMessagebox(
+            title=title,
+            message=message,
+            icon=icon,
+            option_1="ok"
+          )
           response = msg.get()
 
           if response=="ok":
@@ -388,11 +398,18 @@ class DatabaseManager(Configrations):
           title="License not found"
           message="The Activation Key is not valid, please contact the technical team"
           icon="cancel"
-          msg = CTkMessagebox(title=title, message=message,icon=icon, option_1="ok")
+          msg = CTkMessagebox(
+            title=title,
+            message=message,
+            icon=icon,
+            option_1="ok"
+          )
           response = msg.get()
 
           if response == "ok":
             sys.exit(0)     
+
+      DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -495,7 +512,22 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass 
 
-  def insertClass(self, ID, subject, CNBR, AC, CID, ONBR, ST, ET, section, component, campus, instructorID, IT):
+  def insertClass(
+      self,
+      ID,
+      subject,
+      CNBR,
+      AC,
+      CID,
+      ONBR,
+      ST,
+      ET,
+      section,
+      component,
+      campus,
+      instructorID,
+      IT
+    ):
     try:
       data = (
         ID ,
@@ -825,78 +857,6 @@ class DatabaseManager(Configrations):
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
 
-  def validateStudentsData(self, ID, FN, MN, LN, Gender, ImagePath):
-    try:
-      if not ID:
-        title = "Missing Entry"
-        message = "please enter Students ID"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not FN:
-        title = "Missing Entry"
-        message = "please enter Students first name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not FN:
-        title = "Missing Entry"
-        message = "please enter Students first name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not MN:
-        title = "Missing Entry"
-        message = "please enter Students middle name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not LN:
-        title = "Missing Entry"
-        message = "please enter Students last name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not Gender:
-        title = "Missing Entry"
-        message = "please enter Students Gender"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False 
-      elif not ImagePath:
-        title = "Missing Entry"
-        message = "please select Students image"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not os.path.exists(ImagePath):
-        title = "Inavlid Path"
-        message = "the selected path is not valid"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not self.checkFaceInImage(ImagePath):
-        title = "Face Not Found"
-        message = "the uploaded image contains no face"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif self.checkDuplicatedID(ID):
-        title = "Duplicated ID"
-        message = "the entered id has been already assigned to another Student"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-
-      return True
-
-    except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
-        print(exc_obj)
-        pass
-
   def getFaceEncoding(self, path):
     try:
       load_stored_image = face_recognition.load_image_file(path)
@@ -929,17 +889,16 @@ class DatabaseManager(Configrations):
 
   def insertStudent(self, **data):
     try:
-      # DestinationPath = self.storeStudentImage(data["ID"], data["ImagePath"])
       FaceID = self.getFaceEncoding(data["ImagePath"])
 
       # if self.checkExistence(DestinationPath):
       #   pass
       # else:
       data = (
-        data["ID"],
-        data["FN"],
-        data["MN"],
-        data["LN"],
+        data["StudentID"],
+        data["FirstName"],
+        data["MiddleName"],
+        data["LastName"],
         data["Gender"],
         FaceID,
         data["TodayDate"]

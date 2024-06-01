@@ -1,6 +1,7 @@
 import os
 import sys
 import customtkinter
+import uuid
 
 def addClassPage(
     PopWindow,
@@ -68,7 +69,7 @@ def addClassPage(
     SaveButton.configure(
       text="Save Class",
       command = lambda: insertClassStudentRelation(
-        "123", # Relation ID
+        uuid.uuid4(),
         StudentID,
         class_id_title_map[ClassEntry.get()],
         DayEntry.get()

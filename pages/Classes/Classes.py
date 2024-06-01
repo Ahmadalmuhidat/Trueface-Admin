@@ -569,8 +569,8 @@ class Classes(DatabaseManager):
 
       self.ClassessTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.ClassessTableFrame.pack(
-        fill="x",
-        expand=False
+        fill="both",
+        expand=True
       )
 
       for col,header in enumerate(self.headers):

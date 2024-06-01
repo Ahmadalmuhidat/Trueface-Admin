@@ -39,7 +39,7 @@ class Courses(DatabaseManager):
         label.destroy()
 
       if len(DatabaseManager.Courses) > 0:
-        for row, Courses in enumerate(DatabaseManager.Courses, start=1):
+        for row, Courses in enumerate(DatabaseManager.Courses, start = 1):
           CourseID, \
           CourseTitle, \
           CourseCredit, \
@@ -541,8 +541,8 @@ class Courses(DatabaseManager):
 
       self.CoursessTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.CoursessTableFrame.pack(
-        fill="x",
-        expand=False
+        fill="both",
+        expand=True
       )
 
       for col, header in enumerate(self.headers):

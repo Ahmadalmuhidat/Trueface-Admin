@@ -47,6 +47,7 @@ class Users(DatabaseManager):
           UserName, \
           UsesEmail, \
           UserRole = User
+
           Users_data = [
             UsersID,
             UserName,
@@ -187,8 +188,8 @@ class Users(DatabaseManager):
 
       self.UsersTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.UsersTableFrame.pack(
-        fill="x",
-        expand=False
+        fill="both",
+        expand=True
       )
 
       for col, header in enumerate(self.headers):

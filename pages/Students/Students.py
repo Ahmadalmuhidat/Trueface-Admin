@@ -6,6 +6,7 @@ import tkinter
 
 from PIL import Image
 from DatabaseManager import DatabaseManager
+from CTkMessagebox import CTkMessagebox
 from .Modals import StudentClasses
 
 class Students(DatabaseManager):
@@ -25,7 +26,7 @@ class Students(DatabaseManager):
 
       self.getSettings()
       self.connect()
-      # self.checkLicenseStatus()
+      self.checkLicenseStatus()
       self.getStudents()
       self.getClassesForSelection()
 
@@ -154,28 +155,108 @@ class Students(DatabaseManager):
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
 
+  def validateStudentsData(
+      self,
+      StudentID,
+      FirstName,
+      MiddleName,
+      LastName,
+      Gender,
+      ImagePath
+    ):
+    try:
+      if not StudentID:
+        title = "Missing Entry"
+        message = "please enter Students ID"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not FirstName:
+        title = "Missing Entry"
+        message = "please enter Students first name"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not FirstName:
+        title = "Missing Entry"
+        message = "please enter Students first name"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not MiddleName:
+        title = "Missing Entry"
+        message = "please enter Students middle name"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not LastName:
+        title = "Missing Entry"
+        message = "please enter Students last name"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not Gender:
+        title = "Missing Entry"
+        message = "please enter Students Gender"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False 
+      elif not ImagePath:
+        title = "Missing Entry"
+        message = "please select Students image"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not os.path.exists(ImagePath):
+        title = "Inavlid Path"
+        message = "the selected path is not valid"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif not self.checkFaceInImage(ImagePath):
+        title = "Face Not Found"
+        message = "the uploaded image contains no face"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+      elif self.checkDuplicatedID(StudentID):
+        title = "Duplicated ID"
+        message = "the entered id has been already assigned to another Student"
+        icon = "cancel"
+        CTkMessagebox(title=title, message=message, icon=icon)  
+        return False
+
+      return True
+
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        print(exc_obj)
+        pass
+
   def saveStudent(self):
     try:
-      ID = self.StudentIDEntry.get()
-      FN = self.StudentFirstNameEntry.get()
-      MN = self.StudentMiddleNameEntry.get()
-      LN = self.StudentLastNameEntry.get()
+      StudentID = self.StudentIDEntry.get()
+      FirstName = self.StudentFirstNameEntry.get()
+      MiddleName = self.StudentMiddleNameEntry.get()
+      LastName = self.StudentLastNameEntry.get()
       Gender = self.StudentGenderEntry.get()
       TodayDate = datetime.date.today()
 
       if self.validateStudentsData(
-        ID,
-        FN,
-        MN,
-        LN,
+        StudentID,
+        FirstName,
+        MiddleName,
+        LastName,
         Gender,
         self.ImagePath
       ):
         self.insertStudent(
-          ID = ID,
-          FN = FN,
-          MN = MN,
-          LN = LN,
+          StudentID = StudentID,
+          FirstName = FirstName,
+          MiddleName = MiddleName,
+          LastName = LastName,
           Gender = Gender,
           ImagePath =  self.ImagePath,
           TodayDate = TodayDate
@@ -458,8 +539,8 @@ class Students(DatabaseManager):
 
       self.StudentsTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.StudentsTableFrame.pack(
-        fill="x",
-        expand=False
+        fill="both",
+        expand=True
       )
 
       for col, header in enumerate(self.headers):
