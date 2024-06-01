@@ -201,6 +201,3 @@ class UserInterface():
       print(exc_obj)
     except KeyboardInterrupt:
       pass
-
-if __name__ == "__main__":
-  UserInterface().startTheProgram()
