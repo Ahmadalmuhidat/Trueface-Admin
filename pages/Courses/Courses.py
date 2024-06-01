@@ -539,7 +539,7 @@ class Courses(DatabaseManager):
         pady=5
       )
 
-      self.CoursessTableFrame = customtkinter.CTkFrame(parent)
+      self.CoursessTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.CoursessTableFrame.pack(
         fill="x",
         expand=False

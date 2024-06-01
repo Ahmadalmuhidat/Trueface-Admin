@@ -23,6 +23,7 @@ class DatabaseManager(Configrations):
       self.Absence = []
       self.History = []
       self.Classes = []
+      self.ClassesForSelection = []
       self.Users = []
 
     except Exception as e:
@@ -48,6 +49,98 @@ class DatabaseManager(Configrations):
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
+  
+  def getClassesStudentRelation(self, StudentID):
+    try:
+      data = (StudentID,)
+      query = '''
+        SELECT
+          Classes.ClasseID,
+          Classes.ClassSubjectArea,
+          Classes.ClasseSessionStartTime,
+          Classes.ClasseSessionEndTime,
+          ClassStudentRelation.ClassDay
+        FROM
+          Classes
+        JOIN
+          ClassStudentRelation
+        ON
+          Classes.ClasseID = ClassStudentRelation.ClassID
+        WHERE
+          ClassStudentRelation.StudentID = %s
+        '''
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+      DatabaseManager.cursor.execute(query, data)
+
+      result = DatabaseManager.cursor.fetchall()
+    
+      DatabaseManager.cursor.close()
+
+      return result
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
+  def getClassesForSelection(self):
+    try:
+      query = '''
+        SELECT
+          ClasseID,
+          ClassSubjectArea,
+          ClasseSessionStartTime,
+          ClasseSessionEndTime
+        FROM
+          Classes
+        '''
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+      DatabaseManager.cursor.execute(query)
+
+      self.ClassesForSelection = DatabaseManager.cursor.fetchall()
+    
+      DatabaseManager.cursor.close()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
+  def insertClassStudentRelation(self, RelationID, StudentID, ClassID, ClassDay):
+    try:
+      data = (RelationID, StudentID, ClassID, ClassDay)
+      query = '''
+        INSERT INTO
+          ClassStudentRelation
+        VALUES
+          (
+            %s,
+            %s,
+            %s,
+            %s
+          )
+        '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+      DatabaseManager.cursor.execute(query, data)
+      DatabaseManager.db.commit()
+      DatabaseManager.cursor.close()
+
+      title="Success"
+      message="New class has been added"
+      icon="check"
+      CTkMessagebox(title=title, message=message,icon=icon)
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
 
   def checkDuplicatedID(self, id):
     try:
@@ -169,10 +262,8 @@ class DatabaseManager(Configrations):
       query = "DELETE FROM Classes WHERE ClasseID=%s"
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
-
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
-
       DatabaseManager.cursor.close()
 
     except Exception as e:
@@ -217,10 +308,8 @@ class DatabaseManager(Configrations):
       query = "SELECT * FROM Courses WHERE CourseID=%s"
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
-
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.Courses = DatabaseManager.cursor.fetchall()
-
       DatabaseManager.cursor.close()
 
     except Exception as e:
@@ -345,10 +434,8 @@ class DatabaseManager(Configrations):
       query = "SELECT * FROM Courses"
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
-
       DatabaseManager.cursor.execute(query)
       DatabaseManager.Courses = DatabaseManager.cursor.fetchall()
-
       DatabaseManager.cursor.close()
 
     except Exception as e:
@@ -375,13 +462,30 @@ class DatabaseManager(Configrations):
         data["component"]
       )
 
-      query = "INSERT INTO Courses VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+      query = '''
+        INSERT INTO
+          Courses
+        VALUES
+          (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+          )
+      
+      '''
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
-
       DatabaseManager.cursor.execute(query, data)
       DatabaseManager.db.commit()
-
       DatabaseManager.cursor.close()
 
     except Exception as e:
@@ -408,7 +512,26 @@ class DatabaseManager(Configrations):
         instructorID,
         IT
       )
-      query = "INSERT INTO Classes VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+      query = '''
+        INSERT INTO
+          Classes
+        VALUES
+          (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+          )
+      '''
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
 
@@ -822,7 +945,20 @@ class DatabaseManager(Configrations):
         data["TodayDate"]
       )
 
-      query = "INSERT INTO Students VALUES (%s, %s, %s, %s, %s, %s, %s)"
+      query = '''
+        INSERT INTO
+          Students
+        VALUES
+          (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+          )
+      '''
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
 

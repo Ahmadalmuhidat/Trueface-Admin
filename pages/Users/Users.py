@@ -185,7 +185,7 @@ class Users(DatabaseManager):
         pady=5
       )
 
-      self.UsersTableFrame = customtkinter.CTkFrame(parent)
+      self.UsersTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.UsersTableFrame.pack(
         fill="x",
         expand=False

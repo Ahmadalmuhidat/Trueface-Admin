@@ -6,6 +6,7 @@ import tkinter
 
 from PIL import Image
 from DatabaseManager import DatabaseManager
+from .Modals import StudentClasses
 
 class Students(DatabaseManager):
   def __init__(self):
@@ -26,6 +27,7 @@ class Students(DatabaseManager):
       self.connect()
       # self.checkLicenseStatus()
       self.getStudents()
+      self.getClassesForSelection()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -91,7 +93,29 @@ class Students(DatabaseManager):
               padx=10,
               pady=5
             )
+
             self.StudentsLabels.append(DataLabel)
+
+          ProfileButton = customtkinter.CTkButton(self.StudentsTableFrame)
+          ProfileButton.grid(
+            row=row,
+            column=6,
+            padx=10,
+            pady=5,
+            sticky="nsew"
+          )
+          ProfileButton.configure(
+            text="Profile",
+            command=lambda StudentID=StudentID: StudentClasses.StudentClassesPopWindow(
+              StudentID,
+              self.ClassesForSelection,
+              self.insertClassStudentRelation,
+              self.getClassesStudentRelation
+            )
+          )
+          self.StudentsLabels.append(ProfileButton)
+
+
 
       self.ResultsCount.configure(text="Results: " + str(len(self.Students)))
 
@@ -104,6 +128,7 @@ class Students(DatabaseManager):
   def refresh(self):
     try:
       self.getStudents()
+      self.getClassesForSelection()
       self.displayStudentsTable()
 
     except Exception as e:
@@ -334,7 +359,6 @@ class Students(DatabaseManager):
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
-    
 
   def create(self, parent):
     try:
@@ -432,7 +456,7 @@ class Students(DatabaseManager):
         pady=5
       )
 
-      self.StudentsTableFrame = customtkinter.CTkFrame(parent)
+      self.StudentsTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.StudentsTableFrame.pack(
         fill="x",
         expand=False

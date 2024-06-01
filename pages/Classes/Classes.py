@@ -41,7 +41,7 @@ class Classes(DatabaseManager):
         label.destroy()
 
       if len(self.Classes) > 0:
-        for row, Classes in enumerate(self.Classes, start=1):
+        for row, Class in enumerate(self.Classes, start=1):
           ClasseID, \
           ClassSubjectArea, \
           ClasseCatalogNBR, \
@@ -55,7 +55,7 @@ class Classes(DatabaseManager):
           ClasseCampus, \
           ClasseInstructorID, \
           ClasseInstructorType, \
-          CourseTitle = Classes          
+          CourseTitle = Class          
 
           Classess_data = [
             ClasseID,
@@ -567,7 +567,7 @@ class Classes(DatabaseManager):
         pady=5
       )
 
-      self.ClassessTableFrame = customtkinter.CTkFrame(parent)
+      self.ClassessTableFrame = customtkinter.CTkScrollableFrame(parent)
       self.ClassessTableFrame.pack(
         fill="x",
         expand=False

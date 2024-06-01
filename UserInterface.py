@@ -3,14 +3,14 @@ import sys
 import customtkinter
 import threading
 
-import pages.Students as Students
-import pages.Classes as Classes
-import pages.Courses as Courses
-import pages.Attendance as Attendance
-import pages.Absence as Absence
-import pages.Users as Users
-import pages.History as History
-import pages.Settings as Settings
+import pages.Students.Students as Students
+import pages.Classes.Classes as Classes
+import pages.Courses.Courses as Courses
+import pages.Attendance.Attendance as Attendance
+import pages.Absence.Absence as Absence
+import pages.Users.Users as Users
+import pages.History.History as History
+import pages.Settings.Settings as Settings
 
 class UserInterface():
   def __init__(self):
@@ -201,3 +201,6 @@ class UserInterface():
       print(exc_obj)
     except KeyboardInterrupt:
       pass
+
+if __name__ == "__main__":
+  UserInterface().startTheProgram()
