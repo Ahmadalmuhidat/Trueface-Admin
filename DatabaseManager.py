@@ -38,7 +38,7 @@ class DatabaseManager(Configrations):
       DatabaseManager.db = mysql.connector.connect(
         host = self.Host,
         user = self.User,
-        password = self.User,
+        password = self.Password,
         database = self.Database
       )
 

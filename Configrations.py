@@ -36,11 +36,11 @@ class Configrations:
       #   self.Database = Settings['Database']['database']
       #   self.ActivationKey = Settings['Activation_Key']
 
-      self.Host = "34.83.216.163"
-      self.User = "root"
-      self.Password = "root"
+      self.Host = "timewizeai.mysql.database.azure.com"
+      self.User = "timewizeai"
+      self.Password = "system@admin99"
       self.Database = "TimeWizeAI"
-      self.ActivationKey = "123"
+      self.ActivationKey = "1234"
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

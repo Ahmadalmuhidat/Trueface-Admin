@@ -176,9 +176,14 @@ class UserInterface():
       height= self.window.winfo_screenheight()
       self.window.geometry("%dx%d" % (width, height))
 
-      self.window.title("TimeWizeAI Admin")
+      # self.window.after(
+      #   100,
+      #   lambda: self.window.attributes('-alpha', 0.85)
+      # )
 
       self.window.protocol("WM_DELETE_WINDOW", self.onClosing)
+
+      self.window.title("TimeWizeAI Admin")
 
       self.Navbar(self.window)
       self.createPage(self.window, "Students")
@@ -201,3 +206,6 @@ class UserInterface():
       print(exc_obj)
     except KeyboardInterrupt:
       pass
+
+if __name__ == "__main__":
+  UserInterface().startTheProgram()
