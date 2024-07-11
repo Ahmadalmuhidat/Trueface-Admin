@@ -7,9 +7,7 @@ import pages.Students.Students as Students
 import pages.Classes.Classes as Classes
 import pages.Courses.Courses as Courses
 import pages.Attendance.Attendance as Attendance
-import pages.Absence.Absence as Absence
 import pages.Users.Users as Users
-import pages.History.History as History
 import pages.Settings.Settings as Settings
 
 class UserInterface():
@@ -63,14 +61,6 @@ class UserInterface():
       )
       AttendanceButton.pack(side=customtkinter.LEFT)
 
-      AbsenceButton = customtkinter.CTkButton(navbar)
-      AbsenceButton.configure(
-        corner_radius=0,
-        command=lambda: self.showPage("Absence"),
-        text="Absence"
-      )
-      AbsenceButton.pack(side=customtkinter.LEFT)
-
       UsersButton = customtkinter.CTkButton(navbar)
       UsersButton.configure(
         corner_radius=0,
@@ -78,22 +68,6 @@ class UserInterface():
         text="Users"
       )
       UsersButton.pack(side=customtkinter.LEFT)
-
-      # HistoryButton = customtkinter.CTkButton(navbar)
-      # HistoryButton.configure(
-      #   corner_radius=0,
-      #   command=lambda: self.showPage("History"),
-      #   text="History"
-      # )
-      # HistoryButton.pack(side=customtkinter.LEFT)
-
-      # SettingsButton = customtkinter.CTkButton(navbar)
-      # SettingsButton.configure(
-      #   corner_radius=0,
-      #   command=lambda: self.showPage("Settings"),
-      #   text="Settings"
-      # )
-      # SettingsButton.pack(side=customtkinter.LEFT)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -131,12 +105,8 @@ class UserInterface():
         Courses.Courses().create(page)
       elif name == "Attendance":
         Attendance.Attendance().create(page)
-      elif name == "Absence":
-        Absence.Absence().create(page)
       elif name == "Users":
         Users.Users().create(page)
-      elif name == "History":
-        History.History().create(page)
       elif name == "Settings":
         Settings.Settings().create(page)
 
@@ -190,9 +160,7 @@ class UserInterface():
       self.createPage(self.window, "Classes")
       self.createPage(self.window, "Courses")
       self.createPage(self.window, "Attendance")
-      self.createPage(self.window, "Absence")
       self.createPage(self.window, "Users")
-      # self.createPage(self.window, "History")
       # self.createPage(self.window, "Settings")
 
       self.showPage("Students")

@@ -69,6 +69,22 @@ class Users(DatabaseManager):
             )
             self.UsersLabels.append(DataLabel)
 
+
+            DeleteButton = customtkinter.CTkButton(self.UsersTableFrame)
+            DeleteButton.grid(
+                row=row,
+                column=len(Users_data),
+                sticky="nsew",
+                padx=10,
+                pady=5
+            )
+            DeleteButton.configure(
+                text="Delete",
+                fg_color="red",
+                command=lambda rid=UsersID: self.DeleteUser(rid),
+            )
+            self.UsersLabels.append(DeleteButton)
+
       self.ResultsCount.configure(
         text="Results: " + str(len(self.Users))
       )
@@ -83,6 +99,185 @@ class Users(DatabaseManager):
     try:
       self.getUsers()
       self.displayUsersTable()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+  
+  def DeleteUser(self, UserID):
+    try:
+      self.removeUser(UserID)
+      self.refresh()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)  
+  
+  def SubmitNewUser(self):
+    try:
+      UserID = self.UserIDEntry.get()
+      UserName = self.UserFullNameEntry.get()
+      UserEmail = self.UserEmailEntry.get()
+      UserPassword = self.UserPasswordEntry.get()
+      UserRole = self.UserRoleEntry.get()
+
+      self.insertUser(
+        UserID,
+        UserName,
+        UserEmail,
+        UserPassword,
+        UserRole
+      )
+
+      self.UserIDEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.UserFullNameEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.UserEmailEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.UserPasswordEntry.delete(
+        0,
+        customtkinter.END
+      )
+
+      self.refresh()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def addUser(self):
+    try:
+      self.PopWindow = customtkinter.CTkToplevel()
+      self.PopWindow.grab_set()
+
+      self.PopWindow.geometry("490x400")
+      self.PopWindow.resizable(False, False)
+
+      self.PopWindow.title("Add New User")
+
+      UserIDLabel = customtkinter.CTkLabel(self.PopWindow)
+      UserIDLabel.grid(
+        row=0,
+        column=0,
+        padx=10,
+        pady=15
+      )
+      UserIDLabel.configure(text="User ID:")
+
+      self.UserIDEntry = customtkinter.CTkEntry(self.PopWindow)
+      self.UserIDEntry.grid(
+        row=0,
+        column=1,
+        padx=10,
+        pady=15
+      )
+      self.UserIDEntry.configure(width=350)
+
+      UserFullNameLabel = customtkinter.CTkLabel(self.PopWindow)
+      UserFullNameLabel.grid(
+        row=1, 
+        column=0,
+        padx=10,
+        pady=15
+      )
+      UserFullNameLabel.configure(text="First Name:")
+
+      self.UserFullNameEntry = customtkinter.CTkEntry(self.PopWindow)
+      self.UserFullNameEntry.grid(
+        row=1,
+        column=1,
+        padx=10,
+        pady=15
+      )
+      self.UserFullNameEntry.configure(width=350)
+
+      UserEmailLabel = customtkinter.CTkLabel(self.PopWindow)
+      UserEmailLabel.grid(
+        row=2,
+        column=0,
+        padx=10,
+        pady=15
+      )
+      UserEmailLabel.configure(text="Email:")
+
+      self.UserEmailEntry = customtkinter.CTkEntry(self.PopWindow)
+      self.UserEmailEntry.grid(
+        row=2,
+        column=1,
+        padx=10,
+        pady=15
+      )
+      self.UserEmailEntry.configure(width=350)
+
+      UserPasswordLabel = customtkinter.CTkLabel(self.PopWindow)
+      UserPasswordLabel.grid(
+        row=3,
+        column=0,
+        padx=10,
+        pady=15
+      )
+      UserPasswordLabel.configure(text="Password:")
+
+      self.UserPasswordEntry = customtkinter.CTkEntry(self.PopWindow)
+      self.UserPasswordEntry.grid(
+        row=3,
+        column=1,
+        padx=10,
+        pady=15
+      )
+      self.UserPasswordEntry.configure(width=350, show="*")
+
+      UserRoleLabel = customtkinter.CTkLabel(self.PopWindow)
+      UserRoleLabel.grid(
+        row=4,
+        column=0,
+        padx=10,
+        pady=15
+      )
+      UserRoleLabel.configure(text="Role:")
+
+      self.UserRoleEntry = customtkinter.CTkComboBox(self.PopWindow)
+      self.UserRoleEntry.grid(
+        row=4,
+        column=1,
+        padx=10,
+        pady=15
+      )
+      self.UserRoleEntry.configure(
+        values=[
+          "admin",
+          "teacher"
+        ],
+        width=350
+      )
+      self.UserRoleEntry.set("teacher")
+
+      SaveButton = customtkinter.CTkButton(self.PopWindow)
+      SaveButton.grid(
+        row=7,
+        columnspan=2,
+        sticky="nsew",
+        padx=10,
+        pady=15
+      )
+      SaveButton.configure(
+        text="Save User",
+        command=self.SubmitNewUser,
+        width=350
+        )
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -124,31 +319,19 @@ class Users(DatabaseManager):
         placeholder_text="Search for Users..."
       )
 
-      # delete_button = customtkinter.CTkButton(
-      #   SearchBarFrame,
-      #   width=100,
-      #   text="Delete"
-      # )
-      # delete_button.grid(
-      #   row=0,
-      #   column=2,
-      #   sticky="nsew",
-      #   pady=10,
-      #   padx=5
-      # )
-      # delete_button.configure(command=lambda: self.deleteUsers(delete_bar.get()))
-
-      # DeleteBar = customtkinter.CTkEntry(SearchBarFrame)
-      # DeleteBar.grid(
-      #   row=0,
-      #   column=3,
-      #   sticky="nsew",
-      #   pady=10
-      # )
-      # DeleteBar.configure(
-      #   width=100,
-      #   placeholder_text="ID",
-      # )
+      InsertButton = customtkinter.CTkButton(SearchBarFrame)
+      InsertButton.grid(
+        row=0,
+        column=2,
+        sticky="nsew",
+        pady=10,
+        padx=5
+      )
+      InsertButton.configure(
+        command=self.addUser,
+        width=100,
+        text="New User"
+      )
 
       RefreshButton = customtkinter.CTkButton(SearchBarFrame)
       RefreshButton.grid(

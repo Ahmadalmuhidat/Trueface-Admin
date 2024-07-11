@@ -77,7 +77,10 @@ class Login(DatabaseManager):
         column=1,
         padx=10,
       )
-      self.PasswordEntry.configure(width=250)
+      self.PasswordEntry.configure(
+        width=250,
+        show="*"
+      )
 
       save_button = customtkinter.CTkButton(ContentFrame)
       save_button.grid(

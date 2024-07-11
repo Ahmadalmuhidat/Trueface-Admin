@@ -20,8 +20,6 @@ class DatabaseManager(Configrations):
     try:
       self.Students = []
       self.Attendance = []
-      self.Absence = []
-      self.History = []
       self.Classes = []
       self.ClassesForSelection = []
       self.Users = []
@@ -55,6 +53,7 @@ class DatabaseManager(Configrations):
       data = (StudentID,)
       query = '''
         SELECT
+          ClassStudentRelation.RelationID,
           Classes.ClasseID,
           Classes.ClassSubjectArea,
           Classes.ClasseSessionStartTime,
@@ -85,6 +84,35 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
+  def RemoveClassesStudentRelation(self, RelationID):
+    try:
+      data = (RelationID,)
+      query = '''
+        DELETE FROM
+          ClassStudentRelation
+        WHERE
+          RelationID = %s
+        '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
+      DatabaseManager.cursor.execute(query, data)
+      DatabaseManager.db.commit()
+
+      DatabaseManager.cursor.close()
+
+      title = "Relation has been Deleted"
+      message = "Class has been removed successfully"
+      icon = "check"
+      CTkMessagebox(title=title, message=message, icon=icon)
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
   def getClassesForSelection(self):
     try:
       query = '''
@@ -102,6 +130,88 @@ class DatabaseManager(Configrations):
       self.ClassesForSelection = DatabaseManager.cursor.fetchall()
     
       DatabaseManager.cursor.close()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
+  def removeUser(
+      self,
+      UserID,
+    ):
+    try:
+      data = (
+        UserID,
+      )
+      query = '''
+        DELETE FROM
+          Users
+        WHERE
+          UserID = %s
+        '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
+      DatabaseManager.cursor.execute(query, data)
+      DatabaseManager.db.commit()
+
+      DatabaseManager.cursor.close()
+
+      title="Success"
+      message="User has been removed"
+      icon="check"
+      CTkMessagebox(title=title, message=message,icon=icon)
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+      pass
+
+  def insertUser(
+      self,
+      UserID,
+      UserName,
+      UserEmail,
+      UserPassword,
+      UserRole
+    ):
+    try:
+      data = (
+        UserID,
+        UserName,
+        UserEmail,
+        UserPassword,
+        UserRole
+      )
+      query = '''
+        INSERT INTO
+          Users
+        VALUES
+          (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+          )
+        '''
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
+      DatabaseManager.cursor.execute(query, data)
+      DatabaseManager.db.commit()
+
+      DatabaseManager.cursor.close()
+
+      title="Success"
+      message="New user has been added"
+      icon="check"
+      CTkMessagebox(title=title, message=message,icon=icon)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -197,7 +307,8 @@ class DatabaseManager(Configrations):
       query = '''
       SELECT
         UserID,
-        UserPassword
+        UserPassword,
+        UserRole
       FROM Users
       WHERE UserEmail=%s
       '''
@@ -210,10 +321,14 @@ class DatabaseManager(Configrations):
       DatabaseManager.cursor.close()
 
       if len(User) == 1:
-        if str(User[0][1]) == str(password):
-          return User[0][0]
+        if User[0][2] == "admin":
+          if str(User[0][1]) == str(password):
+            return User[0][0]
+          else:
+            CTkMessagebox(title="Info", message="Incorrect password")
+            return False
         else:
-          CTkMessagebox(title="Info", message="Incorrect password")
+          CTkMessagebox(title="Info", message="You are not authorized to access the admin panel")
           return False
       else:
         CTkMessagebox(title="Info", message="Email was not found")
@@ -451,8 +566,10 @@ class DatabaseManager(Configrations):
       query = "SELECT * FROM Courses"
 
       DatabaseManager.cursor = DatabaseManager.db.cursor()
+
       DatabaseManager.cursor.execute(query)
       DatabaseManager.Courses = DatabaseManager.cursor.fetchall()
+      
       DatabaseManager.cursor.close()
 
     except Exception as e:
@@ -579,7 +696,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass 
 
-  def getAttendanceHistoryByDate(self, date):
+  def getAttendanceByDate(self, date, ClassSubject):
     try:
       if not date:
         title = "Missing Entry"
@@ -597,7 +714,7 @@ class DatabaseManager(Configrations):
         with open('configrations.json', 'r') as file:
           WorkingHourStart = json.load(file)['Working_Hours']['start']
 
-        data = (WorkingHourStart, date)
+        data = (date, ClassSubject)
         query = '''
           SELECT
             AttendanceStudent,
@@ -607,224 +724,16 @@ class DatabaseManager(Configrations):
             TIME(AttendanceTime) > %s
           WHERE
             AttendanceDate = %s
-          '''
-        
-        DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-        DatabaseManager.cursor.execute(query, data)
-        self.History = DatabaseManager.cursor.fetchall()
-
-        DatabaseManager.cursor.close()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-      pass
-  
-  def getAbsenceHistoryByDate(self, date):
-    try:
-      if not date:
-        title = "Missing Entry"
-        message = "please enter the date"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-      elif not re.match(r"^\d{4}-\d{2}-\d{2}$", date):
-        title = "Wrong Date Format"
-        message = "the allowed date format is YYYY-MM-DD"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-      else:
-        data = [date]
-        query = '''
-          SELECT
-            StudentFullName
-          FROM
-            Students
-          WHERE
-            StudentFullName
-          NOT IN
-            (
-            SELECT
-              Attendance.AttendanceStudent
-            FROM
-              Attendance
-            WHERE
-              DATE(Attendance.AttendanceDate) = %s
-            )
-          '''
-        
-        DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-        DatabaseManager.cursor.execute(query, data)
-        self.History = DatabaseManager.cursor.fetchall()
-
-        DatabaseManager.cursor.close()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-      pass
-
-  def getAttendance(self):
-    try:
-      data = (date.today(),)
-      query = '''
-        SELECT 
-          Students.StudentID, 
-          Students.StudentFirstName, 
-          Students.StudentMiddleName, 
-          Students.StudentLastName, 
-          Classes.ClassSubjectArea, 
-          Attendance.AttendanceTime
-        FROM 
-          Attendance
-        LEFT JOIN 
-          Students
-        ON 
-          Students.StudentID = Attendance.AttendanceStudentID
-        LEFT JOIN 
-          Classes
-        ON
-          Attendance.AttendanceClassID = Classes.ClasseID
-        WHERE 
-          Attendance.AttendanceDate = %s
-      '''
-
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-      DatabaseManager.cursor.execute(query, data)
-      self.Attendance = DatabaseManager.cursor.fetchall()
-
-      DatabaseManager.cursor.close()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-      pass
-
-  def searchAttendance(self, term):
-    try:
-      data = (
-        date.today(),
-        term,
-        term
-      )
-      query = '''
-        SELECT 
-          Students.StudentID, 
-          Students.StudentFirstName, 
-          Students.StudentMiddleName, 
-          Students.StudentLastName, 
-          Classes.ClassSubjectArea, 
-          Attendance.AttendanceTime
-        FROM 
-          Attendance
-        LEFT JOIN 
-          Students
-        ON 
-          Students.StudentID = Attendance.AttendanceStudentID
-        LEFT JOIN 
-          Classes
-        ON
-          Attendance.AttendanceClassID = Classes.ClasseID
-        WHERE 
-          Attendance.AttendanceDate = %s
-        AND
-          Attendance.AttendanceStudentID = %s
-        OR
-          Classes.ClassSubjectArea = %s
-      '''
-
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-      DatabaseManager.cursor.execute(query, data)
-      self.Attendance = DatabaseManager.cursor.fetchall()
-
-      DatabaseManager.cursor.close()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-      pass
-
-  def getAbsence(self):
-    try:
-      data = (date.today(),)
-      query = '''
-        SELECT
-          StudentID,
-          StudentFirstName,
-          StudentMiddleName,
-          StudentLastName
-        FROM
-          Students
-        WHERE
-          StudentID
-        NOT IN 
-          (
-          SELECT
-            Attendance.AttendanceStudentID
-          FROM
-            Attendance
-          WHERE
-            DATE(Attendance.AttendanceDate) = %s
-          )
-        '''
-
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-      DatabaseManager.cursor.execute(query, data)
-      self.Absence = DatabaseManager.cursor.fetchall()
-
-      DatabaseManager.cursor.close()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-      pass
-
-  def searchAbsence(self, term):
-    try:
-      data = (date.today(), term)
-      query = '''
-        SELECT
-          StudentID,
-          StudentFirstName,
-          StudentMiddleName,
-          StudentLastName
-        FROM
-          Students
-        WHERE
-          StudentID
-        NOT IN 
-          (
-          SELECT
-            Attendance.AttendanceStudentID
-          FROM
-            Attendance
-          WHERE
-            DATE(Attendance.AttendanceDate) = %s
           AND
-            Students.StudentID = %s
-          )
-        '''
-      
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
+            AttendanceClass = %s
+          '''
+        
+        DatabaseManager.cursor = DatabaseManager.db.cursor()
 
-      DatabaseManager.cursor.execute(query, data)
-      self.Absence = DatabaseManager.cursor.fetchall()
+        DatabaseManager.cursor.execute(query, data)
+        self.Attendance = DatabaseManager.cursor.fetchall()
 
-      DatabaseManager.cursor.close()
+        DatabaseManager.cursor.close()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

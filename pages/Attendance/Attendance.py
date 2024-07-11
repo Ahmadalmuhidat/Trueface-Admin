@@ -20,8 +20,6 @@ class Attendance(DatabaseManager):
         "Attendance Time"
       ]
 
-      self.getAttendance()
-
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -77,25 +75,10 @@ class Attendance(DatabaseManager):
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
-  
-  def refresh(self):
-    try:
-      self.getAttendance()
-      self.displayAttendanceTable()
-
-      self.ResultsCount.configure(
-        text="Results: " + str(len(self.Attendance))
-      )
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
 
   def search(self, term):
     try:
-      self.searchAttendance(term)
+      self.getAttendanceByDate(term)
 
       self.ResultsCount.configure(
         text="Results: " + str(len(self.Attendance))
@@ -116,43 +99,29 @@ class Attendance(DatabaseManager):
       )
       SearchBarFrame.configure(bg_color="transparent")
 
-      # SearchButton = customtkinter.CTkButton(SearchBarFrame)
-      # SearchButton.grid(
-      #   row=0,
-      #   column=0,
-      #   sticky="nsew",
-      #   pady=10,
-      #   padx=5
-      # )
-      # SearchButton.configure(
-      #   command=lambda: self.search(SearchBar.get()),
-      #   text="Search"
-      # )
-
-      # SearchBar = customtkinter.CTkEntry(SearchBarFrame)
-      # SearchBar.grid(
-      #   row=0,
-      #   column=1,
-      #   sticky="nsew",
-      #   pady=10
-      # )
-      # SearchBar.configure(
-      #   width=400,
-      #   placeholder_text="Search by Student ID or Class Subject..."
-      # )
-
-      RefreshButton = customtkinter.CTkButton(SearchBarFrame)
-      RefreshButton.grid(
+      SearchButton = customtkinter.CTkButton(SearchBarFrame)
+      SearchButton.grid(
         row=0,
-        column=2,
+        column=0,
         sticky="nsew",
         pady=10,
         padx=5
       )
-      RefreshButton.configure(
-        command=self.refresh,
-        width=100,
-        text="Refresh"
+      SearchButton.configure(
+        command=lambda: self.search(DateEntry.get()),
+        text="Search"
+      )
+
+      DateEntry = customtkinter.CTkEntry(SearchBarFrame)
+      DateEntry.grid(
+        row=0,
+        column=1,
+        sticky="nsew",
+        pady=10
+      )
+      DateEntry.configure(
+        width=400,
+        placeholder_text="YYYY-MM-DD"
       )
 
       self.ResultsCount = customtkinter.CTkLabel(SearchBarFrame)

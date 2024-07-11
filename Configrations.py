@@ -36,9 +36,15 @@ class Configrations:
       #   self.Database = Settings['Database']['database']
       #   self.ActivationKey = Settings['Activation_Key']
 
-      self.Host = "timewizeai.mysql.database.azure.com"
-      self.User = "timewizeai"
-      self.Password = "system@admin99"
+      # self.Host = "timewizeai.mysql.database.azure.com"
+      # self.User = "timewizeai"
+      # self.Password = "system@admin99"
+      # self.Database = "TimeWizeAI"
+      # self.ActivationKey = "1234"
+
+      self.Host = "localhost"
+      self.User = "root"
+      self.Password = "root"
       self.Database = "TimeWizeAI"
       self.ActivationKey = "1234"
 

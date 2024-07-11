@@ -69,7 +69,7 @@ def addClassPage(
     SaveButton.configure(
       text="Save Class",
       command = lambda: insertClassStudentRelation(
-        uuid.uuid4(),
+        str(uuid.uuid4()),
         StudentID,
         class_id_title_map[ClassEntry.get()],
         DayEntry.get()
@@ -84,9 +84,13 @@ def addClassPage(
 
 def displayClassesPage(
     pop_window,
-    classes
+    StudentID,
+    getClassesStudentRelation,
+    RemoveClassesStudentRelation
   ):
   try:
+    classes = getClassesStudentRelation(StudentID)
+
     ClassessLabels = []
     headers = [
       "Classe ID",
@@ -96,60 +100,89 @@ def displayClassesPage(
       "Day"
     ]
 
-    for widget in pop_window.winfo_children():
-      if widget not in (Navbar,):
-        widget.pack_forget()
+    def remove(rid):
+      RemoveClassesStudentRelation(rid)
+      nonlocal classes
+      classes = getClassesStudentRelation(StudentID)
+      tabel()
 
-    for label in ClassessLabels:
-      label.destroy()
+    def tabel():
+      for widget in pop_window.winfo_children():
+        if widget not in (Navbar,):
+          widget.pack_forget()
 
-    ClassessTableFrame = customtkinter.CTkScrollableFrame(pop_window)
-    ClassessTableFrame.pack(
-      fill="x",
-      expand=False
-    )
+      for label in ClassessLabels:
+        label.destroy()
 
-    for col, header in enumerate(headers):
-      HeaderLabel = customtkinter.CTkLabel(ClassessTableFrame)
-      HeaderLabel.grid(
-        row=0,
-        column=col,
-        sticky="nsew"
-      )
-      HeaderLabel.configure(
-        text=header,
-        padx=10,
-        pady=10
+      ClassessTableFrame = customtkinter.CTkScrollableFrame(pop_window)
+      ClassessTableFrame.pack(
+        fill="both",
+        expand=True
       )
 
-    for col in range(len(headers)):
-      ClassessTableFrame.columnconfigure(col, weight=1)
+      for col, header in enumerate(headers):
+        HeaderLabel = customtkinter.CTkLabel(ClassessTableFrame)
+        HeaderLabel.grid(
+          row=0,
+          column=col,
+          sticky="nsew"
+        )
+        HeaderLabel.configure(
+          text=header,
+          padx=10,
+          pady=10
+        )
 
-    if len(classes) > 0:
-      for row, Class in enumerate(classes, start=1):
-        ClasseID, \
-        ClassSubjectArea, \
-        ClasseSessionStartTime, \
-        ClasseSessionEndTime, \
-        ClassDay = Class          
+      for col in range(len(headers)):
+        ClassessTableFrame.columnconfigure(col, weight=1)
 
-        Classess_data = [
-          ClasseID,
-          ClassSubjectArea,
-          ClasseSessionStartTime,	
-          ClasseSessionEndTime,
-          ClassDay
-        ]
-        for col, data in enumerate(Classess_data):
-          DataLabel = customtkinter.CTkLabel(ClassessTableFrame)
-          DataLabel.grid(row=row, column=col, sticky="nsew")
-          DataLabel.configure(
-            text=data,
-            padx=10,
-            pady=5
-          )
-          ClassessLabels.append(DataLabel)
+      if len(classes) > 0:
+        for row, Class in enumerate(classes, start=1):
+          RelationID, \
+          ClasseID, \
+          ClassSubjectArea, \
+          ClasseSessionStartTime, \
+          ClasseSessionEndTime, \
+          ClassDay = Class          
 
+          Classess_data = [
+            ClasseID,
+            ClassSubjectArea,
+            ClasseSessionStartTime,	
+            ClasseSessionEndTime,
+            ClassDay
+          ]
+
+          for col, data in enumerate(Classess_data):
+            DataLabel = customtkinter.CTkLabel(ClassessTableFrame)
+            DataLabel.grid(
+              row=row,
+              column=col,
+              sticky="nsew"
+            )
+            DataLabel.configure(
+              text=data,
+              padx=10,
+              pady=5
+            )
+            ClassessLabels.append(DataLabel)
+
+            DeleteButton = customtkinter.CTkButton(ClassessTableFrame)
+            DeleteButton.grid(
+                row=row,
+                column=len(Classess_data),
+                sticky="nsew",
+                padx=10,
+                pady=5
+            )
+            DeleteButton.configure(
+                text="Remove",
+                fg_color="red",
+                command=lambda rid=RelationID: remove(rid),
+            )
+            ClassessLabels.append(DeleteButton)
+
+    tabel()
   except Exception as e:
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -160,7 +193,8 @@ def StudentClassesPopWindow(
     StudentID,
     ClassesForSelection,
     insertClassStudentRelation,
-    getClassesStudentRelation
+    getClassesStudentRelation,
+    RemoveClassesStudentRelation
   ):
   try:
     PopWindow = customtkinter.CTkToplevel()
@@ -195,7 +229,9 @@ def StudentClassesPopWindow(
       text="Classes",
       command=lambda: displayClassesPage(
         PopWindow,
-        getClassesStudentRelation(StudentID)
+        StudentID,
+        getClassesStudentRelation,
+        RemoveClassesStudentRelation
       )
     )
     ClassesButton.pack(side=customtkinter.LEFT)

@@ -111,12 +111,11 @@ class Students(DatabaseManager):
               StudentID,
               self.ClassesForSelection,
               self.insertClassStudentRelation,
-              self.getClassesStudentRelation
+              self.getClassesStudentRelation,
+              self.RemoveClassesStudentRelation
             )
           )
           self.StudentsLabels.append(ProfileButton)
-
-
 
       self.ResultsCount.configure(text="Results: " + str(len(self.Students)))
 
@@ -362,7 +361,7 @@ class Students(DatabaseManager):
         padx=10,
         pady=15
       )
-      StudentLastNameLabel.configure(text="last Name:")
+      StudentLastNameLabel.configure(text="Last Name:")
 
       self.StudentLastNameEntry = customtkinter.CTkEntry(self.PopWindow)
       self.StudentLastNameEntry.grid(
