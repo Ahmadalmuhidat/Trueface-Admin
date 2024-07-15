@@ -181,7 +181,7 @@ class Classes(DatabaseManager):
   
   def delete(self, term):
     try:
-      self.deleteClasse(term)
+      self.RemoveClasse(term)
       self.getClasses()
       self.displayClassessTable()
 
@@ -193,7 +193,7 @@ class Classes(DatabaseManager):
 
   def search(self, term):
     try:
-      self.searchClasse(term)
+      self.SearchClasse(term)
       self.displayClassessTable()
 
     except Exception as e:

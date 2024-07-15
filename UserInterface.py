@@ -69,6 +69,14 @@ class UserInterface():
       )
       UsersButton.pack(side=customtkinter.LEFT)
 
+      # SettingsButton = customtkinter.CTkButton(navbar)
+      # SettingsButton.configure(
+      #   corner_radius=0,
+      #   command=lambda: self.showPage("Settings"),
+      #   text="Settings"
+      # )
+      # SettingsButton.pack(side=customtkinter.LEFT)
+
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
       fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -166,6 +174,8 @@ class UserInterface():
       self.showPage("Students")
 
       self.window.mainloop()
+
+      # test
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
