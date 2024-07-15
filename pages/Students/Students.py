@@ -25,7 +25,7 @@ class Students(DatabaseManager):
       ]
 
       self.getSettings()
-      self.checkLicenseStatus()
+      # self.checkLicenseStatus()
       self.getStudents()
       self.getClassesForSelection()
 

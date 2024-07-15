@@ -257,7 +257,7 @@ class DatabaseManager(Configrations):
       data = {
         "term": term
       }
-      response = requests.post(self.BaseURL + "/search_courses", data).content
+      response = requests.get(self.BaseURL + "/search_courses", data).content
       response_str = response.decode('utf-8')
 
       DatabaseManager.Courses = json.loads(response_str)
@@ -385,21 +385,35 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass  
   
-  def insertCourse(self, **data):
+  def insertCourse(
+      self,
+      CourseID,
+      CourseTitle,
+      CourseCredit,
+      CourseMaximumUnits,
+      CourseLongCourseTitle,
+      CourseOfferingNBR,
+      CourseAcademicGroup,
+      CourseSubjectArea,
+      CourseCatalogNBR,
+      CourseCampus,
+      CourseAcademicOrganization,
+      CourseComponent
+      ):
     try:
       data = {
-        "ID": data["ID"],
-        "title": data["title"],
-        "credit": data["credit"],
-        "MaximumUnits": data["MaximumUnits"],
-        "LongCourseTitle": data["LongCourseTitle"],
-        "OfferingNBR": data["OfferingNBR"],
-        "AcademicGroup": data["AcademicGroup"],
-        "SubjectArea": data["SubjectArea"],
-        "CatalogNBR": data["CatalogNBR"],
-        "campus": data["campus"],
-        "AcademicOrganization": data["AcademicOrganization"],
-        "component": data["component"]
+        "ID": CourseID,
+        "title": CourseTitle,
+        "credit": CourseCredit,
+        "MaximumUnits": CourseMaximumUnits,
+        "LongCourseTitle": CourseLongCourseTitle,
+        "OfferingNBR": CourseOfferingNBR,
+        "AcademicGroup": CourseAcademicGroup,
+        "SubjectArea": CourseSubjectArea,
+        "CatalogNBR": CourseCatalogNBR,
+        "campus": CourseCampus,
+        "AcademicOrganization": CourseAcademicOrganization,
+        "component": CourseComponent
       }
 
       response = requests.get(self.BaseURL + "/insert_course", data).content
@@ -425,7 +439,7 @@ class DatabaseManager(Configrations):
       section,
       component,
       campus,
-      instructorID,
+      InstructorID,
       InstructorType
     ):
     try:
@@ -441,7 +455,7 @@ class DatabaseManager(Configrations):
         "section": section,
         "component": component,
         "campus": campus,
-        "instructorID": instructorID,
+        "instructorID": InstructorID,
         "InstructorType": InstructorType
       }
 
@@ -540,12 +554,11 @@ class DatabaseManager(Configrations):
   def searchStudent(self, term):
     try:
       data = {
-        "term": term
+        "term": str(term)
       }
 
       response = requests.get(self.BaseURL + "/search_student", data).content
       response_str = response.decode('utf-8')
-
       self.Students = json.loads(response_str)
 
     except Exception as e:

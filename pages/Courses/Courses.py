@@ -104,18 +104,18 @@ class Courses(DatabaseManager):
   def saveCourse(self):
     try:
       self.insertCourse(
-        ID = self.CourseIDEntry.get(),
-        title = self.CourseTitleEntry.get(),
-        credit = self.CourseCreditEntry.get(),
-        MaximumUnits = self.CourseMaximumUnitsEntry.get(),
-        LongCourseTitle = self.CourseLongCourseTitleEntry.get(),
-        OfferingNBR = self.CourseOfferingNBREntry.get(),
-        AcademicGroup  = self.CourseAcademicGroupEntry.get(),
-        SubjectArea = self.CourseSubjectAreaEntry.get(),
-        CatalogNBR = self.CourseCatalogNBREntry.get(),
-        campus = self.CourseCampusEntry.get(),
-        AcademicOrganization = self.CourseAcademicOrganizationEntry.get(),
-        component = self.CourseComponentEntry.get()
+        self.CourseIDEntry.get(),
+        self.CourseTitleEntry.get(),
+        self.CourseCreditEntry.get(),
+        self.CourseMaximumUnitsEntry.get(),
+        self.CourseLongCourseTitleEntry.get(),
+        self.CourseOfferingNBREntry.get(),
+        self.CourseAcademicGroupEntry.get(),
+        self.CourseSubjectAreaEntry.get(),
+        self.CourseCatalogNBREntry.get(),
+        self.CourseCampusEntry.get(),
+        self.CourseAcademicOrganizationEntry.get(),
+        self.CourseComponentEntry.get()
       )
 
       self.CourseIDEntry.delete(
