@@ -107,19 +107,19 @@ class Classes(DatabaseManager):
   def saveClasses(self):
     try:
       self.insertClass(
-        ID = self.ClasseIDEntry.get(),
-        subject = self.SubjectEntry.get(),
-        CNBR = self.CatalogNBREntry.get(),
-        AC = self.AcademicCareerEntry.get(),
-        CID = self.course_id_title_map[self.ClassesCourseEntry.get()],
-        ONBR = self.OfferingNBREntry.get(),
-        ST = self.StartTimeEntry.get(),
-        ET = self.EndTimeEntry.get(),
-        section = self.SectionEntry.get(),
-        component = self.ComponentEntry.get(),
-        campus = self.CampusEntry.get(),
-        instructorID = self.InstructorIDEntry.get(),
-        IT = self.InstructorTypeEntry.get()
+        self.ClasseIDEntry.get(),
+        self.SubjectEntry.get(),
+        self.CatalogNBREntry.get(),
+        self.AcademicCareerEntry.get(),
+        self.course_id_title_map[self.ClassesCourseEntry.get()],
+        self.OfferingNBREntry.get(),
+        self.StartTimeEntry.get(),
+        self.EndTimeEntry.get(),
+        self.SectionEntry.get(),
+        self.ComponentEntry.get(),
+        self.CampusEntry.get(),
+        self.InstructorIDEntry.get(),
+        self.InstructorTypeEntry.get()
       )
       
       self.ClasseIDEntry.delete(
@@ -181,7 +181,7 @@ class Classes(DatabaseManager):
   
   def delete(self, term):
     try:
-      self.deleteClasse(term)
+      self.RemoveClasse(term)
       self.getClasses()
       self.displayClassessTable()
 
@@ -193,7 +193,7 @@ class Classes(DatabaseManager):
 
   def search(self, term):
     try:
-      self.searchClasse(term)
+      self.SearchClasse(term)
       self.displayClassessTable()
 
     except Exception as e:

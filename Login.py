@@ -11,7 +11,6 @@ class Login(DatabaseManager):
       super().__init__()
 
       self.getSettings()
-      self.connect()
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()

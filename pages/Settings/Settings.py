@@ -40,7 +40,6 @@ class Settings(DatabaseManager):
       self.DatabaseEntry.configure(placeholder_text= self.Database)
       self.ActivationKeyEntry.configure(placeholder_text= self.ActivationKey)
 
-      threading.Thread(target=self.connect).start()
       threading.Thread(target=self.checkLicenseStatus).start()
 
     except Exception as e:
