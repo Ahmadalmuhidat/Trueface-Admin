@@ -148,6 +148,8 @@ class UserInterface():
 
   def startTheProgram(self):
     try:
+      customtkinter.set_appearance_mode("dark")
+
       self.window = customtkinter.CTk()
 
       width= self.window.winfo_screenwidth()
