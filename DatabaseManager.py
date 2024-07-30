@@ -5,6 +5,7 @@ import pickle
 import numpy
 import json
 import requests
+import mysql.connector
 
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
@@ -16,12 +17,14 @@ class DatabaseManager(Configrations):
 
   def __init__(self) -> None:
     try:
-      self.BaseURL = "https://timewizeai-api.azurewebsites.net"
+      # self.BaseURL = "https://timewizeai-api.azurewebsites.net"
+      self.BaseURL = "http://192.168.1.112:8000"
       self.Students = []
       self.Attendance = []
       self.Classes = []
       self.ClassesForSelection = []
       self.Users = []
+      self.token = ""
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -30,13 +33,30 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def getClassesStudentRelation(self, StudentID):
+  def Connect(self):
+    try:
+      DatabaseManager.db = mysql.connector.connect(
+        host = self.Host,
+        user = self.User,
+        password = self.Password,
+        database = self.Database
+      )
+
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+
+    except Exception as e:
+      exc_type, exc_obj, exc_tb = sys.exc_info()
+      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+      print(exc_type, fname, exc_tb.tb_lineno)
+      print(exc_obj)
+
+  def GetClassesStudentRelation(self, StudentID):
     try:
       data = {
         "StudentID": StudentID
       }
       response = requests.get(
-        self.BaseURL + "/get_classes_for_selection",
+        self.BaseURL + "/get_classes_student_relation",
         data
       ).content
       response_str = response.decode('utf-8')
@@ -70,7 +90,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def getClassesForSelection(self):
+  def GetClassesForSelection(self):
     try:
       response = requests.get(self.BaseURL + "/get_classes_for_selection").content
       response_str = response.decode('utf-8')
@@ -84,7 +104,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def removeUser(
+  def RemoveUser(
       self,
       UserID,
     ):
@@ -108,7 +128,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def insertUser(
+  def InsertUser(
       self,
       UserID,
       UserName,
@@ -125,10 +145,11 @@ class DatabaseManager(Configrations):
         "UserRole": UserRole
       }
 
-      response = requests.post(self.BaseURL + "/insert_user", data).content
+      response = requests.post(
+        self.BaseURL + "/insert_user",
+        params=data
+      ).content
       response_str = response.decode('utf-8')
-
-      self.Students = json.loads(response_str)
 
       title="Success"
       message="New user has been added"
@@ -142,7 +163,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def insertClassStudentRelation(
+  def InsertClassStudentRelation(
       self,
       RelationID,
       StudentID,
@@ -156,7 +177,10 @@ class DatabaseManager(Configrations):
         "ClassID": ClassID,
         "ClassDay": ClassDay
       }
-      response = requests.post(self.BaseURL + "/get_classes_for_selection", data).content
+      response = requests.post(
+        self.BaseURL + "/insert_class_student_relation",
+        params=data
+      ).content
       response_str = response.decode('utf-8')
 
       if response_str == True:
@@ -172,7 +196,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def getUsers(self):
+  def GetUsers(self):
     try:
       response = requests.get(self.BaseURL + "/get_users").content
       response_str = response.decode('utf-8')
@@ -184,7 +208,7 @@ class DatabaseManager(Configrations):
       print(exc_type, fname, exc_tb.tb_lineno)
       print(exc_obj)
 
-  def checkUser(self, email, password):
+  def CheckUser(self, email, password):
     try:
       data = {
         "email": email,
@@ -234,7 +258,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def searchUsers(self, term):
+  def SearchUsers(self, term):
     try:
       data = {
         "term": term
@@ -252,7 +276,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def searchCourses(self, term):
+  def SearchCourses(self, term):
     try:
       data = {
         "term": term
@@ -269,7 +293,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def deleteCourses(self, term):
+  def DeleteCourses(self, term):
     try:
       data = {
         "term": term
@@ -284,12 +308,12 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def checkDuplicatedID(self, id):
+  def CheckDuplicatedID(self, id):
     try:
       data = {
         "StudentID": id
       }
-      response = requests.post(self.BaseURL + "/check_duplicated_id", data).content
+      response = requests.get(self.BaseURL + "/check_duplicated_id", data).content
       response_str = response.decode('utf-8')
 
       return json.loads(response_str)
@@ -301,25 +325,20 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
   
-  def checkLicenseStatus(self):
+  def CheckLicenseStatus(self):
     try:
-      data = (self.ActivationKey,)
-      query = '''
-        SELECT
-          LicenseActive
-        FROM
-          Licenses
-        WHERE
-          LicenseActivationKey = %s
-      '''
+      data = {
+        "License": self.ActivationKey
+      }
+      response = requests.get(
+        "https://timewizeai-license-api.azurewebsites.net/check_license",
+        data
+      ).content
+      response_str = response.decode('utf-8')
 
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
+      print(response_str)
 
-      DatabaseManager.cursor.execute(query, data)
-      CustomerLicenseStatus = DatabaseManager.cursor.fetchall()
-
-      if len(CustomerLicenseStatus) > 0:
-        if CustomerLicenseStatus[0][0] == 0:
+      if not json.loads(response_str):
           title="License not active"
           message="Please Renew your License"
           icon="cancel"
@@ -332,23 +351,7 @@ class DatabaseManager(Configrations):
           response = msg.get()
 
           if response=="ok":
-            sys.exit(0)     
-      else:
-          title="License not found"
-          message="The Activation Key is not valid, please contact the technical team"
-          icon="cancel"
-          msg = CTkMessagebox(
-            title=title,
-            message=message,
-            icon=icon,
-            option_1="ok"
-          )
-          response = msg.get()
-
-          if response == "ok":
-            sys.exit(0)     
-
-      DatabaseManager.cursor.close()
+            sys.exit(0)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -357,7 +360,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def getClasses(self):
+  def GetClasses(self):
     try:
       response = requests.get(self.BaseURL + "/get_classes").content
       response_str = response.decode('utf-8')
@@ -371,7 +374,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def getCourses(self):
+  def GetCourses(self):
     try:
       response = requests.get(self.BaseURL + "/get_courses").content
       response_str = response.decode('utf-8')
@@ -385,7 +388,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass  
   
-  def insertCourse(
+  def InsertCourse(
       self,
       CourseID,
       CourseTitle,
@@ -416,7 +419,10 @@ class DatabaseManager(Configrations):
         "component": CourseComponent
       }
 
-      response = requests.get(self.BaseURL + "/insert_course", data).content
+      response = requests.post(
+        self.BaseURL + "/insert_course",
+        params=data
+      ).content
       response_str = response.decode('utf-8')
 
     except Exception as e:
@@ -426,7 +432,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass 
 
-  def insertClass(
+  def InsertClass(
       self,
       ClasseID,
       subject,
@@ -459,7 +465,10 @@ class DatabaseManager(Configrations):
         "InstructorType": InstructorType
       }
 
-      response = requests.get(self.BaseURL + "/insert_class", data).content
+      response = requests.post(
+        self.BaseURL + "/insert_class",
+        params=data
+      ).content
       response_str = response.decode('utf-8')
 
     except Exception as e:
@@ -469,7 +478,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass 
 
-  def getFaceEncoding(self, path):
+  def GetFaceEncoding(self, path):
     try:
       load_stored_image = face_recognition.load_image_file(path)
       stored_face_encoding = numpy.array(face_recognition.face_encodings(load_stored_image)[0])
@@ -482,7 +491,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def checkFaceInImage(self, path):
+  def CheckFaceInImage(self, path):
     try:
       load_stored_image = face_recognition.load_image_file(path)
       FaceFound = face_recognition.face_locations(load_stored_image)
@@ -499,21 +508,40 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def insertStudent(self, **data):
+  def InsertStudent(self, **data):
     try:
-      FaceEncoding = self.getFaceEncoding(data["ImagePath"])
-      data = {
-        "StudentID": data["StudentID"],
-        'FirstName': data["FirstName"],
-        "MiddleName": data["MiddleName"],
-        "LastName": data["LastName"],
-        "Gender": data["Gender"],
-        "FaceEncoding": FaceEncoding,
-        "TodayDate": data["TodayDate"]
-      }
+      FaceEncoding = self.GetFaceEncoding(data["ImagePath"])
+      data = (
+        data["StudentID"],
+        data["FirstName"],
+        data["MiddleName"],
+        data["LastName"],
+        data["Gender"],
+        FaceEncoding,
+        data["TodayDate"]
+      )
+      query = '''
+        INSERT INTO
+          Students
+        VALUES
+        (
+          %s,
+          %s,
+          %s,
+          %s,
+          %s,
+          %s,
+          %s
+        )
+      '''
 
-      response = requests.get(self.BaseURL + "/insert_student", data).content
-      response_str = response.decode('utf-8')
+      DatabaseManager.cursor = DatabaseManager.db.cursor()
+      DatabaseManager.cursor.execute(query, data)
+      DatabaseManager.db.commit()
+      DatabaseManager.cursor.close()
+      DatabaseManager.db.close()
+
+      return True
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -522,7 +550,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def removeStudent(self, term):
+  def RemoveStudent(self, term):
     try:
       data = {
         "term": term
@@ -537,9 +565,9 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def getStudents(self):
+  def GetStudents(self):
     try:
-      response = requests.get(self.BaseURL + "/get_students").content
+      response = requests.get(self.BaseURL + "/get_all_students").content
       response_str = response.decode('utf-8')
 
       self.Students = json.loads(response_str)
@@ -551,7 +579,7 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def searchStudent(self, term):
+  def SearchStudent(self, term):
     try:
       data = {
         "term": str(term)

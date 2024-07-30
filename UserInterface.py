@@ -8,7 +8,6 @@ import pages.Classes.Classes as Classes
 import pages.Courses.Courses as Courses
 import pages.Attendance.Attendance as Attendance
 import pages.Users.Users as Users
-import pages.Settings.Settings as Settings
 
 class UserInterface():
   def __init__(self):
@@ -29,53 +28,45 @@ class UserInterface():
       navbar = customtkinter.CTkFrame(window)
       navbar.pack(fill=customtkinter.X)
 
-      StudentsButton = customtkinter.CTkButton(navbar)
-      StudentsButton.configure(
+      StudentsButton = customtkinter.CTkButton(
+        navbar,
         corner_radius=0,
         command=lambda: self.showPage("Students"),
         text="Students"
       )
       StudentsButton.pack(side=customtkinter.LEFT)
 
-      ClassesButton = customtkinter.CTkButton(navbar)
-      ClassesButton.configure(
+      ClassesButton = customtkinter.CTkButton(
+        navbar,
         corner_radius=0,
         command=lambda: self.showPage("Classes"),
         text="Classes"
       )
       ClassesButton.pack(side=customtkinter.LEFT)
 
-      CoursesButton = customtkinter.CTkButton(navbar)
-      CoursesButton.configure(
+      CoursesButton = customtkinter.CTkButton(
+        navbar,
         corner_radius=0,
         command=lambda: self.showPage("Courses"),
         text="Courses"
       )
       CoursesButton.pack(side=customtkinter.LEFT)
 
-      AttendanceButton = customtkinter.CTkButton(navbar)
-      AttendanceButton.configure(
-        corner_radius=0,
-        command=lambda: self.showPage("Attendance"),
-        text="Attendance"
-      )
-      AttendanceButton.pack(side=customtkinter.LEFT)
+      # AttendanceButton = customtkinter.CTkButton(
+      #   navbar,
+      #   corner_radius=0,
+      #   command=lambda: self.showPage("Attendance"),
+      #   text="Attendance"
+      # )
+      # AttendanceButton.pack(side=customtkinter.LEFT)
 
-      UsersButton = customtkinter.CTkButton(navbar)
-      UsersButton.configure(
+      UsersButton = customtkinter.CTkButton(
+        navbar,
         corner_radius=0,
         command=lambda: self.showPage("Users"),
         text="Users"
       )
       UsersButton.pack(side=customtkinter.LEFT)
-
-      # SettingsButton = customtkinter.CTkButton(navbar)
-      # SettingsButton.configure(
-      #   corner_radius=0,
-      #   command=lambda: self.showPage("Settings"),
-      #   text="Settings"
-      # )
-      # SettingsButton.pack(side=customtkinter.LEFT)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -115,8 +106,6 @@ class UserInterface():
         Attendance.Attendance().create(page)
       elif name == "Users":
         Users.Users().create(page)
-      elif name == "Settings":
-        Settings.Settings().create(page)
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -171,7 +160,6 @@ class UserInterface():
       self.createPage(self.window, "Courses")
       self.createPage(self.window, "Attendance")
       self.createPage(self.window, "Users")
-      # self.createPage(self.window, "Settings")
 
       self.showPage("Students")
 

@@ -19,12 +19,13 @@ class Login(DatabaseManager):
       print(exc_obj)
 
   def login(self):
-    result = self.checkUser(
+    result = self.CheckUser(
       self.EmailEntry.get(),
       self.PasswordEntry.get()
     )
 
     if result:
+      self.token = result
       self.window.destroy()
       UserInterface().startTheProgram()
 
@@ -45,53 +46,59 @@ class Login(DatabaseManager):
         pady=20
       )
 
-      Emaillabel = customtkinter.CTkLabel(ContentFrame)
+      Emaillabel = customtkinter.CTkLabel(
+        ContentFrame,
+        text="Email:"
+      )
       Emaillabel.grid(
         row=0,
         column=0,
         padx=10,
         pady=10
       )
-      Emaillabel.configure(text="Email:")
 
-      self.EmailEntry = customtkinter.CTkEntry(ContentFrame)
+      self.EmailEntry = customtkinter.CTkEntry(
+        ContentFrame,
+        width=250
+      )
       self.EmailEntry.grid(
         row=0,
         column=1,
         padx=10
       )
-      self.EmailEntry.configure(width=250)
 
-      Passwordlabel = customtkinter.CTkLabel(ContentFrame)
+      Passwordlabel = customtkinter.CTkLabel(
+        ContentFrame,
+        text="Password:"
+      )
       Passwordlabel.grid(
         row=1,
         column=0,
         padx=10,
       )
-      Passwordlabel.configure(text="Password:")
 
-      self.PasswordEntry = customtkinter.CTkEntry(ContentFrame)
+      self.PasswordEntry = customtkinter.CTkEntry(
+        ContentFrame,
+        width=250,
+        show="*"
+      )
       self.PasswordEntry.grid(
         row=1,
         column=1,
         padx=10,
       )
-      self.PasswordEntry.configure(
-        width=250,
-        show="*"
-      )
 
-      save_button = customtkinter.CTkButton(ContentFrame)
+      save_button = customtkinter.CTkButton(
+        ContentFrame,
+        text="Login",
+        command=self.login
+      )
       save_button.grid(
         row=6,
         columnspan=2,
         padx=10,
         pady=10,
         sticky="nsew",
-      )
-      save_button.configure(
-        text="Login",
-        command=self.login
       )
 
       self.window.mainloop()
