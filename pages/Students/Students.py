@@ -1,7 +1,6 @@
 import sys
 import os
 import customtkinter
-import datetime
 import tkinter
 
 from PIL import Image
