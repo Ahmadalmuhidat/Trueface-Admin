@@ -5,7 +5,6 @@ import pickle
 import numpy
 import json
 import requests
-import mysql.connector
 
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
