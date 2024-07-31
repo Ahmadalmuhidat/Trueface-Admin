@@ -1,10 +1,10 @@
 import sys
 import os
+import json
+import requests
 import face_recognition
 import pickle
 import numpy
-import json
-import requests
 
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
@@ -26,10 +26,10 @@ class DatabaseManager(Configrations):
       self.token = ""
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def GetClassesStudentRelation(self, StudentID):
@@ -39,17 +39,27 @@ class DatabaseManager(Configrations):
       }
       response = requests.get(
         self.BaseURL + "/get_classes_student_relation",
-        data
+        params = data
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      return json.loads(response_str)
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def RemoveClassesStudentRelation(self, RelationID):
@@ -57,33 +67,58 @@ class DatabaseManager(Configrations):
       data = {
         "RelationID": RelationID
       }
-      response = requests.delete(self.BaseURL + "/remove_classes_student_relation", data).content
-      response_str = response.decode('utf-8')
+      response = requests.post(
+        self.BaseURL + "/remove_classes_student_relation",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      title = "Relation has been Deleted"
-      message = "Class has been removed successfully"
-      icon = "check"
-      CTkMessagebox(title=title, message=message, icon=icon)
+      if response.get("status_code") == 200:
+        title = "Relation has been Deleted"
+        message = "Class has been removed successfully"
+        icon = "check"
+        CTkMessagebox(title=title, message=message, icon=icon)
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def GetClassesForSelection(self):
     try:
-      response = requests.get(self.BaseURL + "/get_classes_for_selection").content
-      response_str = response.decode('utf-8')
+      response = requests.get(
+        self.BaseURL + "/get_classes_for_selection"
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      self.ClassesForSelection = json.loads(response_str)
+      if response.get("status_code") == 200:
+        self.ClassesForSelection = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def RemoveUser(
@@ -95,19 +130,32 @@ class DatabaseManager(Configrations):
         "UserID": UserID,
       }
 
-      response = requests.delete(self.BaseURL + "/remove_user", data).content
-      response_str = response.decode('utf-8')
+      response = requests.post(
+        self.BaseURL + "/remove_user",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      title="Success"
-      message="User has been removed"
-      icon="check"
-      CTkMessagebox(title=title, message=message,icon=icon)
+      if response.get("status_code") == 200:
+        title="Success"
+        message="User has been removed"
+        icon="check"
+        CTkMessagebox(title=title, message=message,icon=icon)
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def InsertUser(
@@ -131,18 +179,28 @@ class DatabaseManager(Configrations):
         self.BaseURL + "/insert_user",
         params=data
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      title="Success"
-      message="New user has been added"
-      icon="check"
-      CTkMessagebox(title=title, message=message,icon=icon)
+      if response.get("status_code") == 200:
+        title="Success"
+        message="New user has been added"
+        icon="check"
+        CTkMessagebox(title=title, message=message,icon=icon)
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def InsertClassStudentRelation(
@@ -161,34 +219,58 @@ class DatabaseManager(Configrations):
       }
       response = requests.post(
         self.BaseURL + "/insert_class_student_relation",
-        params=data
+        params = data
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      if response_str == True:
+      if response.get("status_code") == 200:
         title="Success"
         message="New class has been added"
         icon="check"
-        CTkMessagebox(title=title, message=message,icon=icon)
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def GetUsers(self):
     try:
       response = requests.get(self.BaseURL + "/get_users").content
-      response_str = response.decode('utf-8')
-      self.Users = json.loads(response_str)
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        self.Users = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e: 
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
 
   def CheckUser(self, email, password):
     try:
@@ -197,32 +279,58 @@ class DatabaseManager(Configrations):
         "password": password
       }
 
-      response = requests.get(self.BaseURL + "/check_user", data).content
-      response_str = response.decode('utf-8')
+      response = requests.get(
+        self.BaseURL + "/check_user",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      return json.loads(response_str)
-      
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
+
     except Exception as e: 
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
   
   def SearchClasse(self, term):
     try:
       data = {
         "term": term
       }
-      response = requests.get(self.BaseURL + "/search_classe", data).content
-      response_str = response.decode('utf-8')
+      response = requests.get(
+        self.BaseURL + "/search_classe",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      self.Classes = json.loads(response_str)
+      if response.get("status_code") == 200:
+        self.Classes = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def RemoveClasse(self, term):
@@ -230,14 +338,29 @@ class DatabaseManager(Configrations):
       data = {
         "term": term
       }
-      response = requests.delete(self.BaseURL + "/remove_classe", data).content
-      response_str = response.decode('utf-8')
+      response = requests.post(
+        self.BaseURL + "/remove_classe",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def SearchUsers(self, term):
@@ -246,16 +369,29 @@ class DatabaseManager(Configrations):
         "term": term
       }
 
-      response = requests.get(self.BaseURL + "/search_user", data).content
-      response_str = response.decode('utf-8')
+      response = requests.get(
+        self.BaseURL + "/search_user",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      self.Users = json.loads(response_str)
+      if response.get("status_code") == 200:
+        self.Users = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def SearchCourses(self, term):
@@ -263,16 +399,29 @@ class DatabaseManager(Configrations):
       data = {
         "term": term
       }
-      response = requests.get(self.BaseURL + "/search_courses", data).content
-      response_str = response.decode('utf-8')
+      response = requests.get(
+        self.BaseURL + "/search_courses",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      DatabaseManager.Courses = json.loads(response_str)
+      if response.get("status_code") == 200:
+        DatabaseManager.Courses = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def DeleteCourses(self, term):
@@ -280,14 +429,29 @@ class DatabaseManager(Configrations):
       data = {
         "term": term
       }
-      response = requests.delete(self.BaseURL + "/remove_course", data).content
-      response_str = response.decode('utf-8')
+      response = requests.post(
+        self.BaseURL + "/remove_course",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def CheckDuplicatedID(self, id):
@@ -295,16 +459,29 @@ class DatabaseManager(Configrations):
       data = {
         "StudentID": id
       }
-      response = requests.get(self.BaseURL + "/check_duplicated_id", data).content
-      response_str = response.decode('utf-8')
+      response = requests.get(
+        self.BaseURL + "/check_duplicated_id",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      return json.loads(response_str)
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
   
   def CheckLicenseStatus(self):
@@ -314,13 +491,11 @@ class DatabaseManager(Configrations):
       }
       response = requests.get(
         "https://timewizeai-license-api.azurewebsites.net/check_license",
-        data
+        params = data
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      print(response_str)
-
-      if not json.loads(response_str):
+      if response.get("status_code") != 200:
           title="License not active"
           message="Please Renew your License"
           icon="cancel"
@@ -336,38 +511,58 @@ class DatabaseManager(Configrations):
             sys.exit(0)
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def GetClasses(self):
     try:
       response = requests.get(self.BaseURL + "/get_classes").content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      self.Classes = json.loads(response_str)
+      if response.get("status_code") == 200:
+        self.Classes = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def GetCourses(self):
     try:
       response = requests.get(self.BaseURL + "/get_courses").content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      DatabaseManager.Courses = json.loads(response_str)
+      if response.get("status_code") == 200:
+        DatabaseManager.Courses = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass  
   
   def InsertCourse(
@@ -403,15 +598,27 @@ class DatabaseManager(Configrations):
 
       response = requests.post(
         self.BaseURL + "/insert_course",
-        params=data
+        params = data
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass 
 
   def InsertClass(
@@ -449,15 +656,27 @@ class DatabaseManager(Configrations):
 
       response = requests.post(
         self.BaseURL + "/insert_class",
-        params=data
+        params = data
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass 
 
   def GetFaceEncoding(self, path):
@@ -467,10 +686,10 @@ class DatabaseManager(Configrations):
       return pickle.dumps(stored_face_encoding)
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def CheckFaceInImage(self, path):
@@ -484,10 +703,10 @@ class DatabaseManager(Configrations):
         return False
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def InsertStudent(self, **data):
@@ -507,13 +726,25 @@ class DatabaseManager(Configrations):
         params = data,
         files = files
       ).content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def RemoveStudent(self, term):
@@ -521,28 +752,53 @@ class DatabaseManager(Configrations):
       data = {
         "term": term
       }
-      response = requests.delete(self.BaseURL + "/remove_student", data).content
-      response_str = response.decode('utf-8')
+      response = requests.post(
+        self.BaseURL + "/remove_student", 
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def GetStudents(self):
     try:
       response = requests.get(self.BaseURL + "/get_all_students").content
-      response_str = response.decode('utf-8')
+      response = json.loads(response.decode('utf-8'))
 
-      self.Students = json.loads(response_str)
+      if response.get("status_code") == 200:
+        self.Students = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
 
   def SearchStudent(self, term):
@@ -550,14 +806,27 @@ class DatabaseManager(Configrations):
       data = {
         "term": str(term)
       }
+      response = requests.get(
+        self.BaseURL + "/search_student",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
 
-      response = requests.get(self.BaseURL + "/search_student", data).content
-      response_str = response.decode('utf-8')
-      self.Students = json.loads(response_str)
+      if response.get("status_code") == 200:
+        self.Students = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )
 
     except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
       pass
