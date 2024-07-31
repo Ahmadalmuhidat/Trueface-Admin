@@ -25,7 +25,6 @@ class Students(DatabaseManager):
       ]
 
       self.getSettings()
-      self.Connect()
       # self.checkLicenseStatus()
       self.GetStudents()
       self.GetClassesForSelection()
@@ -241,7 +240,6 @@ class Students(DatabaseManager):
       MiddleName = self.StudentMiddleNameEntry.get()
       LastName = self.StudentLastNameEntry.get()
       Gender = self.StudentGenderEntry.get()
-      TodayDate = datetime.date.today()
 
       if self.validateStudentsData(
         StudentID,
@@ -258,7 +256,6 @@ class Students(DatabaseManager):
           LastName = LastName,
           Gender = Gender,
           ImagePath =  self.ImagePath,
-          TodayDate = TodayDate
         )
 
         self.StudentIDEntry.delete(

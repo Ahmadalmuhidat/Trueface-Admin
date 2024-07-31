@@ -33,23 +33,6 @@ class DatabaseManager(Configrations):
       print(exc_obj)
       pass
 
-  def Connect(self):
-    try:
-      DatabaseManager.db = mysql.connector.connect(
-        host = self.Host,
-        user = self.User,
-        password = self.Password,
-        database = self.Database
-      )
-
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-
-    except Exception as e:
-      exc_type, exc_obj, exc_tb = sys.exc_info()
-      fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-      print(exc_type, fname, exc_tb.tb_lineno)
-      print(exc_obj)
-
   def GetClassesStudentRelation(self, StudentID):
     try:
       data = {
@@ -510,38 +493,22 @@ class DatabaseManager(Configrations):
 
   def InsertStudent(self, **data):
     try:
-      FaceEncoding = self.GetFaceEncoding(data["ImagePath"])
-      data = (
-        data["StudentID"],
-        data["FirstName"],
-        data["MiddleName"],
-        data["LastName"],
-        data["Gender"],
-        FaceEncoding,
-        data["TodayDate"]
-      )
-      query = '''
-        INSERT INTO
-          Students
-        VALUES
-        (
-          %s,
-          %s,
-          %s,
-          %s,
-          %s,
-          %s,
-          %s
-        )
-      '''
+      files = {'FaceEncoding': open(data["ImagePath"], 'rb')}
+      data = {
+        "StudentID": data["StudentID"],
+        "FirstName": data["FirstName"],
+        "MiddleName": data["MiddleName"],
+        "LastName": data["LastName"],
+        "Gender": data["Gender"],
+        "StudentImage":  open(data["ImagePath"], 'rb'),
+      }
 
-      DatabaseManager.cursor = DatabaseManager.db.cursor()
-      DatabaseManager.cursor.execute(query, data)
-      DatabaseManager.db.commit()
-      DatabaseManager.cursor.close()
-      DatabaseManager.db.close()
-
-      return True
+      response = requests.post(
+        self.BaseURL + "/insert_student",
+        params = data,
+        files = files
+      ).content
+      response_str = response.decode('utf-8')
 
     except Exception as e:
       exc_type, exc_obj, exc_tb = sys.exc_info()
