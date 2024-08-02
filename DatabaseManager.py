@@ -679,19 +679,6 @@ class DatabaseManager(Configrations):
       print(ExceptionObject)
       pass 
 
-  def GetFaceEncoding(self, path):
-    try:
-      load_stored_image = face_recognition.load_image_file(path)
-      stored_face_encoding = numpy.array(face_recognition.face_encodings(load_stored_image)[0])
-      return pickle.dumps(stored_face_encoding)
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
   def CheckFaceInImage(self, path):
     try:
       load_stored_image = face_recognition.load_image_file(path)
