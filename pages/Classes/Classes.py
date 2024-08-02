@@ -209,7 +209,7 @@ class Classes(DatabaseManager):
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
 
-      self.PopWindow.geometry("515x550")
+      self.PopWindow.geometry("520x550")
       self.PopWindow.resizable(False, False)
 
       self.PopWindow.title("Add New Class")

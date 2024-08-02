@@ -163,7 +163,7 @@ class Users(DatabaseManager):
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
 
-      self.PopWindow.geometry("490x400")
+      self.PopWindow.geometry("460x350")
       self.PopWindow.resizable(False, False)
       self.PopWindow.title("Add New User")
 
@@ -334,20 +334,6 @@ class Users(DatabaseManager):
         column=1,
         sticky="nsew",
         pady=10
-      )
-
-      InsertButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        text="New User",
-        command=self.addUser,
-        width=100
-      )
-      InsertButton.grid(
-        row=0,
-        column=2,
-        sticky="nsew",
-        pady=10,
-        padx=5
       )
 
       RefreshButton = customtkinter.CTkButton(

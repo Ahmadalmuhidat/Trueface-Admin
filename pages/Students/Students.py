@@ -212,7 +212,7 @@ class Students(DatabaseManager):
         return False
       elif not self.CheckFaceInImage(ImagePath):
         title = "Face Not Found"
-        message = "the uploaded image contains no face"
+        message = "the uploaded image does not contain face"
         icon = "cancel"
         CTkMessagebox(title=title, message=message, icon=icon)  
         return False
@@ -290,7 +290,7 @@ class Students(DatabaseManager):
     try:
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
-      self.PopWindow.geometry("490x400")
+      self.PopWindow.geometry("490x410")
       self.PopWindow.resizable(False, False)
       self.PopWindow.title("Add New Student")
 

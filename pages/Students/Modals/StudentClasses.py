@@ -212,7 +212,7 @@ def StudentClassesPopWindow(
     global Navbar
 
     Navbar = customtkinter.CTkFrame(PopWindow)
-    Navbar.pack(fill=customtkinter.X)
+    Navbar.pack(fill = customtkinter.X)
 
     AddClassButton = customtkinter.CTkButton(
       Navbar,
@@ -229,9 +229,9 @@ def StudentClassesPopWindow(
 
     ClassesButton = customtkinter.CTkButton(
         Navbar,
-        corner_radius=0,
-        text="Classes",
-        command=lambda: displayClassesPage(
+        corner_radius = 0,
+        text = "Classes",
+        command = lambda: displayClassesPage(
           PopWindow,
           StudentID,
           GetClassesStudentRelation,

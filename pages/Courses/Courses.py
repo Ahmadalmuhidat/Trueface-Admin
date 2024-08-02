@@ -203,7 +203,7 @@ class Courses(DatabaseManager):
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
 
-      self.PopWindow.geometry("525x510")
+      self.PopWindow.geometry("535x510")
       self.PopWindow.resizable(False, False)
 
       self.PopWindow.title("Add New Course")
