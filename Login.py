@@ -10,8 +10,6 @@ class Login(DatabaseManager):
     try:
       super().__init__()
 
-      self.getSettings()
-
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
       FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]

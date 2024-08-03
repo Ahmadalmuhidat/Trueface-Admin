@@ -3,8 +3,6 @@ import os
 import json
 import requests
 import face_recognition
-import pickle
-import numpy
 
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
@@ -16,8 +14,8 @@ class DatabaseManager(Configrations):
 
   def __init__(self) -> None:
     try:
-      # self.BaseURL = "https://timewizeai-api.azurewebsites.net"
-      self.BaseURL = "http://192.168.1.112:8000"
+      self.BaseURL = "https://timewizeai-api.azurewebsites.net"
+      # self.BaseURL = "http://192.168.1.112:8000"
       self.Students = []
       self.Attendance = []
       self.Classes = []
@@ -47,11 +45,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while getting classes for the student",
           icon = icon
         )
 
@@ -77,14 +75,18 @@ class DatabaseManager(Configrations):
         title = "Relation has been Deleted"
         message = "Class has been removed successfully"
         icon = "check"
-        CTkMessagebox(title=title, message=message, icon=icon)
-      else:
-        title = "Error"
-        message = response.get("Error")
-        icon = "cancel"
         CTkMessagebox(
           title = title,
           message = message,
+          icon = icon
+        )
+      else:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while removing the class",
           icon = icon
         )
 
@@ -106,11 +108,11 @@ class DatabaseManager(Configrations):
         self.ClassesForSelection = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while getting classes",
           icon = icon
         )
 
@@ -143,11 +145,11 @@ class DatabaseManager(Configrations):
         CTkMessagebox(title=title, message=message,icon=icon)
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while removing the user",
           icon = icon
         )
 
@@ -177,7 +179,7 @@ class DatabaseManager(Configrations):
 
       response = requests.post(
         self.BaseURL + "/insert_user",
-        params=data
+        params = data
       ).content
       response = json.loads(response.decode('utf-8'))
 
@@ -185,14 +187,18 @@ class DatabaseManager(Configrations):
         title="Success"
         message="New user has been added"
         icon="check"
-        CTkMessagebox(title=title, message=message,icon=icon)
-      else:
-        title = "Error"
-        message = response.get("Error")
-        icon = "cancel"
         CTkMessagebox(
           title = title,
           message = message,
+          icon = icon
+        )
+      else:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while inserting the user",
           icon = icon
         )
 
@@ -234,11 +240,11 @@ class DatabaseManager(Configrations):
         )
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while inserting the class",
           icon = icon
         )
 
@@ -258,11 +264,11 @@ class DatabaseManager(Configrations):
         self.Users = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while getting the users",
           icon = icon
         )
 
@@ -289,11 +295,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while checking user info",
           icon = icon
         )
 
@@ -318,11 +324,11 @@ class DatabaseManager(Configrations):
         self.Classes = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while searching in classes",
           icon = icon
         )
 
@@ -348,11 +354,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while removing the class",
           icon = icon
         )
 
@@ -379,11 +385,11 @@ class DatabaseManager(Configrations):
         self.Users = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while searching in users",
           icon = icon
         )
 
@@ -409,11 +415,11 @@ class DatabaseManager(Configrations):
         DatabaseManager.Courses = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while searching in courses",
           icon = icon
         )
 
@@ -439,11 +445,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while removing the course",
           icon = icon
         )
 
@@ -469,11 +475,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while checking duplicated IDs",
           icon = icon
         )
 
@@ -495,20 +501,18 @@ class DatabaseManager(Configrations):
       ).content
       response = json.loads(response.decode('utf-8'))
 
-      if response.get("status_code") != 200:
-          title="License not active"
-          message="Please Renew your License"
-          icon="cancel"
-          msg = CTkMessagebox(
-            title=title,
-            message=message,
-            icon=icon,
-            option_1="ok"
-          )
-          response = msg.get()
-
-          if response=="ok":
-            sys.exit(0)
+      if response.get("status_code") == 200:
+        pass
+      else:
+        title = "Error"
+        message = response.get("Error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while checking license status",
+          icon = icon
+        )
+        sys.exit(0)
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -526,11 +530,11 @@ class DatabaseManager(Configrations):
         self.Classes = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while getting the classes",
           icon = icon
         )
 
@@ -550,11 +554,11 @@ class DatabaseManager(Configrations):
         DatabaseManager.Courses = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while getting the courses",
           icon = icon
         )
 
@@ -606,11 +610,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while inserting the course",
           icon = icon
         )
 
@@ -664,11 +668,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while inserting the class",
           icon = icon
         )
 
@@ -719,11 +723,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while inserting the student",
           icon = icon
         )
 
@@ -749,11 +753,11 @@ class DatabaseManager(Configrations):
         return response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while removing the student",
           icon = icon
         )
 
@@ -773,11 +777,11 @@ class DatabaseManager(Configrations):
         self.Students = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while getting the students",
           icon = icon
         )
 
@@ -803,11 +807,11 @@ class DatabaseManager(Configrations):
         self.Students = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message,
+          message = message if message else "Something went wrong while searching in students",
           icon = icon
         )
 

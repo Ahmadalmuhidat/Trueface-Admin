@@ -165,8 +165,6 @@ class UserInterface():
 
       self.window.mainloop()
 
-      # test
-
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
       FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
@@ -174,6 +172,3 @@ class UserInterface():
       print(ExceptionObject)
     except KeyboardInterrupt:
       pass
-
-if __name__ == "__main__":
-  UserInterface().startTheProgram()
