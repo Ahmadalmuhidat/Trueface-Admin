@@ -3,6 +3,7 @@ import os
 import customtkinter
 
 from DatabaseManager import DatabaseManager
+from CTkMessagebox import CTkMessagebox
 
 class Classes(DatabaseManager):
   def __init__(self):
@@ -35,7 +36,7 @@ class Classes(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def displayClassessTable(self):
+  def DisplayClassessTable(self):
     try:
       for label in self.ClassessLabels:
         label.destroy()
@@ -57,7 +58,7 @@ class Classes(DatabaseManager):
           ClasseInstructorType, \
           CourseTitle = Class          
 
-          Classess_data = [
+          ClassessData = [
             ClasseID,
             ClassSubjectArea,
             ClasseCatalogNBR,	
@@ -73,15 +74,34 @@ class Classes(DatabaseManager):
             ClasseInstructorType
           ]
 
-          for col, data in enumerate(Classess_data):
+          for col, data in enumerate(ClassessData):
             DataLabel = customtkinter.CTkLabel(
               self.ClassessTableFrame,
-              text=data,
-              padx=10,
-              pady=5
+              text = data,
+              padx = 10,
+              pady = 5
             )
-            DataLabel.grid(row=row, column=col, sticky="nsew")
+            DataLabel.grid(
+              row = row,
+              column = col,
+              sticky = "nsew"
+            )
             self.ClassessLabels.append(DataLabel)
+
+            DeleteButton = customtkinter.CTkButton(
+              self.ClassessTableFrame,
+                text = "Delete",
+                fg_color = "red",
+                command = lambda cid = ClasseID: self.delete(cid),
+              )
+            DeleteButton.grid(
+                row = row,
+                column = len(ClassessData),
+                sticky = "nsew",
+                padx = 10,
+                pady= 5
+            )
+            self.ClassessLabels.append(DeleteButton)
 
       self.ResultsCount.configure(
         text="Results: " + str(len(self.Classes))
@@ -96,7 +116,7 @@ class Classes(DatabaseManager):
   def refresh(self):
     try:
       self.GetClasses()
-      self.displayClassessTable()
+      self.DisplayClassessTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -104,9 +124,165 @@ class Classes(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def saveClasses(self):
+  def ValidateClassData(
+      self,
+      ClasseID,
+      Subject,
+      CatalogNBR,
+      AcademicCareer,
+      ClassesCourse,
+      OfferingNBR,
+      StartTime,
+      EndTime,
+      Section,
+      Component,
+      Campus,
+      InstructorID,
+      InstructorType
+    ):
     try:
-      self.InsertClass(
+      if not ClasseID:
+        title = "Missing Entry"
+        message = "please enter classe ID"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not Subject:
+        title = "Missing Entry"
+        message = "please enter class subject"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CatalogNBR or not CatalogNBR.isdigit():
+        title = "Missing Entry"
+        message = "please enter class catalog number"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not AcademicCareer:
+        title = "Missing Entry"
+        message = "please enter class academic career"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not ClassesCourse:
+        title = "Missing Entry"
+        message = "please select classes course"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not OfferingNBR or not OfferingNBR.isdigit():
+        title = "Missing Entry"
+        message = "please enter class offering number"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not StartTime:
+        title = "Missing Entry"
+        message = "please enter class start time"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not EndTime:
+        title = "Missing Entry"
+        message = "please enter class end time"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not Section:
+        title = "Missing Entry"
+        message = "please enter class section"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not Component:
+        title = "Missing Entry"
+        message = "please enter class component"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not Campus:
+        title = "Missing Entry"
+        message = "please enter class campus"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not InstructorID:
+        title = "Missing Entry"
+        message = "please select instructor"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not InstructorType:
+        title = "Missing Entry"
+        message = "please enter instructor type"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+
+      return True
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+
+  def SaveClasses(self):
+    try:
+      if self.ValidateClassData(
         self.ClasseIDEntry.get(),
         self.SubjectEntry.get(),
         self.CatalogNBREntry.get(),
@@ -119,59 +295,74 @@ class Classes(DatabaseManager):
         self.ComponentEntry.get(),
         self.CampusEntry.get(),
         self.InstructorIDEntry.get(),
-        self.InstructorTypeEntry.get()
-      )
-      
-      self.ClasseIDEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.SubjectEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CatalogNBREntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.AcademicCareerEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.OfferingNBREntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.StartTimeEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.EndTimeEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.SectionEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.ComponentEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CampusEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.InstructorIDEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.InstructorTypeEntry.delete(
-        0,
-        customtkinter.END
-      )
+        self.InstructorTypeEntry.get()     
+      ):
+        self.InsertClass(
+          self.ClasseIDEntry.get(),
+          self.SubjectEntry.get(),
+          self.CatalogNBREntry.get(),
+          self.AcademicCareerEntry.get(),
+          self.course_id_title_map[self.ClassesCourseEntry.get()],
+          self.OfferingNBREntry.get(),
+          self.StartTimeEntry.get(),
+          self.EndTimeEntry.get(),
+          self.SectionEntry.get(),
+          self.ComponentEntry.get(),
+          self.CampusEntry.get(),
+          self.InstructorIDEntry.get(),
+          self.InstructorTypeEntry.get()
+        )
+        
+        self.ClasseIDEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.SubjectEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CatalogNBREntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.AcademicCareerEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.OfferingNBREntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.StartTimeEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.EndTimeEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.SectionEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.ComponentEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CampusEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.InstructorIDEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.InstructorTypeEntry.delete(
+          0,
+          customtkinter.END
+        )
 
-      self.refresh()
+        self.refresh()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -181,9 +372,21 @@ class Classes(DatabaseManager):
   
   def delete(self, term):
     try:
-      self.RemoveClasse(term)
-      self.GetClasses()
-      self.displayClassessTable()
+      title = "Conformation"
+      message = "Are you sure you want to delete the class"
+      icon = "question"
+      conformation = CTkMessagebox(
+        title = title,
+        message = message,
+        icon = icon,
+        option_1 = "yes",
+        option_2 = "cancel" 
+      )
+
+      if conformation.get() == "yes":
+        self.RemoveClass(term)
+        self.GetClasses()
+        self.DisplayClassessTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -193,8 +396,8 @@ class Classes(DatabaseManager):
 
   def search(self, term):
     try:
-      self.SearchClasse(term)
-      self.displayClassessTable()
+      self.SearchClass(term)
+      self.DisplayClassessTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -202,7 +405,7 @@ class Classes(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def addClasses(self):
+  def AddClasses(self):
     try:
       self.course_id_title_map = {x[1]: x[0] for x in DatabaseManager.Courses}
 
@@ -505,7 +708,7 @@ class Classes(DatabaseManager):
       SaveButton = customtkinter.CTkButton(
         self.PopWindow,
         text="Save Class",
-        command=self.saveClasses
+        command=self.SaveClasses
       )
       SaveButton.grid(
         row=14,
@@ -557,32 +760,6 @@ class Classes(DatabaseManager):
         pady=10
       )
 
-      DeleteButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        command=lambda: self.delete(DeleteBar.get()),
-        width=100,
-        text="Delete"
-      )
-      DeleteButton.grid(
-        row=0,
-        column=2,
-        sticky="nsew",
-        pady=10,
-        padx=5
-      )
-
-      DeleteBar = customtkinter.CTkEntry(
-        SearchBarFrame,
-        width=100,
-        placeholder_text="ID"
-      )
-      DeleteBar.grid(
-        row=0,
-        column=3,
-        sticky="nsew",
-        pady=10
-      )
-
       RefreshButton = customtkinter.CTkButton(
         SearchBarFrame,
         command=self.refresh,
@@ -599,7 +776,7 @@ class Classes(DatabaseManager):
 
       AddClassesButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=self.addClasses,
+        command=self.AddClasses,
         width=100,
         text="Add Class"
       )
@@ -641,7 +818,7 @@ class Classes(DatabaseManager):
       for col in range(len(self.headers)):
         self.ClassessTableFrame.columnconfigure(col, weight=1)
 
-      self.displayClassessTable()
+      self.DisplayClassessTable()
 
 
     except Exception as e:

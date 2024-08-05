@@ -3,13 +3,14 @@ import os
 import customtkinter
 
 from DatabaseManager import DatabaseManager
+from CTkMessagebox import CTkMessagebox
 
 class Courses(DatabaseManager):
   def __init__(self):
     try:
       super().__init__()
 
-      self.CoursessLabels = []
+      self.CoursesLabels = []
       self.headers = [
         "Course ID",
         "Course Title",
@@ -33,9 +34,9 @@ class Courses(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def displayCoursessTable(self):
+  def DisplayCoursessTable(self):
     try:
-      for label in self.CoursessLabels:
+      for label in self.CoursesLabels:
         label.destroy()
 
       if len(DatabaseManager.Courses) > 0:
@@ -53,7 +54,7 @@ class Courses(DatabaseManager):
           CourseAcademicOrganizatio, \
           CourseComponent = Courses
 
-          Coursess_data = [
+          CoursesData = [
             CourseID,
             CourseTitle,
             CourseCredit,
@@ -68,7 +69,7 @@ class Courses(DatabaseManager):
             CourseComponent
           ]
 
-          for col, data in enumerate(Coursess_data):
+          for col, data in enumerate(CoursesData):
             DataLabel = customtkinter.CTkLabel(
             self.CoursesTableFrame,
              text=data,
@@ -80,7 +81,22 @@ class Courses(DatabaseManager):
               column=col,
               sticky="nsew"
             )
-            self.CoursessLabels.append(DataLabel)
+            self.CoursesLabels.append(DataLabel)
+
+            DeleteButton = customtkinter.CTkButton(
+              self.CoursesTableFrame,
+                text = "Delete",
+                fg_color = "red",
+                command = lambda cid = CourseID: self.delete(cid)
+              )
+            DeleteButton.grid(
+                row = row,
+                column = len(CoursesData),
+                sticky = "nsew",
+                padx = 10,
+                pady= 5
+            )
+            self.CoursesLabels.append(DeleteButton)
 
       self.ResultsCount.configure(text="Results: " + str(len(DatabaseManager.Courses)))
 
@@ -93,7 +109,7 @@ class Courses(DatabaseManager):
   def refresh(self):
     try:
       self.GetCourses()
-      self.displayCoursessTable()
+      self.DisplayCoursessTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -101,14 +117,159 @@ class Courses(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def saveCourse(self):
+  def ValidateCourseData(
+      self,
+      CourseID,
+      CourseTitle,
+      CourseCredit,
+      CourseMaximumUnits,
+      CourseLongTitle,
+      CourseOfferingNBR,
+      CourseAcademicGroup,
+      CourseSubjectArea,
+      CourseCatalogNBR,
+      CourseCampus,
+      CourseAcademicOrganization,
+      CourseComponent
+    ):
     try:
-      self.InsertCourse(
+      if not CourseID:
+        title = "Missing Entry"
+        message = "please enter course ID"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseTitle:
+        title = "Missing Entry"
+        message = "please enter course title"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseCredit or not CourseCredit.isdigit():
+        title = "Missing Entry"
+        message = "please enter course credit number"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseMaximumUnits or not CourseMaximumUnits.isdigit():
+        title = "Missing Entry"
+        message = "please enter course maximum units number"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseLongTitle:
+        title = "Missing Entry"
+        message = "please enter course long title"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseOfferingNBR or not CourseOfferingNBR.isdigit():
+        title = "Missing Entry"
+        message = "please enter course offering number"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseAcademicGroup:
+        title = "Missing Entry"
+        message = "please enter course academic group"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseSubjectArea:
+        title = "Missing Entry"
+        message = "please enter course subject area"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseCatalogNBR or not CourseCatalogNBR.isdigit():
+        title = "Missing Entry"
+        message = "please enter course catalog number"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseCampus:
+        title = "Missing Entry"
+        message = "please enter course campus"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseAcademicOrganization:
+        title = "Missing Entry"
+        message = "please enter course academic organization"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+      if not CourseComponent:
+        title = "Missing Entry"
+        message = "please enter course component"
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message,
+          icon = icon
+        )  
+        return False
+
+      return True
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+
+  def SaveCourse(self):
+    try:
+      if self.ValidateCourseData(
         self.CourseIDEntry.get(),
         self.CourseTitleEntry.get(),
         self.CourseCreditEntry.get(),
         self.CourseMaximumUnitsEntry.get(),
-        self.CourseLongCourseTitleEntry.get(),
+        self.CourseLongTitleEntry.get(),
         self.CourseOfferingNBREntry.get(),
         self.CourseAcademicGroupEntry.get(),
         self.CourseSubjectAreaEntry.get(),
@@ -116,58 +277,72 @@ class Courses(DatabaseManager):
         self.CourseCampusEntry.get(),
         self.CourseAcademicOrganizationEntry.get(),
         self.CourseComponentEntry.get()
-      )
+      ):
+        self.InsertCourse(
+          self.CourseIDEntry.get(),
+          self.CourseTitleEntry.get(),
+          self.CourseCreditEntry.get(),
+          self.CourseMaximumUnitsEntry.get(),
+          self.CourseLongTitleEntry.get(),
+          self.CourseOfferingNBREntry.get(),
+          self.CourseAcademicGroupEntry.get(),
+          self.CourseSubjectAreaEntry.get(),
+          self.CourseCatalogNBREntry.get(),
+          self.CourseCampusEntry.get(),
+          self.CourseAcademicOrganizationEntry.get(),
+          self.CourseComponentEntry.get()
+        )
 
-      self.CourseIDEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseTitleEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseCreditEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseMaximumUnitsEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseLongCourseTitleEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseOfferingNBREntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseAcademicGroupEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseSubjectAreaEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseCatalogNBREntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseCampusEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseAcademicOrganizationEntry.delete(
-        0,
-        customtkinter.END
-      )
-      self.CourseComponentEntry.delete(
-        0,
-        customtkinter.END
-      )
+        self.CourseIDEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseTitleEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseCreditEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseMaximumUnitsEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseLongTitleEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseOfferingNBREntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseAcademicGroupEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseSubjectAreaEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseCatalogNBREntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseCampusEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseAcademicOrganizationEntry.delete(
+          0,
+          customtkinter.END
+        )
+        self.CourseComponentEntry.delete(
+          0,
+          customtkinter.END
+        )
 
-      self.refresh()
+        self.refresh()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -177,9 +352,21 @@ class Courses(DatabaseManager):
 
   def delete(self, term):
     try:
-      self.DeleteCourses(term)
-      self.GetCourses()
-      self.displayCoursessTable()
+      title = "Conformation"
+      message = "Are you sure you want to delete the course"
+      icon = "question"
+      conformation = CTkMessagebox(
+        title = title,
+        message = message,
+        icon = icon,
+        option_1 = "yes",
+        option_2 = "cancel" 
+      )
+
+      if conformation.get() == "yes":
+        self.RemoveCourse(term)
+        self.GetCourses()
+        self.DisplayCoursessTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -190,7 +377,7 @@ class Courses(DatabaseManager):
   def search(self, term):
     try:
       self.SearchCourses(term)
-      self.displayCoursessTable()
+      self.DisplayCoursessTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -307,11 +494,11 @@ class Courses(DatabaseManager):
         pady=5
       )
 
-      self.CourseLongCourseTitleEntry = customtkinter.CTkEntry(
+      self.CourseLongTitleEntry = customtkinter.CTkEntry(
         self.PopWindow,
         width=350
       )
-      self.CourseLongCourseTitleEntry.grid(
+      self.CourseLongTitleEntry.grid(
         row=4,
         column=1,
         padx=10,
@@ -475,7 +662,7 @@ class Courses(DatabaseManager):
       SaveButton = customtkinter.CTkButton(
         self.PopWindow,
         text="Save Course",
-        command=self.saveCourse,
+        command=self.SaveCourse,
         width=350
       )
       SaveButton.grid(
@@ -524,32 +711,6 @@ class Courses(DatabaseManager):
       SearchBar.grid(
         row=0,
         column=1,
-        sticky="nsew",
-        pady=10
-      )
-
-      DeleteButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        command=lambda: self.delete(DeleteBar.get()),
-        width=100,
-        text="Delete"
-      )
-      DeleteButton.grid(
-        row=0,
-        column=2,
-        sticky="nsew",
-        pady=10,
-        padx=5
-      )
-
-      DeleteBar = customtkinter.CTkEntry(
-        SearchBarFrame,
-        width=100,
-        placeholder_text="ID"
-      )
-      DeleteBar.grid(
-        row=0,
-        column=3,
         sticky="nsew",
         pady=10
       )
@@ -614,7 +775,7 @@ class Courses(DatabaseManager):
       for col in range(len(self.headers)):
         self.CoursesTableFrame.columnconfigure(col, weight=1)
 
-      self.displayCoursessTable()
+      self.DisplayCoursessTable()
 
 
     except Exception as e:

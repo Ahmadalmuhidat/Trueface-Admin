@@ -34,10 +34,10 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def searchStudents(self, term):
+  def SearchStudents(self, term):
     try:
       self.SearchStudent(term)
-      self.displayStudentsTable()
+      self.DisplayStudentsTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -45,11 +45,23 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def deleteStudent(self, term):
+  def DeleteStudent(self, term):
     try:
-      self.RemoveStudent(term)
-      self.GetStudents()
-      self.displayStudentsTable()
+      title = "Conformation"
+      message = "Are you sure you want to delete the student"
+      icon = "question"
+      conformation = CTkMessagebox(
+        title = title,
+        message = message,
+        icon = icon,
+        option_1 = "yes",
+        option_2 = "cancel" 
+      )
+
+      if conformation.get() == "yes":
+        self.RemoveStudent(term)
+        self.GetStudents()
+        self.DisplayStudentsTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -57,7 +69,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def displayStudentsTable(self):
+  def DisplayStudentsTable(self):
     try:
       for label in self.StudentsLabels:
         label.destroy()
@@ -115,6 +127,21 @@ class Students(DatabaseManager):
           )
           self.StudentsLabels.append(ProfileButton)
 
+          DeleteButton = customtkinter.CTkButton(
+            self.StudentsTableFrame,
+              text = "Delete",
+              fg_color = "red",
+              command = lambda sid = StudentID: self.DeleteStudent(sid)
+            )
+          DeleteButton.grid(
+              row = row,
+              column = 7,
+              sticky = "nsew",
+              padx = 10,
+              pady= 5
+          )
+          self.StudentsLabels.append(DeleteButton)
+
       self.ResultsCount.configure(text="Results: " + str(len(self.Students)))
 
     except Exception as e:
@@ -127,7 +154,7 @@ class Students(DatabaseManager):
     try:
       self.GetStudents()
       self.GetClassesForSelection()
-      self.displayStudentsTable()
+      self.DisplayStudentsTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -135,7 +162,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def uploadImage(self):
+  def UploadImage(self):
     try:
       FilePath = tkinter.filedialog.askopenfilename()
 
@@ -152,7 +179,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def validateStudentsData(
+  def ValidateStudentsData(
       self,
       StudentID,
       FirstName,
@@ -232,7 +259,7 @@ class Students(DatabaseManager):
         print(ExceptionObject)
         pass
 
-  def saveStudent(self):
+  def SaveStudent(self):
     try:
       StudentID = self.StudentIDEntry.get()
       FirstName = self.StudentFirstNameEntry.get()
@@ -240,7 +267,7 @@ class Students(DatabaseManager):
       LastName = self.StudentLastNameEntry.get()
       Gender = self.StudentGenderEntry.get()
 
-      if self.validateStudentsData(
+      if self.ValidateStudentsData(
         StudentID,
         FirstName,
         MiddleName,
@@ -286,7 +313,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def addStudent(self):
+  def AddStudent(self):
     try:
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
@@ -422,7 +449,7 @@ class Students(DatabaseManager):
         text="Upload Image",
         width=30,
         height=30,
-        command=self.uploadImage
+        command=self.UploadImage
       )
       UploadButton.grid(
         row=5,
@@ -434,7 +461,7 @@ class Students(DatabaseManager):
       SaveButton = customtkinter.CTkButton(
         self.PopWindow,
         text="Save Students",
-        command=self.saveStudent,
+        command=self.SaveStudent,
         width=350
       )
       SaveButton.grid(
@@ -464,7 +491,7 @@ class Students(DatabaseManager):
 
       SearchButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=lambda: self.searchStudents(SearchBar.get()),
+        command=lambda: self.SearchStudents(SearchBar.get()),
         text="Search"
       )
       SearchButton.grid(
@@ -487,32 +514,6 @@ class Students(DatabaseManager):
         pady=10
       )
 
-      DeleteButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        command=lambda: self.deleteStudent(DeleteBar.get()),
-        width=100,
-        text="Delete"
-      )
-      DeleteButton.grid(
-        row=0,
-        column=2,
-        sticky="nsew",
-        pady=10,
-        padx=5
-      )
-
-      DeleteBar = customtkinter.CTkEntry(
-        SearchBarFrame,
-        width=100,
-        placeholder_text="ID"
-      )
-      DeleteBar.grid(
-        row=0,
-        column=3,
-        sticky="nsew",
-        pady=10
-      )
-
       RefreshButton = customtkinter.CTkButton(
         SearchBarFrame,
         command=self.refresh,
@@ -529,7 +530,7 @@ class Students(DatabaseManager):
 
       AddStudentButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=self.addStudent,
+        command=self.AddStudent,
         width=100,
         text="Add Student"
       )
@@ -571,7 +572,7 @@ class Students(DatabaseManager):
       for col in range(len(self.headers)):
         self.StudentsTableFrame.columnconfigure(col, weight=1)
 
-      self.displayStudentsTable()
+      self.DisplayStudentsTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

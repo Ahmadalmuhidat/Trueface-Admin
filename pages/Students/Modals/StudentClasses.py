@@ -3,6 +3,8 @@ import sys
 import customtkinter
 import uuid
 
+from CTkMessagebox import CTkMessagebox
+
 def addClassPage(
   PopWindow,
   ClassesForSelection,
@@ -106,10 +108,22 @@ def displayClassesPage(
     ]
 
     def remove(rid):
-      RemoveClassesStudentRelation(rid)
-      nonlocal classes
-      classes = GetClassesStudentRelation(StudentID)
-      tabel()
+      title = "Conformation"
+      message = "Are you sure you want to delete the class"
+      icon = "question"
+      conformation = CTkMessagebox(
+        title = title,
+        message = message,
+        icon = icon,
+        option_1 = "yes",
+        option_2 = "cancel" 
+      )
+
+      if conformation.get() == "yes":
+        RemoveClassesStudentRelation(rid)
+        nonlocal classes
+        classes = GetClassesStudentRelation(StudentID)
+        tabel()
 
     def tabel():
       for widget in pop_window.winfo_children():

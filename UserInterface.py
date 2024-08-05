@@ -30,9 +30,9 @@ class UserInterface():
 
       StudentsButton = customtkinter.CTkButton(
         navbar,
-        corner_radius=0,
-        command=lambda: self.showPage("Students"),
-        text="Students"
+        corner_radius = 0,
+        command = lambda: self.showPage("Students"),
+        text = "Students"
       )
       StudentsButton.pack(side=customtkinter.LEFT)
 
@@ -52,13 +52,13 @@ class UserInterface():
       )
       CoursesButton.pack(side=customtkinter.LEFT)
 
-      # AttendanceButton = customtkinter.CTkButton(
-      #   navbar,
-      #   corner_radius=0,
-      #   command=lambda: self.showPage("Attendance"),
-      #   text="Attendance"
-      # )
-      # AttendanceButton.pack(side=customtkinter.LEFT)
+      AttendanceButton = customtkinter.CTkButton(
+        navbar,
+        corner_radius=0,
+        command=lambda: self.showPage("Attendance"),
+        text="Attendance"
+      )
+      AttendanceButton.pack(side=customtkinter.LEFT)
 
       UsersButton = customtkinter.CTkButton(
         navbar,
@@ -145,14 +145,10 @@ class UserInterface():
       height= self.window.winfo_screenheight()
       self.window.geometry("%dx%d" % (width, height))
 
-      # self.window.after(
-      #   100,
-      #   lambda: self.window.attributes('-alpha', 0.85)
-      # )
-
       self.window.protocol("WM_DELETE_WINDOW", self.onClosing)
 
-      self.window.title("TimeWizeAI Admin")
+      self.window.title("TrueFace Admin")
+      self.window.iconbitmap("logo.ico")
 
       self.Navbar(self.window)
       self.createPage(self.window, "Students")
@@ -172,3 +168,6 @@ class UserInterface():
       print(ExceptionObject)
     except KeyboardInterrupt:
       pass
+
+if __name__ == "__main__":
+  UserInterface().startTheProgram()

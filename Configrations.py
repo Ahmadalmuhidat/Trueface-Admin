@@ -1,6 +1,5 @@
 import sys
 import os
-import json
 
 class Configrations:
   def __init__(self) -> None:

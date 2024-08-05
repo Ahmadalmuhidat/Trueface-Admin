@@ -14,8 +14,8 @@ class DatabaseManager(Configrations):
 
   def __init__(self) -> None:
     try:
-      self.BaseURL = "https://timewizeai-api.azurewebsites.net"
-      # self.BaseURL = "http://192.168.1.112:8000"
+      # self.BaseURL = "https://timewizeai-api.azurewebsites.net"
+      self.BaseURL = "http://192.168.1.112:8000"
       self.Students = []
       self.Attendance = []
       self.Classes = []
@@ -72,14 +72,15 @@ class DatabaseManager(Configrations):
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        title = "Relation has been Deleted"
-        message = "Class has been removed successfully"
-        icon = "check"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )
+        if response.get("data"):
+          title = "Relation has been deleted"
+          message = "Class has been removed successfully"
+          icon = "check"
+          CTkMessagebox(
+            title = title,
+            message = message,
+            icon = icon
+          )
       else:
         title = "Error"
         message = response.get("error")
@@ -123,10 +124,7 @@ class DatabaseManager(Configrations):
       print(ExceptionObject)
       pass
 
-  def RemoveUser(
-      self,
-      UserID,
-    ):
+  def RemoveUser(self, UserID):
     try:
       data = {
         "UserID": UserID,
@@ -309,13 +307,13 @@ class DatabaseManager(Configrations):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
   
-  def SearchClasse(self, term):
+  def SearchClass(self, term):
     try:
       data = {
-        "term": term
+        "ClassID": term
       }
       response = requests.get(
-        self.BaseURL + "/search_classe",
+        self.BaseURL + "/search_class",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -339,19 +337,27 @@ class DatabaseManager(Configrations):
       print(ExceptionObject)
       pass
 
-  def RemoveClasse(self, term):
+  def RemoveClass(self, term):
     try:
       data = {
-        "term": term
+        "ClassID": term
       }
       response = requests.post(
-        self.BaseURL + "/remove_classe",
+        self.BaseURL + "/remove_class",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        return response.get("data")
+        if response.get("data"):
+          title = "Success"
+          message = "Class has been deleted"
+          icon = "check"
+          CTkMessagebox(
+            title = title,
+            message = message,
+            icon = icon
+          )
       else:
         title = "Error"
         message = response.get("error")
@@ -372,7 +378,7 @@ class DatabaseManager(Configrations):
   def SearchUsers(self, term):
     try:
       data = {
-        "term": term
+        "UserID": term
       }
 
       response = requests.get(
@@ -403,7 +409,7 @@ class DatabaseManager(Configrations):
   def SearchCourses(self, term):
     try:
       data = {
-        "term": term
+        "CourseID": term
       }
       response = requests.get(
         self.BaseURL + "/search_courses",
@@ -430,10 +436,10 @@ class DatabaseManager(Configrations):
       print(ExceptionObject)
       pass
 
-  def DeleteCourses(self, term):
+  def RemoveCourse(self, term):
     try:
       data = {
-        "term": term
+        "CourseID": term
       }
       response = requests.post(
         self.BaseURL + "/remove_course",
@@ -442,7 +448,15 @@ class DatabaseManager(Configrations):
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        return response.get("data")
+        if response.get("data"):
+          title = "Success"
+          message = "Course has been deleted"
+          icon = "check"
+          CTkMessagebox(
+            title = title,
+            message = message if message else "Something went wrong while removing the course",
+            icon = icon
+          )
       else:
         title = "Error"
         message = response.get("error")
@@ -501,18 +515,52 @@ class DatabaseManager(Configrations):
       ).content
       response = json.loads(response.decode('utf-8'))
 
+      if response.get("status_code") != 200:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        WarningMessage = CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while checking license status",
+          icon = icon,
+          option_1 = "ok"
+        )
+
+        if WarningMessage.get() == "ok":
+          sys.exit(0)
+        else:
+          sys.exit(0)
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+      pass
+
+  def GetAttendanceByDate(self, ClassID, Date):
+    try:
+      data = {
+        "ClassID": ClassID,
+        "Date": Date
+      }
+      response = requests.get(
+        self.BaseURL + "/get_attendance_by_date",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
       if response.get("status_code") == 200:
-        pass
+        self.Attendance = response.get("data")
       else:
         title = "Error"
-        message = response.get("Error")
+        message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message if message else "Something went wrong while checking license status",
+          message = message if message else "Something went wrong while getting the attendance",
           icon = icon
         )
-        sys.exit(0)
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -627,7 +675,7 @@ class DatabaseManager(Configrations):
 
   def InsertClass(
       self,
-      ClasseID,
+      ClassID,
       subject,
       CatalogNBR,
       AcademicCareer,
@@ -643,7 +691,7 @@ class DatabaseManager(Configrations):
     ):
     try:
       data = {
-        "ClasseID":ClasseID ,
+        "ClassID":ClassID ,
         "subject": subject,
         "CatalogNBR": CatalogNBR,
         "AcademicCareer": AcademicCareer,
@@ -702,14 +750,13 @@ class DatabaseManager(Configrations):
 
   def InsertStudent(self, **data):
     try:
-      files = {'FaceEncoding': open(data["ImagePath"], 'rb')}
+      files = {'StudentImage': open(data["ImagePath"], 'rb')}
       data = {
         "StudentID": data["StudentID"],
         "FirstName": data["FirstName"],
         "MiddleName": data["MiddleName"],
         "LastName": data["LastName"],
-        "Gender": data["Gender"],
-        "StudentImage":  open(data["ImagePath"], 'rb'),
+        "Gender": data["Gender"]
       }
 
       response = requests.post(
@@ -741,7 +788,7 @@ class DatabaseManager(Configrations):
   def RemoveStudent(self, term):
     try:
       data = {
-        "term": term
+        "StudentID": term
       }
       response = requests.post(
         self.BaseURL + "/remove_student", 
@@ -750,7 +797,15 @@ class DatabaseManager(Configrations):
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        return response.get("data")
+        if response.get("data"):
+          title = "Relation has been deleted"
+          message = "Class has been removed successfully"
+          icon = "check"
+          CTkMessagebox(
+            title = title,
+            message = message,
+            icon = icon
+          )
       else:
         title = "Error"
         message = response.get("error")
@@ -795,7 +850,7 @@ class DatabaseManager(Configrations):
   def SearchStudent(self, term):
     try:
       data = {
-        "term": str(term)
+        "StudentID": str(term)
       }
       response = requests.get(
         self.BaseURL + "/search_student",
