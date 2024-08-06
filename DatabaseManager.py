@@ -66,7 +66,7 @@ class DatabaseManager(Configrations):
         "RelationID": RelationID
       }
       response = requests.post(
-        self.BaseURL + "/remove_classes_student_relation",
+        self.BaseURL + "/remove_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
