@@ -73,7 +73,7 @@ class DatabaseManager(Configrations):
 
       if response.get("status_code") == 200:
         if response.get("data"):
-          title = "Relation has been deleted"
+          title = "Class has been removed"
           message = "Class has been removed successfully"
           icon = "check"
           CTkMessagebox(
@@ -88,6 +88,44 @@ class DatabaseManager(Configrations):
         CTkMessagebox(
           title = title,
           message = message if message else "Something went wrong while removing the class",
+          icon = icon
+        )
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+      pass
+
+  def ClearClassesStudentRelation(self, StudentID):
+    try:
+      data = {
+        "StudentID": StudentID
+      }
+      response = requests.post(
+        self.BaseURL + "/clear_class_student_relation",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        if response.get("data"):
+          title = "Classes has been cleared"
+          message = "Class has been cleared successfully"
+          icon = "check"
+          CTkMessagebox(
+            title = title,
+            message = message,
+            icon = icon
+          )
+      else:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while clearing the classes",
           icon = icon
         )
 

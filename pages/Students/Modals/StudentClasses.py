@@ -93,7 +93,8 @@ def displayClassesPage(
   pop_window,
   StudentID,
   GetClassesStudentRelation,
-  RemoveClassesStudentRelation
+  RemoveClassesStudentRelation,
+  ClearClassesStudentRelation
 ):
   try:
     for widget in pop_window.winfo_children():
@@ -110,6 +111,28 @@ def displayClassesPage(
       "Day"
     ]
 
+    SearchBarFrame = customtkinter.CTkFrame(
+      pop_window,
+      bg_color="transparent"
+    )
+    SearchBarFrame.pack(
+      fill="x",
+      expand=False
+    )
+
+    SearchButton = customtkinter.CTkButton(
+      SearchBarFrame,
+      command=lambda: ClearClassesStudentRelation(StudentID),
+      text="Clear"
+    )
+    SearchButton.grid(
+      row=0,
+      column=0,
+      sticky="nsew",
+      pady=10,
+      padx=5
+    )
+    
     ClassessTableFrame = customtkinter.CTkScrollableFrame(pop_window)
     ClassessTableFrame.pack(
       fill = "both",
@@ -226,7 +249,8 @@ def StudentClassesPopWindow(
   ClassesForSelection,
   insertClassStudentRelation,
   GetClassesStudentRelation,
-  RemoveClassesStudentRelation
+  RemoveClassesStudentRelation,
+  ClearClassesStudentRelation
 ):
   try:
     PopWindow = customtkinter.CTkToplevel()
@@ -262,7 +286,8 @@ def StudentClassesPopWindow(
           PopWindow,
           StudentID,
           GetClassesStudentRelation,
-          RemoveClassesStudentRelation
+          RemoveClassesStudentRelation,
+          ClearClassesStudentRelation
         )
     )
     ClassesButton.pack(side=customtkinter.LEFT)

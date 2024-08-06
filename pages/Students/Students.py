@@ -115,7 +115,8 @@ class Students(DatabaseManager):
               self.ClassesForSelection,
               self.InsertClassStudentRelation,
               self.GetClassesStudentRelation,
-              self.RemoveClassesStudentRelation
+              self.RemoveClassesStudentRelation,
+              self.ClearClassesStudentRelation
             )
           )
           ProfileButton.grid(
