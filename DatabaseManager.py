@@ -30,6 +30,40 @@ class DatabaseManager(Configrations):
       print(ExceptionObject)
       pass
 
+  def CheckLicenseStatus(self):
+    try:
+      data = {
+        "License": self.ActivationKey
+      }
+      response = requests.get(
+        "https://trueface-license-api-cqh8fphkcccthfe7.uaenorth-01.azurewebsites.net/check_license",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") != 200:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        WarningMessage = CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while checking license status",
+          icon = icon,
+          option_1 = "ok"
+        )
+
+        if WarningMessage.get() == "ok":
+          sys.exit(0)
+        else:
+          sys.exit(0)
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+      pass
+
   def GetClassesStudentRelation(self, StudentID):
     try:
       data = {
@@ -534,40 +568,6 @@ class DatabaseManager(Configrations):
           message = message if message else "Something went wrong while checking duplicated IDs",
           icon = icon
         )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-  
-  def CheckLicenseStatus(self):
-    try:
-      data = {
-        "License": self.ActivationKey
-      }
-      response = requests.get(
-        "https://timewizeai-license-api.azurewebsites.net/check_license",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") != 200:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        WarningMessage = CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while checking license status",
-          icon = icon,
-          option_1 = "ok"
-        )
-
-        if WarningMessage.get() == "ok":
-          sys.exit(0)
-        else:
-          sys.exit(0)
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
