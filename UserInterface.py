@@ -140,15 +140,13 @@ class UserInterface():
       customtkinter.set_appearance_mode("dark")
 
       self.window = customtkinter.CTk()
-
       width= self.window.winfo_screenwidth()
       height= self.window.winfo_screenheight()
       self.window.geometry("%dx%d" % (width, height))
-
-      self.window.protocol("WM_DELETE_WINDOW", self.onClosing)
-
       self.window.title("TrueFace Admin")
       self.window.iconbitmap("logo.ico")
+
+      self.window.protocol("WM_DELETE_WINDOW", self.onClosing)
 
       self.Navbar(self.window)
       self.createPage(self.window, "Students")

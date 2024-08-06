@@ -18,7 +18,6 @@ class Attendance(DatabaseManager):
         "First Name",
         "Middle Name",
         "Last Name",
-        "Class Subject",
         "Attendance Time"
       ]
 
@@ -37,8 +36,8 @@ class Attendance(DatabaseManager):
   def parseTimedelta(self, time):
     hours, minutes = map(int, time.split(':'))
     return timedelta(
-      hours=hours,
-      minutes=minutes
+      hours = hours,
+      minutes = minutes
     )
 
   def displayAttendanceTable(self):
@@ -47,20 +46,18 @@ class Attendance(DatabaseManager):
         label.destroy()
 
       if len(self.Attendance) > 0:
-        for row, Attendance in enumerate(self.Attendance, start=1):
+        for row, attendance in enumerate(self.Attendance, start = 1):
           StudentID, \
           StudentFirstName, \
           StudentMiddleName, \
           StudentLastName, \
-          ClassSubjectArea, \
-          AttendanceTime = Attendance
+          AttendanceTime = attendance
 
           AttendanceData = [
             StudentID,
             StudentFirstName,
             StudentMiddleName,
             StudentLastName,
-            ClassSubjectArea,
             AttendanceTime
           ]
 
