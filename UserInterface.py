@@ -3,6 +3,8 @@ import sys
 import customtkinter
 import threading
 
+from Configrations import Configrations
+
 import pages.Students.Students as Students
 import pages.Classes.Classes as Classes
 import pages.Courses.Courses as Courses
@@ -13,6 +15,8 @@ class UserInterface():
   def __init__(self):
     try:
       super().__init__()
+
+      self.config = Configrations()
 
       self.CurrentPage = None
       self.pages = {}
@@ -144,7 +148,7 @@ class UserInterface():
       height= self.window.winfo_screenheight()
       self.window.geometry("%dx%d" % (width, height))
       self.window.title("TrueFace Admin")
-      self.window.iconbitmap("logo.ico")
+      # self.window.iconbitmap("logo.ico")
 
       self.window.protocol("WM_DELETE_WINDOW", self.onClosing)
 
@@ -168,4 +172,8 @@ class UserInterface():
       pass
 
 if __name__ == "__main__":
-  UserInterface().startTheProgram()
+  startup = UserInterface()
+  LicenseStatus = startup.config.CheckLicenseStatus()
+
+  if LicenseStatus:
+    UserInterface().startTheProgram()

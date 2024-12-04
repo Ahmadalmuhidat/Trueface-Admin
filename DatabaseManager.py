@@ -7,15 +7,15 @@ import face_recognition
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
 
-class DatabaseManager(Configrations):
+class DatabaseManager():
   cursor = None
   db = None
   Courses = []
 
   def __init__(self) -> None:
     try:
-      self.BaseURL = "https://trueface-demo-api-ddgsfvefgmfhb9aa.uaenorth-01.azurewebsites.net/"
-      # self.BaseURL = "http://192.168.1.112:8000"
+      self.config = Configrations()
+
       self.Students = []
       self.Attendance = []
       self.Classes = []
@@ -30,47 +30,13 @@ class DatabaseManager(Configrations):
       print(ExceptionObject)
       pass
 
-  def CheckLicenseStatus(self):
-    try:
-      data = {
-        "License": self.ActivationKey
-      }
-      response = requests.get(
-        "https://trueface-license-api-cqh8fphkcccthfe7.uaenorth-01.azurewebsites.net/check_license",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") != 200:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        WarningMessage = CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while checking license status",
-          icon = icon,
-          option_1 = "ok"
-        )
-
-        if WarningMessage.get() == "ok":
-          sys.exit(0)
-        else:
-          sys.exit(0)
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
   def GetClassesStudentRelation(self, StudentID):
     try:
       data = {
         "StudentID": StudentID
       }
       response = requests.get(
-        self.BaseURL + "/get_classes_student_relation",
+        self.config.getBaseURL() + "/get_classes_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -100,7 +66,7 @@ class DatabaseManager(Configrations):
         "RelationID": RelationID
       }
       response = requests.post(
-        self.BaseURL + "/remove_class_student_relation",
+        self.config.getBaseURL() + "/remove_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -138,7 +104,7 @@ class DatabaseManager(Configrations):
         "StudentID": StudentID
       }
       response = requests.post(
-        self.BaseURL + "/clear_class_student_relation",
+        self.config.getBaseURL() + "/clear_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -173,7 +139,7 @@ class DatabaseManager(Configrations):
   def GetClassesForSelection(self):
     try:
       response = requests.get(
-        self.BaseURL + "/get_classes_for_selection"
+        self.config.getBaseURL() + "/get_classes_for_selection"
       ).content
       response = json.loads(response.decode('utf-8'))
 
@@ -203,7 +169,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.post(
-        self.BaseURL + "/remove_user",
+        self.config.getBaseURL() + "/remove_user",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -248,7 +214,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.post(
-        self.BaseURL + "/insert_user",
+        self.config.getBaseURL() + "/insert_user",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -294,7 +260,7 @@ class DatabaseManager(Configrations):
         "ClassDay": ClassDay
       }
       response = requests.post(
-        self.BaseURL + "/insert_class_student_relation",
+        self.config.getBaseURL() + "/insert_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -327,7 +293,7 @@ class DatabaseManager(Configrations):
 
   def GetUsers(self):
     try:
-      response = requests.get(self.BaseURL + "/get_users").content
+      response = requests.get(self.config.getBaseURL() + "/get_users").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
@@ -356,7 +322,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.get(
-        self.BaseURL + "/check_user",
+        self.config.getBaseURL() + "/check_user",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -385,7 +351,7 @@ class DatabaseManager(Configrations):
         "ClassID": term
       }
       response = requests.get(
-        self.BaseURL + "/search_class",
+        self.config.getBaseURL() + "/search_class",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -415,7 +381,7 @@ class DatabaseManager(Configrations):
         "ClassID": term
       }
       response = requests.post(
-        self.BaseURL + "/remove_class",
+        self.config.getBaseURL() + "/remove_class",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -454,7 +420,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.get(
-        self.BaseURL + "/search_user",
+        self.config.getBaseURL() + "/search_user",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -484,7 +450,7 @@ class DatabaseManager(Configrations):
         "CourseID": term
       }
       response = requests.get(
-        self.BaseURL + "/search_courses",
+        self.config.getBaseURL() + "/search_courses",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -514,7 +480,7 @@ class DatabaseManager(Configrations):
         "CourseID": term
       }
       response = requests.post(
-        self.BaseURL + "/remove_course",
+        self.config.getBaseURL() + "/remove_course",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -552,7 +518,7 @@ class DatabaseManager(Configrations):
         "StudentID": id
       }
       response = requests.get(
-        self.BaseURL + "/check_duplicated_id",
+        self.config.getBaseURL() + "/check_duplicated_id",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -583,7 +549,7 @@ class DatabaseManager(Configrations):
         "Date": Date
       }
       response = requests.get(
-        self.BaseURL + "/get_attendance_by_date",
+        self.config.getBaseURL() + "/get_attendance_by_date",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -609,7 +575,7 @@ class DatabaseManager(Configrations):
 
   def GetClasses(self):
     try:
-      response = requests.get(self.BaseURL + "/get_classes").content
+      response = requests.get(self.config.getBaseURL() + "/get_classes").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
@@ -633,7 +599,7 @@ class DatabaseManager(Configrations):
 
   def GetCourses(self):
     try:
-      response = requests.get(self.BaseURL + "/get_courses").content
+      response = requests.get(self.config.getBaseURL() + "/get_courses").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
@@ -687,7 +653,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.post(
-        self.BaseURL + "/insert_course",
+        self.config.getBaseURL() + "/insert_course",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -745,7 +711,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.post(
-        self.BaseURL + "/insert_class",
+        self.config.getBaseURL() + "/insert_class",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -798,7 +764,7 @@ class DatabaseManager(Configrations):
       }
 
       response = requests.post(
-        self.BaseURL + "/insert_student",
+        self.config.getBaseURL() + "/insert_student",
         params = data,
         files = files
       ).content
@@ -829,7 +795,7 @@ class DatabaseManager(Configrations):
         "StudentID": term
       }
       response = requests.post(
-        self.BaseURL + "/remove_student", 
+        self.config.getBaseURL() + "/remove_student", 
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -863,7 +829,7 @@ class DatabaseManager(Configrations):
 
   def GetStudents(self):
     try:
-      response = requests.get(self.BaseURL + "/get_all_students").content
+      response = requests.get(self.config.getBaseURL() + "/get_all_students").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
@@ -891,7 +857,7 @@ class DatabaseManager(Configrations):
         "StudentID": str(term)
       }
       response = requests.get(
-        self.BaseURL + "/search_student",
+        self.config.getBaseURL() + "/search_student",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))

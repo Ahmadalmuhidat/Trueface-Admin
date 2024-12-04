@@ -23,8 +23,6 @@ class Students(DatabaseManager):
         "Create Date",
       ]
 
-      self.getSettings()
-      self.CheckLicenseStatus()
       self.GetStudents()
       self.GetClassesForSelection()
 
