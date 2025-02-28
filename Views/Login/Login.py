@@ -2,7 +2,7 @@ import sys
 import os
 import customtkinter
 
-from UserInterface import UserInterface
+from main import Main
 from DatabaseManager import DatabaseManager
 
 class Login(DatabaseManager):
@@ -24,7 +24,7 @@ class Login(DatabaseManager):
     if result:
       self.token = result
       self.window.destroy()
-      UserInterface().startTheProgram()
+      Main().startTheProgram()
 
   def create(self):
     try:
@@ -106,6 +106,3 @@ class Login(DatabaseManager):
       FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
-
-if __name__ ==  "__main__":
-  login = Login().create()

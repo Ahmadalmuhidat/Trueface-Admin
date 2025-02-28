@@ -5,13 +5,13 @@ import threading
 
 from Configrations import Configrations
 
-import pages.Students.Students as Students
-import pages.Classes.Classes as Classes
-import pages.Courses.Courses as Courses
-import pages.Attendance.Attendance as Attendance
-import pages.Users.Users as Users
+import Views.Students.Students as Students
+import Views.Classes.Classes as Classes
+import Views.Courses.Courses as Courses
+import Views.Users.Users as Users
+import Views.Login.Login as Login
 
-class UserInterface():
+class Main():
   def __init__(self):
     try:
       super().__init__()
@@ -56,14 +56,6 @@ class UserInterface():
       )
       CoursesButton.pack(side=customtkinter.LEFT)
 
-      AttendanceButton = customtkinter.CTkButton(
-        navbar,
-        corner_radius=0,
-        command=lambda: self.showPage("Attendance"),
-        text="Attendance"
-      )
-      AttendanceButton.pack(side=customtkinter.LEFT)
-
       UsersButton = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
@@ -101,15 +93,13 @@ class UserInterface():
       self.pages[name] = page
 
       if name == "Students":
-        Students.Students().create(page)
+        Students.Students().LunchGUI(page)
       elif name == "Classes":
-        Classes.Classes().create(page)
+        Classes.Classes().LunchGUI(page)
       elif name == "Courses":
-        Courses.Courses().create(page)
-      elif name == "Attendance":
-        Attendance.Attendance().create(page)
+        Courses.Courses().LunchGUI(page)
       elif name == "Users":
-        Users.Users().create(page)
+        Users.Users().LunchGUI(page)
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -156,7 +146,6 @@ class UserInterface():
       self.createPage(self.window, "Students")
       self.createPage(self.window, "Classes")
       self.createPage(self.window, "Courses")
-      self.createPage(self.window, "Attendance")
       self.createPage(self.window, "Users")
 
       self.showPage("Students")
@@ -172,8 +161,5 @@ class UserInterface():
       pass
 
 if __name__ == "__main__":
-  startup = UserInterface()
-  LicenseStatus = startup.config.CheckLicenseStatus()
-
-  if LicenseStatus:
-    UserInterface().startTheProgram()
+  Main().startTheProgram()
+  # login = Login.Login().create()

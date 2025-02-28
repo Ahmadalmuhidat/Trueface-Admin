@@ -5,7 +5,7 @@ import uuid
 
 from CTkMessagebox import CTkMessagebox
 
-def AddClassPage(
+def AddClassInputWindow(
   PopWindow,
   ClassesForSelection,
   StudentID,
@@ -269,7 +269,7 @@ def StudentClassesPopWindow(
       Navbar,
       corner_radius=0,
       text="Add Class",
-      command=lambda: AddClassPage(
+      command=lambda: AddClassInputWindow(
         PopWindow,
         ClassesForSelection,
         StudentID,
@@ -292,7 +292,7 @@ def StudentClassesPopWindow(
     )
     ClassesButton.pack(side=customtkinter.LEFT)
 
-    AddClassPage(
+    AddClassInputWindow(
       PopWindow,
       ClassesForSelection,
       StudentID,

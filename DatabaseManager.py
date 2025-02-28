@@ -2,10 +2,10 @@ import sys
 import os
 import json
 import requests
-import face_recognition
 
 from Configrations import Configrations
 from CTkMessagebox import CTkMessagebox
+from Models import Course, Student, Class, User
 
 class DatabaseManager():
   cursor = None
@@ -16,11 +16,10 @@ class DatabaseManager():
     try:
       self.config = Configrations()
 
+      self.Users = []
       self.Students = []
-      self.Attendance = []
       self.Classes = []
       self.ClassesForSelection = []
-      self.Users = []
       self.token = ""
 
     except Exception as e:
@@ -30,13 +29,114 @@ class DatabaseManager():
       print(ExceptionObject)
       pass
 
+  ##########
+  # Users
+  ##########
+
+  def SearchUser(self, term):
+    try:
+      data = {
+        "UserID": term
+      }
+
+      response = requests.get(
+        self.config.getBaseURL() + "/admin/search_user",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        self.Users = response.get("data")
+      else:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while searching in users",
+          icon = icon
+        )
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+      pass
+
+  def GetUsers(self):
+    try:
+      response = requests.get(self.config.getBaseURL() + "/admin/get_users").content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        self.Users = [
+          User.User(
+            data['UserID'],
+            data['UserName'],
+            data['UserEmail'],
+            data['UserRole'], 
+          ) for data in response.get("data")
+        ]
+      else:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while getting the users",
+          icon = icon
+        )
+
+    except Exception as e: 
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+
+  # remove later
+  def CheckUser(self, email, password):
+    try:
+      data = {
+        "email": email,
+        "password": password
+      }
+
+      response = requests.get(
+        self.config.getBaseURL() + "/admin/check_user",
+        params = data
+      ).content
+      response = json.loads(response.decode('utf-8'))
+
+      if response.get("status_code") == 200:
+        return response.get("data")
+      else:
+        title = "Error"
+        message = response.get("error")
+        icon = "cancel"
+        CTkMessagebox(
+          title = title,
+          message = message if message else "Something went wrong while checking user info",
+          icon = icon
+        )
+
+    except Exception as e: 
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+
+  ##############################
+  # Classes Student Relation
+  ##############################
+
   def GetClassesStudentRelation(self, StudentID):
     try:
       data = {
         "StudentID": StudentID
       }
       response = requests.get(
-        self.config.getBaseURL() + "/get_classes_student_relation",
+        self.config.getBaseURL() + "/admin/get_classes_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -66,7 +166,7 @@ class DatabaseManager():
         "RelationID": RelationID
       }
       response = requests.post(
-        self.config.getBaseURL() + "/remove_class_student_relation",
+        self.config.getBaseURL() + "/admin/remove_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -104,7 +204,7 @@ class DatabaseManager():
         "StudentID": StudentID
       }
       response = requests.post(
-        self.config.getBaseURL() + "/clear_class_student_relation",
+        self.config.getBaseURL() + "/admin/clear_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -139,7 +239,7 @@ class DatabaseManager():
   def GetClassesForSelection(self):
     try:
       response = requests.get(
-        self.config.getBaseURL() + "/get_classes_for_selection"
+        self.config.getBaseURL() + "/admin/get_classes_for_selection"
       ).content
       response = json.loads(response.decode('utf-8'))
 
@@ -152,89 +252,6 @@ class DatabaseManager():
         CTkMessagebox(
           title = title,
           message = message if message else "Something went wrong while getting classes",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def RemoveUser(self, UserID):
-    try:
-      data = {
-        "UserID": UserID,
-      }
-
-      response = requests.post(
-        self.config.getBaseURL() + "/remove_user",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        title="Success"
-        message="User has been removed"
-        icon="check"
-        CTkMessagebox(title=title, message=message,icon=icon)
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while removing the user",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def InsertUser(
-      self,
-      UserID,
-      UserName,
-      UserEmail,
-      UserPassword,
-      UserRole
-    ):
-    try:
-      data = {
-        "UserID": UserID,
-        "UserName": UserName,
-        "UserEmail": UserEmail,
-        "UserPassword": UserPassword,
-        "UserRole": UserRole
-      }
-
-      response = requests.post(
-        self.config.getBaseURL() + "/insert_user",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        title="Success"
-        message="New user has been added"
-        icon="check"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while inserting the user",
           icon = icon
         )
 
@@ -260,7 +277,7 @@ class DatabaseManager():
         "ClassDay": ClassDay
       }
       response = requests.post(
-        self.config.getBaseURL() + "/insert_class_student_relation",
+        self.config.getBaseURL() + "/admin/insert_class_student_relation",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -291,67 +308,17 @@ class DatabaseManager():
       print(ExceptionObject)
       pass
 
-  def GetUsers(self):
-    try:
-      response = requests.get(self.config.getBaseURL() + "/get_users").content
-      response = json.loads(response.decode('utf-8'))
+  ##########
+  # Classes
+  ##########
 
-      if response.get("status_code") == 200:
-        self.Users = response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while getting the users",
-          icon = icon
-        )
-
-    except Exception as e: 
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-
-  def CheckUser(self, email, password):
-    try:
-      data = {
-        "email": email,
-        "password": password
-      }
-
-      response = requests.get(
-        self.config.getBaseURL() + "/check_user",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while checking user info",
-          icon = icon
-        )
-
-    except Exception as e: 
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-  
   def SearchClass(self, term):
     try:
       data = {
         "ClassID": term
       }
       response = requests.get(
-        self.config.getBaseURL() + "/search_class",
+        self.config.getBaseURL() + "/admin/search_class",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -375,34 +342,37 @@ class DatabaseManager():
       print(ExceptionObject)
       pass
 
-  def RemoveClass(self, term):
+  def GetClasses(self):
     try:
-      data = {
-        "ClassID": term
-      }
-      response = requests.post(
-        self.config.getBaseURL() + "/remove_class",
-        params = data
-      ).content
+      response = requests.get(self.config.getBaseURL() + "/admin/get_classes").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        if response.get("data"):
-          title = "Success"
-          message = "Class has been deleted"
-          icon = "check"
-          CTkMessagebox(
-            title = title,
-            message = message,
-            icon = icon
-          )
+        self.Classes =  [
+          Class.Class(
+            data['ClasseID'],
+            data['ClassSubjectArea'],
+            data['ClasseCatalogNBR'],
+            data['ClasseAcademicCareer'],
+            data['ClasseCourseID'], 
+            data['ClasseCourseOfferingNBR'], 
+            data['ClasseSessionStartTime'],
+            data['ClasseSessionEndTime'], 
+            data['ClasseSection'], 
+            data['ClasseComponent'], 
+            data['ClasseCampus'], 
+            data['ClasseInstructorID'], 
+            data['ClasseInstructorType'], 
+            data['CourseTitle'],
+          ) for data in response.get("data")
+        ]
       else:
         title = "Error"
         message = response.get("error")
         icon = "cancel"
         CTkMessagebox(
           title = title,
-          message = message if message else "Something went wrong while removing the class",
+          message = message if message else "Something went wrong while getting the classes",
           icon = icon
         )
 
@@ -412,37 +382,10 @@ class DatabaseManager():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
       pass
-
-  def SearchUsers(self, term):
-    try:
-      data = {
-        "UserID": term
-      }
-
-      response = requests.get(
-        self.config.getBaseURL() + "/search_user",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        self.Users = response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while searching in users",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
+  
+  ##########
+  # Course
+  ##########
 
   def SearchCourses(self, term):
     try:
@@ -450,13 +393,28 @@ class DatabaseManager():
         "CourseID": term
       }
       response = requests.get(
-        self.config.getBaseURL() + "/search_courses",
+        self.config.getBaseURL() + "/admin/search_courses",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        DatabaseManager.Courses = response.get("data")
+        DatabaseManager.Courses = [
+          Course(
+            data['CourseID'],
+            data['CourseTitle'],
+            data['CourseCredit'],
+            data['CourseMaximumUnits'], 
+            data['CourseLongCourseTitle'],
+            data['CourseOfferingNBR'],
+            data['CourseAcademicGroup'], 
+            data['CourseSubjectArea'],
+            data['CourseCatalogNBR'],
+            data['CourseCampus'], 
+            data['CourseAcademicOrganization'],
+            data['CourseComponent']
+          ) for data in response.get("data")
+        ]
       else:
         title = "Error"
         message = response.get("error")
@@ -474,136 +432,28 @@ class DatabaseManager():
       print(ExceptionObject)
       pass
 
-  def RemoveCourse(self, term):
-    try:
-      data = {
-        "CourseID": term
-      }
-      response = requests.post(
-        self.config.getBaseURL() + "/remove_course",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        if response.get("data"):
-          title = "Success"
-          message = "Course has been deleted"
-          icon = "check"
-          CTkMessagebox(
-            title = title,
-            message = message if message else "Something went wrong while removing the course",
-            icon = icon
-          )
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while removing the course",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def CheckDuplicatedID(self, id):
-    try:
-      data = {
-        "StudentID": id
-      }
-      response = requests.get(
-        self.config.getBaseURL() + "/check_duplicated_id",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while checking duplicated IDs",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def GetAttendanceByDate(self, ClassID, Date):
-    try:
-      data = {
-        "ClassID": ClassID,
-        "Date": Date
-      }
-      response = requests.get(
-        self.config.getBaseURL() + "/get_attendance_by_date",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        self.Attendance = response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while getting the attendance",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def GetClasses(self):
-    try:
-      response = requests.get(self.config.getBaseURL() + "/get_classes").content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        self.Classes = response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while getting the classes",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
   def GetCourses(self):
     try:
-      response = requests.get(self.config.getBaseURL() + "/get_courses").content
+      response = requests.get(self.config.getBaseURL() + "/admin/get_courses").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        DatabaseManager.Courses = response.get("data")
+        DatabaseManager.Courses = [
+          Course.Course(
+            data['CourseID'],
+            data['CourseTitle'],
+            data['CourseCredit'],
+            data['CourseMaximumUnits'], 
+            data['CourseLongCourseTitle'],
+            data['CourseOfferingNBR'],
+            data['CourseAcademicGroup'], 
+            data['CourseSubjectArea'],
+            data['CourseCatalogNBR'],
+            data['CourseCampus'], 
+            data['CourseAcademicOrganization'],
+            data['CourseComponent']
+          ) for data in response.get("data")
+        ]
       else:
         title = "Error"
         message = response.get("error")
@@ -620,220 +470,27 @@ class DatabaseManager():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
       pass  
-  
-  def InsertCourse(
-      self,
-      CourseID,
-      CourseTitle,
-      CourseCredit,
-      CourseMaximumUnits,
-      CourseLongCourseTitle,
-      CourseOfferingNBR,
-      CourseAcademicGroup,
-      CourseSubjectArea,
-      CourseCatalogNBR,
-      CourseCampus,
-      CourseAcademicOrganization,
-      CourseComponent
-      ):
-    try:
-      data = {
-        "ID": CourseID,
-        "title": CourseTitle,
-        "credit": CourseCredit,
-        "MaximumUnits": CourseMaximumUnits,
-        "LongCourseTitle": CourseLongCourseTitle,
-        "OfferingNBR": CourseOfferingNBR,
-        "AcademicGroup": CourseAcademicGroup,
-        "SubjectArea": CourseSubjectArea,
-        "CatalogNBR": CourseCatalogNBR,
-        "campus": CourseCampus,
-        "AcademicOrganization": CourseAcademicOrganization,
-        "component": CourseComponent
-      }
 
-      response = requests.post(
-        self.config.getBaseURL() + "/insert_course",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while inserting the course",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass 
-
-  def InsertClass(
-      self,
-      ClassID,
-      subject,
-      CatalogNBR,
-      AcademicCareer,
-      CourseID,
-      OfferingNBR,
-      StartTime,
-      EndTime,
-      section,
-      component,
-      campus,
-      InstructorID,
-      InstructorType
-    ):
-    try:
-      data = {
-        "ClassID":ClassID ,
-        "subject": subject,
-        "CatalogNBR": CatalogNBR,
-        "AcademicCareer": AcademicCareer,
-        "CourseID": CourseID,
-        "OfferingNBR": OfferingNBR,
-        "StartTime": StartTime,
-        "EndTime": EndTime,
-        "section": section,
-        "component": component,
-        "campus": campus,
-        "instructorID": InstructorID,
-        "InstructorType": InstructorType
-      }
-
-      response = requests.post(
-        self.config.getBaseURL() + "/insert_class",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while inserting the class",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass 
-
-  def CheckFaceInImage(self, path):
-    try:
-      load_stored_image = face_recognition.load_image_file(path)
-      FaceFound = face_recognition.face_locations(load_stored_image)
-
-      if FaceFound:
-        return True
-      else:
-        return False
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def InsertStudent(self, **data):
-    try:
-      files = {'StudentImage': open(data["ImagePath"], 'rb')}
-      data = {
-        "StudentID": data["StudentID"],
-        "FirstName": data["FirstName"],
-        "MiddleName": data["MiddleName"],
-        "LastName": data["LastName"],
-        "Gender": data["Gender"]
-      }
-
-      response = requests.post(
-        self.config.getBaseURL() + "/insert_student",
-        params = data,
-        files = files
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while inserting the student",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
-  def RemoveStudent(self, term):
-    try:
-      data = {
-        "StudentID": term
-      }
-      response = requests.post(
-        self.config.getBaseURL() + "/remove_student", 
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        if response.get("data"):
-          title = "Relation has been deleted"
-          message = "Class has been removed successfully"
-          icon = "check"
-          CTkMessagebox(
-            title = title,
-            message = message,
-            icon = icon
-          )
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while removing the student",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
+  ##########
+  # Student
+  ##########
 
   def GetStudents(self):
     try:
-      response = requests.get(self.config.getBaseURL() + "/get_all_students").content
+      response = requests.get(self.config.getBaseURL() + "/admin/get_all_students").content
       response = json.loads(response.decode('utf-8'))
 
       if response.get("status_code") == 200:
-        self.Students = response.get("data")
+        self.Students = DatabaseManager.Courses = [
+          Student.Student(
+            data['StudentID'],
+            data['StudentFirstName'],
+            data['StudentMiddleName'],
+            data['StudentLastName'], 
+            data['StudentGender'],
+            data['StudentCreateDate']
+          ) for data in response.get("data")
+        ]
       else:
         title = "Error"
         message = response.get("error")
@@ -857,7 +514,7 @@ class DatabaseManager():
         "StudentID": str(term)
       }
       response = requests.get(
-        self.config.getBaseURL() + "/search_student",
+        self.config.getBaseURL() + "/admin/search_student",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))

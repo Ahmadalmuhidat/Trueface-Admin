@@ -2,8 +2,8 @@ import sys
 import os
 import customtkinter
 
+from Models import User
 from DatabaseManager import DatabaseManager
-from CTkMessagebox import CTkMessagebox
 
 class Users(DatabaseManager):
   def __init__(self):
@@ -26,77 +26,9 @@ class Users(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def ValidateUserData(
-      self,
-      UserID,
-      Name,
-      Email,
-      Password,
-      Role
-    ):
+  def SearchUser(self, term):
     try:
-      if not UserID:
-        title = "Missing Entry"
-        message = "please enter user ID"
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )  
-        return False
-      if not Name:
-        title = "Missing Entry"
-        message = "please enter user name"
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )  
-        return False
-      if not Email:
-        title = "Missing Entry"
-        message = "please enter user email"
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )  
-        return False
-      if not Password:
-        title = "Missing Entry"
-        message = "please enter user password"
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )  
-        return False
-      if not Role:
-        title = "Missing Entry"
-        message = "please enter user role"
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message,
-          icon = icon
-        )  
-        return False
-
-      return True
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-
-  def search(self, term):
-    try:
-      self.SearchUsers(term)
+      self.SearchUser(term)
       self.DisplayUsersTable()
 
     except Exception as e:
@@ -112,16 +44,11 @@ class Users(DatabaseManager):
 
       if len(self.Users) > 0:
         for row, User in enumerate(self.Users, start=1):
-          UsersID, \
-          UserName, \
-          UsesEmail, \
-          UserRole = User
-
           UsersData = [
-            UsersID,
-            UserName,
-            UsesEmail,
-            UserRole
+            User.ID,
+            User.name,
+            User.email,
+            User.role
           ]
 
           for col, data in enumerate(UsersData):
@@ -138,12 +65,11 @@ class Users(DatabaseManager):
             )
             self.UsersLabels.append(DataLabel)
 
-
             DeleteButton = customtkinter.CTkButton(
               self.UsersTableFrame,
                 text="Delete",
                 fg_color="red",
-                command=lambda uid = UsersID: self.DeleteUser(uid)
+                command= lambda: User.Remove(self.RefreshUsersTable)
               )
             DeleteButton.grid(
                 row=row,
@@ -164,7 +90,7 @@ class Users(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def refresh(self):
+  def RefreshUsersTable(self):
     try:
       self.GetUsers()
       self.DisplayUsersTable()
@@ -175,29 +101,6 @@ class Users(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
   
-  def DeleteUser(self, UserID):
-    try:
-      title = "Conformation"
-      message = "Are you sure you want to delete the user"
-      icon = "question"
-      conformation = CTkMessagebox(
-        title = title,
-        message = message,
-        icon = icon,
-        option_1 = "yes",
-        option_2 = "cancel" 
-      )
-
-      if conformation.get() == "yes":
-        self.RemoveUser(UserID)
-        self.refresh()
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)  
-  
   def SubmitNewUser(self):
     try:
       UserID = self.UserIDEntry.get()
@@ -206,38 +109,28 @@ class Users(DatabaseManager):
       UserPassword = self.UserPasswordEntry.get()
       UserRole = self.UserRoleEntry.get()
 
-      if self.ValidateUserData(
-        UserID,
-        UserName,
-        UserEmail,
-        UserPassword,
-        UserRole
-      ):
-        self.InsertUser(
-          UserID,
-          UserName,
-          UserEmail,
-          UserPassword,
-          UserRole
-        )
-        self.UserIDEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.UserFullNameEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.UserEmailEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.UserPasswordEntry.delete(
-          0,
-          customtkinter.END
-        )
+      NewUser = User.User(UserID, UserName, UserEmail, UserRole)
+      NewUser.ValidateUserData()
+      NewUser.Add()
+      
+      self.UserIDEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.UserFullNameEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.UserEmailEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.UserPasswordEntry.delete(
+        0,
+        customtkinter.END
+      )
 
-        self.refresh()
+      self.RefreshUsersTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -245,7 +138,7 @@ class Users(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def AddUser(self):
+  def AddUserInputWindow(self):
     try:
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
@@ -387,7 +280,7 @@ class Users(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def create(self, parent):
+  def LunchGUI(self, parent):
     try:
       SearchBarFrame = customtkinter.CTkFrame(
         parent,
@@ -401,7 +294,7 @@ class Users(DatabaseManager):
       SearchButton = customtkinter.CTkButton(
         SearchBarFrame,
         text="Search",
-        command=lambda: self.search(SearchBar.get())
+        command=lambda: self.SearchUser(SearchBar.get())
       )
       SearchButton.grid(
         row=0,
@@ -426,7 +319,7 @@ class Users(DatabaseManager):
       RefreshButton = customtkinter.CTkButton(
         SearchBarFrame,
         text="Refresh",
-        command=self.refresh,
+        command=self.RefreshUsersTable,
         width=100
       )
       RefreshButton.grid(
@@ -440,7 +333,7 @@ class Users(DatabaseManager):
       AddUsersButton = customtkinter.CTkButton(
         SearchBarFrame,
         text="Add Users",
-        command=self.AddUser,
+        command=self.AddUserInputWindow,
         width=100
       )
       AddUsersButton.grid(

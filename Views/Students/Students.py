@@ -5,8 +5,8 @@ import tkinter
 
 from PIL import Image
 from DatabaseManager import DatabaseManager
-from CTkMessagebox import CTkMessagebox
 from .Modals import StudentClasses
+from Models import Student
 
 class Students(DatabaseManager):
   def __init__(self):
@@ -43,51 +43,20 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def DeleteStudent(self, term):
-    try:
-      title = "Conformation"
-      message = "Are you sure you want to delete the student"
-      icon = "question"
-      conformation = CTkMessagebox(
-        title = title,
-        message = message,
-        icon = icon,
-        option_1 = "yes",
-        option_2 = "cancel" 
-      )
-
-      if conformation.get() == "yes":
-        self.RemoveStudent(term)
-        self.GetStudents()
-        self.DisplayStudentsTable()
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-
   def DisplayStudentsTable(self):
     try:
       for label in self.StudentsLabels:
         label.destroy()
 
       if len(self.Students) > 0:
-        for row, Students in enumerate(self.Students, start=1):
-          StudentID, \
-          StudentFirstName, \
-          StudentMiddleName, \
-          StudentLastName, \
-          StudentGender, \
-          StudentCreateDate = Students
-
+        for row, Student in enumerate(self.Students, start=1):
           Students_data = [
-            StudentID,
-            StudentFirstName,
-            StudentMiddleName,
-            StudentLastName,
-            StudentGender,
-            StudentCreateDate
+            Student.ID,
+            Student.first_name,
+            Student.middle_name,
+            Student.last_name,
+            Student.gender,
+            Student.create_date
           ]
 
           for col, data in enumerate(Students_data):
@@ -108,7 +77,7 @@ class Students(DatabaseManager):
           ProfileButton = customtkinter.CTkButton(
             self.StudentsTableFrame,
             text="Profile",
-            command=lambda StudentID=StudentID: StudentClasses.StudentClassesPopWindow(
+            command=lambda StudentID=Student.ID: StudentClasses.StudentClassesPopWindow(
               StudentID,
               self.ClassesForSelection,
               self.InsertClassStudentRelation,
@@ -130,14 +99,14 @@ class Students(DatabaseManager):
             self.StudentsTableFrame,
               text = "Delete",
               fg_color = "red",
-              command = lambda sid = StudentID: self.DeleteStudent(sid)
+              command = lambda: Student.Remove(self.RefreshStudentsTable)
             )
           DeleteButton.grid(
-              row = row,
-              column = 7,
-              sticky = "nsew",
-              padx = 10,
-              pady= 5
+            row = row,
+            column = 7,
+            sticky = "nsew",
+            padx = 10,
+            pady= 5
           )
           self.StudentsLabels.append(DeleteButton)
 
@@ -149,7 +118,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def refresh(self):
+  def RefreshStudentsTable(self):
     try:
       self.GetStudents()
       self.GetClassesForSelection()
@@ -168,7 +137,7 @@ class Students(DatabaseManager):
       if FilePath:
         image = Image.open(FilePath)
         image.thumbnail((150, 150))
-        self.ImagePath = FilePath
+        self.StudentImage = FilePath
         self.StudentImageEntry.delete(0, customtkinter.END)
         self.StudentImageEntry.insert(0, FilePath)
 
@@ -178,133 +147,41 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def ValidateStudentsData(
-      self,
-      StudentID,
-      FirstName,
-      MiddleName,
-      LastName,
-      Gender,
-      ImagePath
-    ):
-    try:
-      if not StudentID:
-        title = "Missing Entry"
-        message = "please enter Students ID"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not FirstName:
-        title = "Missing Entry"
-        message = "please enter Students first name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not FirstName:
-        title = "Missing Entry"
-        message = "please enter Students first name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not MiddleName:
-        title = "Missing Entry"
-        message = "please enter Students middle name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not LastName:
-        title = "Missing Entry"
-        message = "please enter Students last name"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not Gender:
-        title = "Missing Entry"
-        message = "please enter Students Gender"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False 
-      elif not ImagePath:
-        title = "Missing Entry"
-        message = "please select Students image"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not os.path.exists(ImagePath):
-        title = "Inavlid Path"
-        message = "the selected path is not valid"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif not self.CheckFaceInImage(ImagePath):
-        title = "Face Not Found"
-        message = "the uploaded image does not contain face"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-      elif self.CheckDuplicatedID(StudentID):
-        title = "Duplicated ID"
-        message = "the entered id has been already assigned to another Student"
-        icon = "cancel"
-        CTkMessagebox(title=title, message=message, icon=icon)  
-        return False
-
-      return True
-
-    except Exception as e:
-        ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-        FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-        print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-        print(ExceptionObject)
-        pass
-
-  def SaveStudent(self):
+  def SubmitNewStudent(self):
     try:
       StudentID = self.StudentIDEntry.get()
       FirstName = self.StudentFirstNameEntry.get()
       MiddleName = self.StudentMiddleNameEntry.get()
       LastName = self.StudentLastNameEntry.get()
       Gender = self.StudentGenderEntry.get()
+      CreateDate = ""
 
-      if self.ValidateStudentsData(
-        StudentID,
-        FirstName,
-        MiddleName,
-        LastName,
-        Gender,
-        self.ImagePath
-      ):
-        self.InsertStudent(
-          StudentID = StudentID,
-          FirstName = FirstName,
-          MiddleName = MiddleName,
-          LastName = LastName,
-          Gender = Gender,
-          ImagePath =  self.ImagePath,
-        )
+      NewStudent = Student.Student(StudentID, FirstName, MiddleName, LastName, Gender, CreateDate, self.StudentImage)
+      NewStudent.ValidateStudentsData()
+      NewStudent.Add()
 
-        self.StudentIDEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.StudentFirstNameEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.StudentMiddleNameEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.StudentLastNameEntry.delete(
-          0,
-          customtkinter.END
-        )
-        self.StudentImageEntry.delete(
-          0,
-          customtkinter.END
-        )
+      self.StudentIDEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.StudentFirstNameEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.StudentMiddleNameEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.StudentLastNameEntry.delete(
+        0,
+        customtkinter.END
+      )
+      self.StudentImageEntry.delete(
+        0,
+        customtkinter.END
+      )
 
-        self.refresh()
+      self.RefreshStudentsTable()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -312,7 +189,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def AddStudent(self):
+  def AddStudentInputWindow(self):
     try:
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
@@ -460,7 +337,7 @@ class Students(DatabaseManager):
       SaveButton = customtkinter.CTkButton(
         self.PopWindow,
         text="Save Students",
-        command=self.SaveStudent,
+        command=self.SubmitNewStudent,
         width=350
       )
       SaveButton.grid(
@@ -477,7 +354,7 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def create(self, parent):
+  def LunchGUI(self, parent):
     try:
       SearchBarFrame = customtkinter.CTkFrame(
         parent,
@@ -515,7 +392,7 @@ class Students(DatabaseManager):
 
       RefreshButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=self.refresh,
+        command=self.RefreshStudentsTable,
         width=100,
         text="Refresh"
       )
@@ -529,7 +406,7 @@ class Students(DatabaseManager):
 
       AddStudentButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=self.AddStudent,
+        command=self.AddStudentInputWindow,
         width=100,
         text="Add Student"
       )
