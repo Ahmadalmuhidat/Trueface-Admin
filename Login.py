@@ -24,7 +24,7 @@ class Login(DatabaseManager):
     if result:
       self.token = result
       self.window.destroy()
-      Main().startTheProgram()
+      Main().StartTheProgram()
 
   def create(self):
     try:
