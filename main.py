@@ -94,11 +94,12 @@ class Main():
       customtkinter.set_appearance_mode("dark")
 
       self.window = customtkinter.CTk()
-      width= self.window.winfo_screenwidth()
-      height= self.window.winfo_screenheight()
+      width = self.window.winfo_screenwidth()
+      height = self.window.winfo_screenheight()
       self.window.geometry("%dx%d" % (width, height))
       self.window.title("TrueFace Admin")
       # self.window.iconbitmap("logo.ico")
+      self.window.protocol("WM_DELETE_WINDOW", self.OnClosing)
 
       self.window.protocol("WM_DELETE_WINDOW", self.WhenAppClose)
 
