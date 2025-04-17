@@ -3,13 +3,13 @@ import os
 import requests
 import json
 import face_recognition
+import app.config.configrations as Configrations
 
 from CTkMessagebox import CTkMessagebox
-import Configrations
 
 class Student:
-  def __init__(self, ID, first_name, middle_name, last_name, gender, create_date, picture):
-    self.ID = ID
+  def __init__(self, ID, first_name, middle_name, last_name, gender, create_date, picture = None):
+    self.student_id = ID
     self.first_name = first_name
     self.middle_name = middle_name
     self.last_name = last_name
@@ -19,87 +19,10 @@ class Student:
 
     self.config  = Configrations.Configrations()
 
-  def Add(self):
-    try:
-      data = {
-        "StudentID": self.ID,
-        "FirstName": self.first_name,
-        "MiddleName": self.middle_name,
-        "LastName": self.last_name,
-        "Gender": self.gender
-      }
-      files = {'StudentImage': open(self.picture, 'rb')}
-
-      response = requests.post(
-        self.config.getBaseURL() + "/admin/insert_student",
-        params = data,
-        files = files
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while inserting the student",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-  
-  def Remove(self, RefreshTableFunction: None):
-    try:
-      data = {
-        "StudentID": self.ID
-      }
-      response = requests.post(
-        self.config.getBaseURL() + "/admin/remove_student", 
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        if response.get("data"):
-          title = "Relation has been deleted"
-          message = "Class has been removed successfully"
-          icon = "check"
-          CTkMessagebox(
-            title = title,
-            message = message,
-            icon = icon
-          )
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while removing the student",
-          icon = icon
-        )
-
-      RefreshTableFunction()
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass
-
   def CheckDuplicatedID(self):
     try:
       data = {
-        "StudentID": self.ID
+        "student_id": self.student_id
       }
       response = requests.get(
         self.config.getBaseURL() + "/admin/check_duplicated_id",
@@ -145,7 +68,7 @@ class Student:
 
   def ValidateStudentsData(self):
     try:
-      if not self.ID:
+      if not self.student_id:
         title = "Missing Entry"
         message = "please enter Students ID"
         icon = "cancel"

@@ -4,11 +4,13 @@ import customtkinter
 import tkinter
 
 from PIL import Image
-from DatabaseManager import DatabaseManager
+from app.core.GlobalData import GlobalData
 from .Modals import StudentClasses
-from Models import Student
+from app.models import student
+from app.controllers.students import GetStudents, SearchStudent, AddStudent, RemoveStudent
+from app.controllers.classes import InsertClassStudentRelation, GetClassesForSelection, GetClassesStudentRelation, RemoveClassesStudentRelation, ClearClassesStudentRelation
 
-class Students(DatabaseManager):
+class Students():
   def __init__(self):
     try:
       super().__init__()
@@ -23,8 +25,8 @@ class Students(DatabaseManager):
         "Create Date",
       ]
 
-      self.GetStudents()
-      self.GetClassesForSelection()
+      GetStudents()
+      GetClassesForSelection()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -32,9 +34,88 @@ class Students(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def SearchStudents(self, term):
+  # def AddClassInputWindow(self, ID):
+  #   try:
+  #     class_id_title_map = {
+  #       f"{x[1]} {x[2]}-{x[3]}": x[0] for x in self.ClassesForSelection
+  #     }
+
+  #     for widget in self.PopWindow.winfo_children():
+  #       if widget not in (Navbar,):
+  #         widget.pack_forget()
+
+  #     ClassLabel = customtkinter.CTkLabel(
+  #       self.PopWindow,
+  #       text="Select Class:"
+  #     )
+  #     ClassLabel.pack(
+  #       padx=10,
+  #       pady=10
+  #     )
+
+  #     ClassEntry = customtkinter.CTkComboBox(
+  #       self.PopWindow,
+  #       values=[f"{x[1]} {x[2]}-{x[3]}" for x in self.ClassesForSelection],
+  #       width=350
+  #     )
+  #     ClassEntry.pack(
+  #       padx=10,
+  #       pady=10
+  #     )
+  #     ClassEntry.set("None")
+
+  #     DayLabel = customtkinter.CTkLabel(
+  #       self.PopWindow,
+  #       text="Select Day:"
+  #     )
+  #     DayLabel.pack(
+  #       padx=10,
+  #       pady=10
+  #     )
+
+  #     DayEntry = customtkinter.CTkComboBox(
+  #       self.PopWindow,
+  #       values=[
+  #         "Sunday",
+  #         "Monday",
+  #         "Tuesday",
+  #         "Wednesday",
+  #         "Thursday",
+  #         "Friday",
+  #         "Saturday"
+  #       ],
+  #       width=350
+  #     )
+  #     DayEntry.pack(
+  #       padx=10,
+  #       pady=10
+  #     )
+  #     DayEntry.set("None")
+
+  #     SaveButton = customtkinter.CTkButton(
+  #       self.PopWindow,
+  #       text="Save Class",
+  #       command=lambda: self.InsertClassStudentRelation(
+  #         str(uuid.uuid4()),
+  #         ID,
+  #         class_id_title_map[ClassEntry.get()],
+  #         DayEntry.get()
+  #       )
+  #     )
+  #     SaveButton.pack(
+  #       padx=10,
+  #       pady=5
+  #     )
+
+  #   except Exception as e:
+  #     ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+  #     FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+  #     print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+  #     print(ExceptionObject)
+
+  def search(self, term):
     try:
-      self.SearchStudent(term)
+      SearchStudent(term)
       self.DisplayStudentsTable()
 
     except Exception as e:
@@ -48,15 +129,15 @@ class Students(DatabaseManager):
       for label in self.StudentsLabels:
         label.destroy()
 
-      if len(self.Students) > 0:
-        for row, Student in enumerate(self.Students, start=1):
+      if len(GlobalData.students) > 0:
+        for row, student in enumerate(GlobalData.students, start=1):
           Students_data = [
-            Student.ID,
-            Student.first_name,
-            Student.middle_name,
-            Student.last_name,
-            Student.gender,
-            Student.create_date
+            student.student_id,
+            student.first_name,
+            student.middle_name,
+            student.last_name,
+            student.gender,
+            student.create_date
           ]
 
           for col, data in enumerate(Students_data):
@@ -77,14 +158,14 @@ class Students(DatabaseManager):
           ProfileButton = customtkinter.CTkButton(
             self.StudentsTableFrame,
             text="Profile",
-            command=lambda StudentID=Student.ID: StudentClasses.StudentClassesPopWindow(
-              StudentID,
-              self.ClassesForSelection,
-              self.InsertClassStudentRelation,
-              self.GetClassesStudentRelation,
-              self.RemoveClassesStudentRelation,
-              self.ClearClassesStudentRelation
-            )
+            # command=lambda ID=student.student_id: StudentClasses.StudentClassesPopWindow(
+            #   ID,
+            #   self.ClassesForSelection,
+            #   InsertClassStudentRelation,
+            #   GetClassesStudentRelation,
+            #   RemoveClassesStudentRelation,
+            #   ClearClassesStudentRelation
+            # )
           )
           ProfileButton.grid(
             row=row,
@@ -99,7 +180,7 @@ class Students(DatabaseManager):
             self.StudentsTableFrame,
               text = "Delete",
               fg_color = "red",
-              command = lambda: Student.Remove(self.RefreshStudentsTable)
+              command = lambda: RemoveStudent(student.student_id, self.RefreshStudentsTable)
             )
           DeleteButton.grid(
             row = row,
@@ -110,7 +191,7 @@ class Students(DatabaseManager):
           )
           self.StudentsLabels.append(DeleteButton)
 
-      self.ResultsCount.configure(text="Results: " + str(len(self.Students)))
+      self.ResultsCount.configure(text="Results: " + str(len(GlobalData.students)))
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -120,8 +201,8 @@ class Students(DatabaseManager):
 
   def RefreshStudentsTable(self):
     try:
-      self.GetStudents()
-      self.GetClassesForSelection()
+      GetStudents()
+      GetClassesForSelection()
       self.DisplayStudentsTable()
 
     except Exception as e:
@@ -149,16 +230,16 @@ class Students(DatabaseManager):
 
   def SubmitNewStudent(self):
     try:
-      StudentID = self.StudentIDEntry.get()
+      ID = self.StudentIDEntry.get()
       FirstName = self.StudentFirstNameEntry.get()
       MiddleName = self.StudentMiddleNameEntry.get()
       LastName = self.StudentLastNameEntry.get()
       Gender = self.StudentGenderEntry.get()
       CreateDate = ""
 
-      NewStudent = Student.Student(StudentID, FirstName, MiddleName, LastName, Gender, CreateDate, self.StudentImage)
+      NewStudent = student.Student(ID, FirstName, MiddleName, LastName, Gender, CreateDate, self.StudentImage)
       NewStudent.ValidateStudentsData()
-      NewStudent.Add()
+      AddStudent(NewStudent)
 
       self.StudentIDEntry.delete(
         0,
@@ -367,7 +448,7 @@ class Students(DatabaseManager):
 
       SearchButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=lambda: self.SearchStudents(SearchBar.get()),
+        command=lambda: self.search(SearchBar.get()),
         text="Search"
       )
       SearchButton.grid(

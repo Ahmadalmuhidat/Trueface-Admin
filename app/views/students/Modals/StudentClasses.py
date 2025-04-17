@@ -8,7 +8,7 @@ from CTkMessagebox import CTkMessagebox
 def AddClassInputWindow(
   PopWindow,
   ClassesForSelection,
-  StudentID,
+  ID,
   insertClassStudentRelation
 ):
   try:
@@ -73,7 +73,7 @@ def AddClassInputWindow(
       text="Save Class",
       command=lambda: insertClassStudentRelation(
         str(uuid.uuid4()),
-        StudentID,
+        ID,
         class_id_title_map[ClassEntry.get()],
         DayEntry.get()
       )
@@ -91,7 +91,7 @@ def AddClassInputWindow(
 
 def displayClassesPage(
   pop_window,
-  StudentID,
+  ID,
   GetClassesStudentRelation,
   RemoveClassesStudentRelation,
   ClearClassesStudentRelation
@@ -101,7 +101,7 @@ def displayClassesPage(
       if widget not in (Navbar,):
         widget.pack_forget()
 
-    classes = GetClassesStudentRelation(StudentID)
+    classes = GetClassesStudentRelation(ID)
     ClassessLabels = []
     headers = [
       "Classe ID",
@@ -122,7 +122,7 @@ def displayClassesPage(
 
     SearchButton = customtkinter.CTkButton(
       SearchBarFrame,
-      command=lambda: ClearClassesStudentRelation(StudentID),
+      command=lambda: ClearClassesStudentRelation(ID),
       text="Clear"
     )
     SearchButton.grid(
@@ -171,7 +171,7 @@ def displayClassesPage(
         if conformation.get() == "yes":
           RemoveClassesStudentRelation(rid)
           nonlocal classes
-          classes = GetClassesStudentRelation(StudentID)
+          classes = GetClassesStudentRelation(ID)
           DisplayTable()
 
       except Exception as e:
@@ -188,17 +188,17 @@ def displayClassesPage(
         if len(classes) > 0:
           for row, Class in enumerate(classes, start=1):
             RelationID, \
-            ClasseID, \
-            ClassSubjectArea, \
-            ClasseSessionStartTime, \
-            ClasseSessionEndTime, \
+            ID, \
+            SubjectArea, \
+            StartTime, \
+            EndTime, \
             ClassDay = Class          
 
             Classess_data = [
-              ClasseID,
-              ClassSubjectArea,
-              ClasseSessionStartTime,	
-              ClasseSessionEndTime,
+              ID,
+              SubjectArea,
+              StartTime,	
+              EndTime,
               ClassDay
             ]
 
@@ -245,7 +245,7 @@ def displayClassesPage(
     print(ExceptionObject)
 
 def StudentClassesPopWindow(
-  StudentID,
+  ID,
   ClassesForSelection,
   insertClassStudentRelation,
   GetClassesStudentRelation,
@@ -272,7 +272,7 @@ def StudentClassesPopWindow(
       command=lambda: AddClassInputWindow(
         PopWindow,
         ClassesForSelection,
-        StudentID,
+        ID,
         insertClassStudentRelation
       )
     )
@@ -284,7 +284,7 @@ def StudentClassesPopWindow(
         text = "Classes",
         command = lambda: displayClassesPage(
           PopWindow,
-          StudentID,
+          ID,
           GetClassesStudentRelation,
           RemoveClassesStudentRelation,
           ClearClassesStudentRelation
@@ -295,7 +295,7 @@ def StudentClassesPopWindow(
     AddClassInputWindow(
       PopWindow,
       ClassesForSelection,
-      StudentID,
+      ID,
       insertClassStudentRelation
     )
 

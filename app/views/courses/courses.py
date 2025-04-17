@@ -2,10 +2,11 @@ import sys
 import os
 import customtkinter
 
-from Models import Course
-from DatabaseManager import DatabaseManager
+from app.models import course
+from app.core.GlobalData import GlobalData
+from app.controllers.courses import GetCourses, SearchCourses, AddCourse, RemoveCourse
 
-class Courses(DatabaseManager):
+class Courses():
   def __init__(self):
     try:
       super().__init__()
@@ -26,7 +27,7 @@ class Courses(DatabaseManager):
         "Component"
       ]
 
-      self.GetCourses()
+      GetCourses()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -39,21 +40,21 @@ class Courses(DatabaseManager):
       for label in self.CoursesLabels:
         label.destroy()
 
-      if len(DatabaseManager.Courses) > 0:
-        for row, Course in enumerate(DatabaseManager.Courses, start = 1):
+      if len(GlobalData.courses) > 0:
+        for row, course in enumerate(GlobalData.courses, start = 1):
           CoursesData = [
-            Course.ID,
-            Course.title,
-            Course.credit,
-            Course.MaximumUnits,
-            Course.LongCourseTitle,
-            Course.OfferingNBR,
-            Course.AcademicGroup,
-            Course.SubjectArea,
-            Course.CatalogNBR,
-            Course.campus,
-            Course.AcademicOrganization,
-            Course.component
+            course.ID,
+            course.title,
+            course.credit,
+            course.MaximumUnits,
+            course.LongCourseTitle,
+            course.OfferingNBR,
+            course.AcademicGroup,
+            course.SubjectArea,
+            course.CatalogNBR,
+            course.campus,
+            course.AcademicOrganization,
+            course.component
           ]
 
           for col, data in enumerate(CoursesData):
@@ -74,7 +75,7 @@ class Courses(DatabaseManager):
               self.CoursesTableFrame,
                 text = "Delete",
                 fg_color = "red",
-                command = lambda: Course.Remove(self.RefreshCoursessTable)
+                command = lambda: RemoveCourse(course.ID, self.RefreshCoursessTable)
               )
             DeleteButton.grid(
                 row = row,
@@ -85,7 +86,7 @@ class Courses(DatabaseManager):
             )
             self.CoursesLabels.append(DeleteButton)
 
-      self.ResultsCount.configure(text="Results: " + str(len(DatabaseManager.Courses)))
+      self.ResultsCount.configure(text="Results: " + str(len(GlobalData.courses)))
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -95,7 +96,7 @@ class Courses(DatabaseManager):
 
   def RefreshCoursessTable(self):
     try:
-      self.GetCourses()
+      GetCourses()
       self.DisplayCoursessTable()
 
     except Exception as e:
@@ -113,13 +114,13 @@ class Courses(DatabaseManager):
       LongTitle = self.CourseLongTitleEntry.get()
       OfferingNBR = self.CourseOfferingNBREntry.get()
       AcademicGroup = self.CourseAcademicGroupEntry.get()
-      SubjectArea = self.CourseSubjectAreaEntry.get(),
-      CatalogNBR = self.CourseCatalogNBREntry.get(),
-      campus = self.CourseCampusEntry.get(),
-      AcademicOrganization = self.CourseAcademicOrganizationEntry.get(),
+      SubjectArea = self.CourseSubjectAreaEntry.get()
+      CatalogNBR = self.CourseCatalogNBREntry.get()
+      campus = self.CourseCampusEntry.get()
+      AcademicOrganization = self.CourseAcademicOrganizationEntry.get()
       component = self.CourseComponentEntry.get()
 
-      NewCourse = Course.Course(
+      NewCourse = course.Course(
         ID,
         title,
         credit,
@@ -134,7 +135,7 @@ class Courses(DatabaseManager):
         component
       )
       NewCourse.ValidateCourseData()
-      NewCourse.Add()
+      AddCourse(NewCourse)
 
       self.CourseIDEntry.delete(
         0,
@@ -193,9 +194,9 @@ class Courses(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def SearchCourse(self, term):
+  def search(self, term):
     try:
-      self.SearchCourses(term)
+      SearchCourses(term)
       self.DisplayCoursessTable()
 
     except Exception as e:
@@ -509,7 +510,7 @@ class Courses(DatabaseManager):
 
       SearchButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=lambda: self.SearchCourse(SearchBar.get()),
+        command=lambda: self.search(SearchBar.get()),
         text="Search"
       )
       SearchButton.grid(

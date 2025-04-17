@@ -2,10 +2,11 @@ import sys
 import os
 import customtkinter
 
-from Models import User
-from DatabaseManager import DatabaseManager
+from app.models import user
+from app.core.GlobalData import GlobalData
+from app.controllers.users import GetUsers, SearchUser, AddUser, RemoveUser
 
-class Users(DatabaseManager):
+class Users():
   def __init__(self):
     try:
       super().__init__()
@@ -13,12 +14,12 @@ class Users(DatabaseManager):
       self.UsersLabels = []
       self.headers = [
         "Users ID",
-        "User Name",
-        "User Email",
-        "User Role",
+        "Name",
+        "Email",
+        "Role",
       ]
 
-      self.GetUsers()
+      GetUsers()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -26,9 +27,9 @@ class Users(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def SearchUser(self, term):
+  def search(self, term):
     try:
-      self.SearchUser(term)
+      SearchUser(term)
       self.DisplayUsersTable()
 
     except Exception as e:
@@ -42,13 +43,13 @@ class Users(DatabaseManager):
       for label in self.UsersLabels:
         label.destroy()
 
-      if len(self.Users) > 0:
-        for row, User in enumerate(self.Users, start=1):
+      if len(GlobalData.users) > 0:
+        for row, user in enumerate(GlobalData.users, start=1):
           UsersData = [
-            User.ID,
-            User.name,
-            User.email,
-            User.role
+            user.ID,
+            user.name,
+            user.email,
+            user.role
           ]
 
           for col, data in enumerate(UsersData):
@@ -69,7 +70,7 @@ class Users(DatabaseManager):
               self.UsersTableFrame,
                 text="Delete",
                 fg_color="red",
-                command= lambda: User.Remove(self.RefreshUsersTable)
+                command= lambda: RemoveUser(user.ID, self.RefreshUsersTable)
               )
             DeleteButton.grid(
                 row=row,
@@ -81,7 +82,7 @@ class Users(DatabaseManager):
             self.UsersLabels.append(DeleteButton)
 
       self.ResultsCount.configure(
-        text="Results: " + str(len(self.Users))
+        text="Results: " + str(len(GlobalData.users))
       )
 
     except Exception as e:
@@ -92,7 +93,7 @@ class Users(DatabaseManager):
 
   def RefreshUsersTable(self):
     try:
-      self.GetUsers()
+      GetUsers()
       self.DisplayUsersTable()
 
     except Exception as e:
@@ -103,15 +104,15 @@ class Users(DatabaseManager):
   
   def SubmitNewUser(self):
     try:
-      UserID = self.UserIDEntry.get()
-      UserName = self.UserFullNameEntry.get()
-      UserEmail = self.UserEmailEntry.get()
+      ID = self.UserIDEntry.get()
+      Name = self.UserFullNameEntry.get()
+      Email = self.UserEmailEntry.get()
       UserPassword = self.UserPasswordEntry.get()
-      UserRole = self.UserRoleEntry.get()
+      Role = self.UserRoleEntry.get()
 
-      NewUser = User.User(UserID, UserName, UserEmail, UserRole)
+      NewUser = user.User(ID, Name, Email, Role)
       NewUser.ValidateUserData()
-      NewUser.Add()
+      AddUser(NewUser)
       
       self.UserIDEntry.delete(
         0,
@@ -294,7 +295,7 @@ class Users(DatabaseManager):
       SearchButton = customtkinter.CTkButton(
         SearchBarFrame,
         text="Search",
-        command=lambda: self.SearchUser(SearchBar.get())
+        command=lambda: self.search(SearchBar.get())
       )
       SearchButton.grid(
         row=0,

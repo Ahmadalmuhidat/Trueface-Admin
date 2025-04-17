@@ -3,9 +3,10 @@ import os
 import customtkinter
 
 from main import Main
-from DatabaseManager import DatabaseManager
+from app.controllers.auth import login
+from app.core.GlobalData import GlobalData
 
-class Login(DatabaseManager):
+class Login():
   def __init__(self):
     try:
       super().__init__()
@@ -17,14 +18,14 @@ class Login(DatabaseManager):
       print(ExceptionObject)
 
   def login(self):
-    result = self.CheckUser(
+    result = login(
       self.EmailEntry.get(),
       self.PasswordEntry.get()
     )
     if result:
-      self.token = result
+      GlobalData.config.token = result
       self.window.destroy()
-      Main().startTheProgram()
+      Main().StartTheProgram()
 
   def create(self):
     try:

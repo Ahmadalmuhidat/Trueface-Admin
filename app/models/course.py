@@ -1,10 +1,8 @@
 import sys
 import os
-import requests
-import json
+import app.config.configrations as Configrations
 
 from CTkMessagebox import CTkMessagebox
-import Configrations
 
 class Course:
   def __init__(self, ID, title, credit, MaximumUnits, LongCourseTitle, OfferingNBR, AcademicGroup, SubjectArea, CatalogNBR, campus, AcademicOrganization, component):
@@ -21,100 +19,7 @@ class Course:
     self.AcademicOrganization = AcademicOrganization
     self.component = component
 
-    self.config  = Configrations.Configrations()
-  
-  def Add(self):
-    try:
-      data = {
-        "ID": self.ID,
-        "title": self.title,
-        "credit": self.credit,
-        "MaximumUnits": self.MaximumUnits,
-        "LongCourseTitle": self.LongCourseTitle,
-        "OfferingNBR": self.OfferingNBR,
-        "AcademicGroup": self.AcademicGroup,
-        "SubjectArea": self.SubjectArea,
-        "CatalogNBR": self.CatalogNBR,
-        "campus": self.campus,
-        "AcademicOrganization": self.AcademicOrganization,
-        "component": self.component
-      }
-
-      response = requests.post(
-        self.config.getBaseURL() + "/admin/insert_course",
-        params = data
-      ).content
-      response = json.loads(response.decode('utf-8'))
-
-      if response.get("status_code") == 200:
-        return response.get("data")
-      else:
-        title = "Error"
-        message = response.get("error")
-        icon = "cancel"
-        CTkMessagebox(
-          title = title,
-          message = message if message else "Something went wrong while inserting the course",
-          icon = icon
-        )
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-      pass 
-
-  def Remove(self, RefreshTableFunction: None):
-    try:
-      title = "Conformation"
-      message = "Are you sure you want to delete the course"
-      icon = "question"
-      conformation = CTkMessagebox(
-        title = title,
-        message = message,
-        icon = icon,
-        option_1 = "yes",
-        option_2 = "cancel" 
-      )
-
-      if conformation.get() == "yes":
-        data = {
-          "CourseID": self.ID
-        }
-        response = requests.post(
-          self.config.getBaseURL() + "/admin/remove_course",
-          params = data
-        ).content
-        response = json.loads(response.decode('utf-8'))
-
-        if response.get("status_code") == 200:
-          if response.get("data"):
-            title = "Success"
-            message = "Course has been deleted"
-            icon = "check"
-            CTkMessagebox(
-              title = title,
-              message = message if message else "Something went wrong while removing the course",
-              icon = icon
-            )
-        else:
-          title = "Error"
-          message = response.get("error")
-          icon = "cancel"
-          CTkMessagebox(
-            title = title,
-            message = message if message else "Something went wrong while removing the course",
-            icon = icon
-          )
-      
-      RefreshTableFunction()
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
+    self.config  = Configrations.Configrations() 
 
   def ValidateCourseData(self):
     try:

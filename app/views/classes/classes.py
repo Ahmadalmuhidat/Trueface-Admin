@@ -2,10 +2,12 @@ import sys
 import os
 import customtkinter
 
-from Models import Class
-from DatabaseManager import DatabaseManager
+from app.models import class_
+from app.core.GlobalData import GlobalData
+from app.controllers.classes import GetClasses, SearchClass, AddClass, RemoveClass
+from app.controllers.courses import GetCourses
 
-class Classes(DatabaseManager):
+class Classes():
   def __init__(self):
     try:
       super().__init__()
@@ -27,8 +29,8 @@ class Classes(DatabaseManager):
         "Instructor Type"
       ]
 
-      self.GetClasses()
-      self.GetCourses()
+      GetClasses()
+      GetCourses()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -41,22 +43,22 @@ class Classes(DatabaseManager):
       for label in self.ClassessLabels:
         label.destroy()
 
-      if len(self.Classes) > 0:
-        for row, Class in enumerate(self.Classes, start=1):
+      if len(GlobalData.classes) > 0:
+        for row, class_ in enumerate(GlobalData.classes, start=1):
           ClassessData = [
-            Class.ID,
-            Class.SubjectArea,
-            Class.CatalogNBR,	
-            Class.AcademicCareer,	
-            Class.CourseID,	
-            Class.OfferingNBR,	
-            Class.SessionStartTime,	
-            Class.SessionEndTime,	
-            Class.Section,	
-            Class.Component,	
-            Class.Campus,	
-            Class.InstructorID,	
-            Class.InstructorType
+            class_.ClassID,
+            class_.SubjectArea,
+            class_.CatalogNBR,	
+            class_.AcademicCareer,	
+            class_.Course,	
+            class_.OfferingNBR,	
+            class_.StartTime,	
+            class_.EndTime,	
+            class_.Section,	
+            class_.Component,	
+            class_.Campus,	
+            class_.InstructorID,	
+            class_.InstructorType
           ]
 
           for col, data in enumerate(ClassessData):
@@ -77,7 +79,7 @@ class Classes(DatabaseManager):
               self.ClassesTableFrame,
                 text = "Delete",
                 fg_color = "red",
-                command = lambda: Class.Remove(self.RefreshClassesTable),
+                command = lambda:RemoveClass(class_.ClassID, self.RefreshClassesTable),
               )
             DeleteButton.grid(
                 row = row,
@@ -89,7 +91,7 @@ class Classes(DatabaseManager):
             self.ClassessLabels.append(DeleteButton)
 
       self.ResultsCount.configure(
-        text="Results: " + str(len(self.Classes))
+        text="Results: " + str(len(GlobalData.classes))
       )
 
     except Exception as e:
@@ -100,7 +102,7 @@ class Classes(DatabaseManager):
 
   def RefreshClassesTable(self):
     try:
-      self.GetClasses()
+      GetClasses()
       self.DisplayClassesTable()
 
     except Exception as e:
@@ -111,26 +113,26 @@ class Classes(DatabaseManager):
 
   def SubmitNewClass(self):
     try:
-      ID = self.ClasseIDEntry.get(),
-      subject =  self.çEntry.get(),
-      CatalogNBR = self.CatalogNBREntry.get(),
-      AcademicCareer = self.AcademicCareerEntry.get(),
-      CourseID = self.course_id_title_map[self.ClassesCourseEntry.get()],
-      OfferingNBR = self.OfferingNBREntry.get(),
-      StartTime = self.StartTimeEntry.get(),
-      EndTime = self.EndTimeEntry.get(),
-      section = self.SectionEntry.get(),
-      component = self.ComponentEntry.get(),
-      campus = self.CampusEntry.get(),
-      InstructorID = self.InstructorIDEntry.get(),
+      ID = self.ClasseIDEntry.get()
+      subject =  self.SubjectEntry.get()
+      CatalogNBR = self.CatalogNBREntry.get()
+      AcademicCareer = self.AcademicCareerEntry.get()
+      Course = self.course_id_title_map[self.ClassesCourseEntry.get()]
+      OfferingNBR = self.OfferingNBREntry.get()
+      StartTime = self.StartTimeEntry.get()
+      EndTime = self.EndTimeEntry.get()
+      section = self.SectionEntry.get()
+      component = self.ComponentEntry.get()
+      campus = self.CampusEntry.get()
+      InstructorID = self.InstructorIDEntry.get()
       InstructorType = self.InstructorTypeEntry.get()
 
-      NewClass = Class.Class(
+      NewClass = class_.Class(
         ID,
         subject,
         CatalogNBR,
         AcademicCareer,
-        CourseID,
+        Course,
         OfferingNBR,
         StartTime,
         EndTime,
@@ -140,8 +142,9 @@ class Classes(DatabaseManager):
         InstructorID,
         InstructorType
       )
+
       NewClass.ValidateClassData()
-      NewClass.Add()
+      AddClass(NewClass)
  
       self.ClasseIDEntry.delete(
         0,
@@ -200,9 +203,9 @@ class Classes(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def SearchClass(self, term):
+  def search(self, term):
     try:
-      self.SearchClass(term)
+      SearchClass(term)
       self.DisplayClassesTable()
 
     except Exception as e:
@@ -211,9 +214,9 @@ class Classes(DatabaseManager):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def AddClasseInputWindow(self):
+  def AddClassInputWindow(self):
     try:
-      self.course_id_title_map = {x.title: x.ID for x in DatabaseManager.Courses}
+      self.course_id_title_map = {x.title: x.ID for x in GlobalData.courses}
 
       self.PopWindow = customtkinter.CTkToplevel()
       self.PopWindow.grab_set()
@@ -500,7 +503,7 @@ class Classes(DatabaseManager):
 
       self.ClassesCourseEntry = customtkinter.CTkComboBox(
         self.PopWindow,
-        values=[x.title for x in DatabaseManager.Courses],
+        values=[x.title for x in GlobalData.courses],
         width=350
       )
       self.ClassesCourseEntry.grid(
@@ -509,7 +512,7 @@ class Classes(DatabaseManager):
         padx=10,
         pady=5
       )
-      self.ClassesCourseEntry.set(DatabaseManager.Courses[0].title)
+      self.ClassesCourseEntry.set(GlobalData.courses[0].title)
 
       SaveButton = customtkinter.CTkButton(
         self.PopWindow,
@@ -543,7 +546,7 @@ class Classes(DatabaseManager):
 
       SearchButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=lambda: self.SearchClass(SearchBar.get()),
+        command=lambda: self.search(SearchBar.get()),
         text="Search"
       )
       SearchButton.grid(
@@ -582,7 +585,7 @@ class Classes(DatabaseManager):
 
       AddClassesButton = customtkinter.CTkButton(
         SearchBarFrame,
-        command=self.AddClasseInputWindow,
+        command=self.AddClassInputWindow,
         width=100,
         text="Add Class"
       )
@@ -625,7 +628,6 @@ class Classes(DatabaseManager):
         self.ClassesTableFrame.columnconfigure(col, weight=1)
 
       self.DisplayClassesTable()
-
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
