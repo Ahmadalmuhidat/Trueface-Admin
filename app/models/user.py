@@ -5,17 +5,17 @@ import app.config.configrations as Configrations
 from CTkMessagebox import CTkMessagebox
 
 class User:
-  def __init__(self, ID, name, email, role):
-    self.ID = ID
+  def __init__(self, user_id, name, email, role):
+    self.user_id = user_id
     self.name = name
     self.email = email
     self.role = role
 
     self.config = Configrations.Configrations()
 
-  def ValidateUserData(self):
+  def validate_user_data(self):
     try:
-      if not self.ID:
+      if not self.user_id:
         title = "Missing Entry"
         message = "please enter user ID"
         icon = "cancel"

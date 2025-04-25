@@ -8,4 +8,3 @@ class GlobalData():
   classes = []
   users = []
   students = []
-  ClassesForSelection = []

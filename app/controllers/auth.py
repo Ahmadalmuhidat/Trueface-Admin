@@ -14,7 +14,7 @@ def login(email, password):
 		}
 
 		response = requests.get(
-			GlobalData.config.getBaseURL() + "/admin/check_user",
+			GlobalData.config.get_base_url() + "/admin/check_user",
 			params = data
 		).content
 		response = json.loads(response.decode('utf-8'))

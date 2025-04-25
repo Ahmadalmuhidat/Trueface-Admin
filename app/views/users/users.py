@@ -4,14 +4,14 @@ import customtkinter
 
 from app.models import user
 from app.core.GlobalData import GlobalData
-from app.controllers.users import GetUsers, SearchUser, AddUser, RemoveUser
+from app.controllers.users import get_users, search_user, add_user, remove_user
 
 class Users():
   def __init__(self):
     try:
       super().__init__()
 
-      self.UsersLabels = []
+      self.users = []
       self.headers = [
         "Users ID",
         "Name",
@@ -19,7 +19,7 @@ class Users():
         "Role",
       ]
 
-      GetUsers()
+      get_users()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -29,8 +29,8 @@ class Users():
 
   def search(self, term):
     try:
-      SearchUser(term)
-      self.DisplayUsersTable()
+      search_user(term)
+      self.display_users_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -38,50 +38,50 @@ class Users():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def DisplayUsersTable(self):
+  def display_users_table(self):
     try:
-      for label in self.UsersLabels:
+      for label in self.users:
         label.destroy()
 
       if len(GlobalData.users) > 0:
         for row, user in enumerate(GlobalData.users, start=1):
-          UsersData = [
-            user.ID,
+          user_row = [
+            user.user_id,
             user.name,
             user.email,
             user.role
           ]
 
-          for col, data in enumerate(UsersData):
-            DataLabel = customtkinter.CTkLabel(
-              self.UsersTableFrame,
+          for col, data in enumerate(user_row):
+            user_data = customtkinter.CTkLabel(
+              self.users_table_frame,
               text=data,
               padx=10,
               pady=5
             )
-            DataLabel.grid(
+            user_data.grid(
               row=row,
               column=col,
               sticky="nsew"
             )
-            self.UsersLabels.append(DataLabel)
+            self.users.append(user_data)
 
-            DeleteButton = customtkinter.CTkButton(
-              self.UsersTableFrame,
+            delete_button = customtkinter.CTkButton(
+              self.users_table_frame,
                 text="Delete",
                 fg_color="red",
-                command= lambda: RemoveUser(user.ID, self.RefreshUsersTable)
+                command= lambda: remove_user(user.user_id, self.refresh_users_table)
               )
-            DeleteButton.grid(
+            delete_button.grid(
                 row=row,
-                column=len(UsersData),
+                column=len(user_row),
                 sticky="nsew",
                 padx=10,
                 pady=5
             )
-            self.UsersLabels.append(DeleteButton)
+            self.users.append(delete_button)
 
-      self.ResultsCount.configure(
+      self.users_count.configure(
         text="Results: " + str(len(GlobalData.users))
       )
 
@@ -91,10 +91,10 @@ class Users():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def RefreshUsersTable(self):
+  def refresh_users_table(self):
     try:
-      GetUsers()
-      self.DisplayUsersTable()
+      get_users()
+      self.display_users_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -102,36 +102,36 @@ class Users():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
   
-  def SubmitNewUser(self):
+  def submit_new_user(self):
     try:
-      ID = self.UserIDEntry.get()
-      Name = self.UserFullNameEntry.get()
-      Email = self.UserEmailEntry.get()
-      UserPassword = self.UserPasswordEntry.get()
-      Role = self.UserRoleEntry.get()
-
-      NewUser = user.User(ID, Name, Email, Role)
-      NewUser.ValidateUserData()
-      AddUser(NewUser)
+      # UserPassword = self.user_pass_word.get()
+      new_user = user.User(
+        self.user_id_entry.get(),
+        self.user_full_name_entry.get(),
+        self.user_email_entry.get(),
+        self.user_role_entry.get()
+      )
+      new_user.validate_user_data()
+      add_user(new_user)
       
-      self.UserIDEntry.delete(
+      self.user_id_entry.delete(
         0,
         customtkinter.END
       )
-      self.UserFullNameEntry.delete(
+      self.user_full_name_entry.delete(
         0,
         customtkinter.END
       )
-      self.UserEmailEntry.delete(
+      self.user_email_entry.delete(
         0,
         customtkinter.END
       )
-      self.UserPasswordEntry.delete(
+      self.user_pass_word.delete(
         0,
         customtkinter.END
       )
 
-      self.RefreshUsersTable()
+      self.refresh_users_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -139,135 +139,135 @@ class Users():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def AddUserInputWindow(self):
+  def add_user_pop_window(self):
     try:
-      self.PopWindow = customtkinter.CTkToplevel()
-      self.PopWindow.grab_set()
+      self.pop_window = customtkinter.CTkToplevel()
+      self.pop_window.grab_set()
 
-      self.PopWindow.geometry("460x350")
-      self.PopWindow.resizable(False, False)
-      self.PopWindow.title("Add New User")
+      self.pop_window.geometry("460x350")
+      self.pop_window.resizable(False, False)
+      self.pop_window.title("Add New User")
 
-      UserIDLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      user_id_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="User ID:"
       )
-      UserIDLabel.grid(
+      user_id_label.grid(
         row=0,
         column=0,
         padx=10,
         pady=15
       )
 
-      self.UserIDEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.user_id_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.UserIDEntry.grid(
+      self.user_id_entry.grid(
         row=0,
         column=1,
         padx=10,
         pady=15
       )
 
-      UserFullNameLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      user_full_name_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="First Name:"
       )
-      UserFullNameLabel.grid(
+      user_full_name_label.grid(
         row=1,
         column=0,
         padx=10,
         pady=15
       )
 
-      self.UserFullNameEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.user_full_name_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.UserFullNameEntry.grid(
+      self.user_full_name_entry.grid(
         row=1,
         column=1,
         padx=10,
         pady=15
       )
 
-      UserEmailLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      user_email_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Email:"
       )
-      UserEmailLabel.grid(
+      user_email_label.grid(
         row=2,
         column=0,
         padx=10,
         pady=15
       )
 
-      self.UserEmailEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.user_email_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.UserEmailEntry.grid(
+      self.user_email_entry.grid(
         row=2,
         column=1,
         padx=10,
         pady=15
       )
 
-      UserPasswordLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      user_password_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Password:"
       )
-      UserPasswordLabel.grid(
+      user_password_label.grid(
         row=3,
         column=0,
         padx=10,
         pady=15
       )
 
-      self.UserPasswordEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.user_pass_word = customtkinter.CTkEntry(
+        self.pop_window,
         width=350,
         show="*"
       )
-      self.UserPasswordEntry.grid(
+      self.user_pass_word.grid(
         row=3,
         column=1,
         padx=10,
         pady=15
       )
 
-      UserRoleLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      user_role_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Role:"
       )
-      UserRoleLabel.grid(
+      user_role_label.grid(
         row=4,
         column=0,
         padx=10,
         pady=15
       )
 
-      self.UserRoleEntry = customtkinter.CTkComboBox(
-        self.PopWindow,
+      self.user_role_entry = customtkinter.CTkComboBox(
+        self.pop_window,
         values=["admin", "teacher"],
         width=350
       )
-      self.UserRoleEntry.grid(
+      self.user_role_entry.grid(
         row=4,
         column=1,
         padx=10,
         pady=15
       )
-      self.UserRoleEntry.set("teacher")
+      self.user_role_entry.set("teacher")
 
-      SaveButton = customtkinter.CTkButton(
-        self.PopWindow,
+      submit_button = customtkinter.CTkButton(
+        self.pop_window,
         text="Save User",
-        command=self.SubmitNewUser,
+        command=self.submit_new_user,
         width=350
       )
-      SaveButton.grid(
+      submit_button.grid(
         row=7,
         columnspan=2,
         sticky="nsew",
@@ -281,23 +281,23 @@ class Users():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def LunchGUI(self, parent):
+  def lunch_view(self, parent):
     try:
-      SearchBarFrame = customtkinter.CTkFrame(
+      search_bar_frame = customtkinter.CTkFrame(
         parent,
         bg_color="transparent"
       )
-      SearchBarFrame.pack(
+      search_bar_frame.pack(
         fill="x",
         expand=False
       )
 
-      SearchButton = customtkinter.CTkButton(
-        SearchBarFrame,
+      search_button = customtkinter.CTkButton(
+        search_bar_frame,
         text="Search",
-        command=lambda: self.search(SearchBar.get())
+        command=lambda: self.search(search_bar.get())
       )
-      SearchButton.grid(
+      search_button.grid(
         row=0,
         column=0,
         sticky="nsew",
@@ -305,25 +305,25 @@ class Users():
         padx=5
       )
 
-      SearchBar = customtkinter.CTkEntry(
-        SearchBarFrame,
+      search_bar = customtkinter.CTkEntry(
+        search_bar_frame,
         width=400,
         placeholder_text="Search for Users..."
       )
-      SearchBar.grid(
+      search_bar.grid(
         row=0,
         column=1,
         sticky="nsew",
         pady=10
       )
 
-      RefreshButton = customtkinter.CTkButton(
-        SearchBarFrame,
+      refresh_button = customtkinter.CTkButton(
+        search_bar_frame,
         text="Refresh",
-        command=self.RefreshUsersTable,
+        command=self.refresh_users_table,
         width=100
       )
-      RefreshButton.grid(
+      refresh_button.grid(
         row=0,
         column=4,
         sticky="nsew",
@@ -331,13 +331,13 @@ class Users():
         padx=5
       )
 
-      AddUsersButton = customtkinter.CTkButton(
-        SearchBarFrame,
+      add_user_button = customtkinter.CTkButton(
+        search_bar_frame,
         text="Add Users",
-        command=self.AddUserInputWindow,
+        command=self.add_user_pop_window,
         width=100
       )
-      AddUsersButton.grid(
+      add_user_button.grid(
         row=0,
         column=5,
         sticky="nsew",
@@ -345,39 +345,39 @@ class Users():
         padx=5
       )
 
-      self.ResultsCount = customtkinter.CTkLabel(SearchBarFrame)
-      self.ResultsCount.grid(
+      self.users_count = customtkinter.CTkLabel(search_bar_frame)
+      self.users_count.grid(
         row=0,
         column=6,
         padx=10,
         pady=5
       )
 
-      self.UsersTableFrame = customtkinter.CTkScrollableFrame(
+      self.users_table_frame = customtkinter.CTkScrollableFrame(
         parent
       )
-      self.UsersTableFrame.pack(
+      self.users_table_frame.pack(
         fill="both",
         expand=True
       )
 
       for col, header in enumerate(self.headers):
-          HeaderLabel = customtkinter.CTkLabel(
-            self.UsersTableFrame,
-            text=header,
-            padx=10,
-            pady=10
-          )
-          HeaderLabel.grid(
-            row=0,
-            column=col,
-            sticky="nsew"
-          )
+        header_label = customtkinter.CTkLabel(
+          self.users_table_frame,
+          text=header,
+          padx=10,
+          pady=10
+        )
+        header_label.grid(
+          row=0,
+          column=col,
+          sticky="nsew"
+        )
 
       for col in range(len(self.headers)):
-          self.UsersTableFrame.columnconfigure(col, weight=1)
+        self.users_table_frame.columnconfigure(col, weight=1)
 
-      self.DisplayUsersTable()
+      self.display_users_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

@@ -2,7 +2,9 @@ import sys
 import os
 import requests
 import json
+import numpy
 import face_recognition
+import pickle
 import app.config.configrations as Configrations
 
 from CTkMessagebox import CTkMessagebox
@@ -25,7 +27,7 @@ class Student:
         "student_id": self.student_id
       }
       response = requests.get(
-        self.config.getBaseURL() + "/admin/check_duplicated_id",
+        self.config.get_base_url() + "/admin/check_duplicated_id",
         params = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -48,10 +50,24 @@ class Student:
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
       pass
-
-  def CheckFaceInImage(self, image_path):
+  
+  def GetFaceEncode(self):
     try:
-      load_stored_image = face_recognition.load_image_file(image_path)
+      load_stored_image = face_recognition.load_image_file(self.picture)
+      return pickle.dumps(numpy.array(
+        face_recognition.face_encodings(load_stored_image)[0])
+      )
+
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+      pass
+
+  def CheckFaceInImage(self):
+    try:
+      load_stored_image = face_recognition.load_image_file(self.picture)
       FaceFound = face_recognition.face_locations(load_stored_image)
 
       if FaceFound:
@@ -110,7 +126,7 @@ class Student:
         icon = "cancel"
         CTkMessagebox(title=title, message=message, icon=icon)  
         return False
-      elif not self.CheckFaceInImage(self.picture):
+      elif not self.CheckFaceInImage():
         title = "Face Not Found"
         message = "the uploaded image does not contain face"
         icon = "cancel"

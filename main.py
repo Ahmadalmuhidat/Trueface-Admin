@@ -24,42 +24,42 @@ class Main():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def Navbar(self, window):
+  def create_navbar(self):
     try:
-      navbar = customtkinter.CTkFrame(window)
+      navbar = customtkinter.CTkFrame(self.config.window)
       navbar.pack(fill=customtkinter.X)
 
-      StudentsButton = customtkinter.CTkButton(
+      students_view = customtkinter.CTkButton(
         navbar,
         corner_radius = 0,
-        command = lambda: self.config.router.navigate(Students.Students, self.window),
+        command = lambda: self.config.router.navigate(Students.Students),
         text = "Students"
       )
-      StudentsButton.pack(side=customtkinter.LEFT)
+      students_view.pack(side=customtkinter.LEFT)
 
-      ClassesButton = customtkinter.CTkButton(
+      classes_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command=lambda:  self.config.router.navigate(Classes.Classes, self.window),
+        command=lambda:  self.config.router.navigate(Classes.Classes),
         text="Classes"
       )
-      ClassesButton.pack(side=customtkinter.LEFT)
+      classes_view.pack(side=customtkinter.LEFT)
 
-      CoursesButton = customtkinter.CTkButton(
+      courses_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command=lambda:  self.config.router.navigate(Courses.Courses, self.window),
+        command=lambda:  self.config.router.navigate(Courses.Courses),
         text="Courses"
       )
-      CoursesButton.pack(side=customtkinter.LEFT)
+      courses_view.pack(side=customtkinter.LEFT)
 
-      UsersButton = customtkinter.CTkButton(
+      users_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command=lambda:  self.config.router.navigate(Users.Users, self.window),
+        command=lambda:  self.config.router.navigate(Users.Users),
         text="Users"
       )
-      UsersButton.pack(side=customtkinter.LEFT)
+      users_view.pack(side=customtkinter.LEFT)
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -67,9 +67,9 @@ class Main():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def WhenAppClose(self):
+  def when_app_close(self):
     try:
-      self.window.destroy()
+      self.config.window.destroy()
 
       threadsToTerminate = [
         thread for thread in 
@@ -89,24 +89,26 @@ class Main():
     finally:
         sys.exit(0)
 
-  def StartTheProgram(self):
+  def start_program(self):
     try:
       customtkinter.set_appearance_mode("dark")
 
       self.window = customtkinter.CTk()
-      width = self.window.winfo_screenwidth()
-      height = self.window.winfo_screenheight()
-      self.window.geometry("%dx%d" % (width, height))
-      self.window.title("TrueFace Admin")
+      self.config.set_window(self.window)
+
+      width = self.config.window.winfo_screenwidth()
+      height = self.config.window.winfo_screenheight()
+      self.config.window.geometry("%dx%d" % (width, height))
+      self.config.window.title("TrueFace Admin")
       # self.window.iconbitmap("logo.ico")
-      self.window.protocol("WM_DELETE_WINDOW", self.OnClosing)
+      # self.window.protocol("WM_DELETE_WINDOW", self.OnClosing)
 
-      self.window.protocol("WM_DELETE_WINDOW", self.WhenAppClose)
+      self.config.window.protocol("WM_DELETE_WINDOW", self.when_app_close)
 
-      self.Navbar(self.window)
-      self.config.router.navigate(Students.Students, self.window)
+      self.create_navbar()
+      self.config.router.navigate(Students.Students)
 
-      self.window.mainloop()
+      self.config.window.mainloop()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -117,5 +119,5 @@ class Main():
       pass
 
 if __name__ == "__main__":
-  Main().StartTheProgram()
+  Main().start_program()
   # login = Login.Login().create()

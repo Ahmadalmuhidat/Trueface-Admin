@@ -7,27 +7,17 @@ from app.controllers.auth import login
 from app.core.GlobalData import GlobalData
 
 class Login():
-  def __init__(self):
-    try:
-      super().__init__()
-
-    except Exception as e:
-      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-      print(ExceptionObject)
-
   def login(self):
     result = login(
-      self.EmailEntry.get(),
-      self.PasswordEntry.get()
+      self.email_entry.get(),
+      self.password_entry.get()
     )
     if result:
       GlobalData.config.token = result
       self.window.destroy()
-      Main().StartTheProgram()
+      Main().start_program()
 
-  def create(self):
+  def lunch_view(self):
     try:
       self.window = customtkinter.CTk()
       self.window.geometry("400x170")
@@ -39,56 +29,56 @@ class Login():
 
       self.window.title("Login To TrueFace")
 
-      ContentFrame = customtkinter.CTkFrame(self.window)
-      ContentFrame.pack(
+      content_frame = customtkinter.CTkFrame(self.window)
+      content_frame.pack(
         padx=20,
         pady=20
       )
 
-      Emaillabel = customtkinter.CTkLabel(
-        ContentFrame,
+      email_label = customtkinter.CTkLabel(
+        content_frame,
         text="Email:"
       )
-      Emaillabel.grid(
+      email_label.grid(
         row=0,
         column=0,
         padx=10,
         pady=10
       )
 
-      self.EmailEntry = customtkinter.CTkEntry(
-        ContentFrame,
+      self.email_entry = customtkinter.CTkEntry(
+        content_frame,
         width=250
       )
-      self.EmailEntry.grid(
+      self.email_entry.grid(
         row=0,
         column=1,
         padx=10
       )
 
-      Passwordlabel = customtkinter.CTkLabel(
-        ContentFrame,
+      password_label = customtkinter.CTkLabel(
+        content_frame,
         text="Password:"
       )
-      Passwordlabel.grid(
+      password_label.grid(
         row=1,
         column=0,
         padx=10,
       )
 
-      self.PasswordEntry = customtkinter.CTkEntry(
-        ContentFrame,
+      self.password_entry = customtkinter.CTkEntry(
+        content_frame,
         width=250,
         show="*"
       )
-      self.PasswordEntry.grid(
+      self.password_entry.grid(
         row=1,
         column=1,
         padx=10,
       )
 
       save_button = customtkinter.CTkButton(
-        ContentFrame,
+        content_frame,
         text="Login",
         command=self.login
       )

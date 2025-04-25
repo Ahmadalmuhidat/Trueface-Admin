@@ -5,27 +5,31 @@ import customtkinter
 class Router:
   def __init__(self):
     self.current_page = None
-    self.cached_frames = {}
 
-  def ClearWindow(self):
+  def clear_window(self):
     if self.current_page:
       self.current_page.pack_forget()
 
-  def navigate(self, view_class, window):
-    self.ClearWindow()
+  def navigate(self, view_class):
+    self.clear_window()
 
-    if view_class not in self.cached_frames:
-      frame = customtkinter.CTkFrame(window)
-      view_instance = view_class()
-      view_instance.LunchGUI(frame)
-      self.cached_frames[view_class] = frame
-    else:
-      frame = self.cached_frames[view_class]
+    Configrations.window.configure(cursor="watch")
+    Configrations.window.update()
+
+    frame = customtkinter.CTkFrame(Configrations.window)
+    view_instance = view_class()
+
+    Configrations.window.configure(cursor="")
+    Configrations.window.update()
+
+    view_instance.lunch_view(frame)
 
     self.current_page = frame
     self.current_page.pack(fill="both", expand=True)
 
 class Configrations:
+  window = None
+
   def __init__(self) -> None:
     try:
       self.BaseURL = "http://localhost:8000"
@@ -38,8 +42,19 @@ class Configrations:
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
       pass
+  
+  def set_window(self, window):
+    try:
+      Configrations.window = window
 
-  def getBaseURL(self):
+    except Exception as e:
+      ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+      FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+      print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+      print(ExceptionObject)
+      pass
+
+  def get_base_url(self):
     try:
       return self.BaseURL
 

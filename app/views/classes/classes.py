@@ -4,15 +4,15 @@ import customtkinter
 
 from app.models import class_
 from app.core.GlobalData import GlobalData
-from app.controllers.classes import GetClasses, SearchClass, AddClass, RemoveClass
-from app.controllers.courses import GetCourses
+from app.controllers.classes import get_classes, search_class, add_class, remove_class
+from app.controllers.courses import get_courses
 
 class Classes():
   def __init__(self):
     try:
       super().__init__()
 
-      self.ClassessLabels = []
+      self.classes = []
       self.headers = [
         "Classe ID",
         "Subject",
@@ -29,8 +29,8 @@ class Classes():
         "Instructor Type"
       ]
 
-      GetClasses()
-      GetCourses()
+      get_classes()
+      get_courses()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -38,59 +38,59 @@ class Classes():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def DisplayClassesTable(self):
+  def display_classes_table(self):
     try:
-      for label in self.ClassessLabels:
+      for label in self.classes:
         label.destroy()
 
       if len(GlobalData.classes) > 0:
         for row, class_ in enumerate(GlobalData.classes, start=1):
-          ClassessData = [
-            class_.ClassID,
-            class_.SubjectArea,
-            class_.CatalogNBR,	
-            class_.AcademicCareer,	
+          class_row = [
+            class_.class_id,
+            class_.subject_area,
+            class_.catalog_nbr,	
+            class_.academic_career,	
             class_.Course,	
-            class_.OfferingNBR,	
-            class_.StartTime,	
-            class_.EndTime,	
-            class_.Section,	
-            class_.Component,	
-            class_.Campus,	
-            class_.InstructorID,	
-            class_.InstructorType
+            class_.offering_nbr,	
+            class_.start_time,	
+            class_.end_time,	
+            class_.section,	
+            class_.component,	
+            class_.campus,	
+            class_.instructor_id,	
+            class_.instructor_type
           ]
 
-          for col, data in enumerate(ClassessData):
-            DataLabel = customtkinter.CTkLabel(
-              self.ClassesTableFrame,
+          for col, data in enumerate(class_row):
+            class_data = customtkinter.CTkLabel(
+              self.classes_table_frame,
               text = data,
               padx = 10,
               pady = 5
             )
-            DataLabel.grid(
+            class_data.grid(
               row = row,
               column = col,
               sticky = "nsew"
             )
-            self.ClassessLabels.append(DataLabel)
+            self.classes.append(class_data)
 
-            DeleteButton = customtkinter.CTkButton(
-              self.ClassesTableFrame,
+            delete_button = customtkinter.CTkButton(
+              self.classes_table_frame,
                 text = "Delete",
                 fg_color = "red",
-                command = lambda:RemoveClass(class_.ClassID, self.RefreshClassesTable),
+                command = lambda: remove_class(class_.class_id, self.refresh_classes_table),
               )
-            DeleteButton.grid(
+            delete_button.grid(
                 row = row,
-                column = len(ClassessData),
+                column = len(class_row),
                 sticky = "nsew",
                 padx = 10,
                 pady= 5
             )
-            self.ClassessLabels.append(DeleteButton)
+            self.classes.append(delete_button)
 
-      self.ResultsCount.configure(
+      self.classes_count.configure(
         text="Results: " + str(len(GlobalData.classes))
       )
 
@@ -100,10 +100,10 @@ class Classes():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def RefreshClassesTable(self):
+  def refresh_classes_table(self):
     try:
-      GetClasses()
-      self.DisplayClassesTable()
+      get_classes()
+      self.display_classes_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -111,91 +111,76 @@ class Classes():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def SubmitNewClass(self):
+  def submit_new_class(self):
     try:
-      ID = self.ClasseIDEntry.get()
-      subject =  self.SubjectEntry.get()
-      CatalogNBR = self.CatalogNBREntry.get()
-      AcademicCareer = self.AcademicCareerEntry.get()
-      Course = self.course_id_title_map[self.ClassesCourseEntry.get()]
-      OfferingNBR = self.OfferingNBREntry.get()
-      StartTime = self.StartTimeEntry.get()
-      EndTime = self.EndTimeEntry.get()
-      section = self.SectionEntry.get()
-      component = self.ComponentEntry.get()
-      campus = self.CampusEntry.get()
-      InstructorID = self.InstructorIDEntry.get()
-      InstructorType = self.InstructorTypeEntry.get()
-
-      NewClass = class_.Class(
-        ID,
-        subject,
-        CatalogNBR,
-        AcademicCareer,
-        Course,
-        OfferingNBR,
-        StartTime,
-        EndTime,
-        section,
-        component,
-        campus,
-        InstructorID,
-        InstructorType
+      new_class = class_.Class(
+        self.class_id_entry.get(),
+        self.subject_entry.get(),
+        self.catalog_nbr_entry.get(),
+        self.academic_career_entry.get(),
+        self.course_id_title_map[self.course_id_entry.get()],
+        self.offering_nbr_entry.get(),
+        self.start_time_entry.get(),
+        self.end_time_entry.get(),
+        self.section_entry.get(),
+        self.component_entry.get(),
+        self.campus_entry.get(),
+        self.instructor_id_entry.get()
       )
 
-      NewClass.ValidateClassData()
-      AddClass(NewClass)
+      new_class.validate_class_data()
+      add_class(new_class)
  
-      self.ClasseIDEntry.delete(
+      self.class_id_entry.delete(
         0,
         customtkinter.END
       )
-      self.SubjectEntry.delete(
+      self.subject_entry.delete(
         0,
         customtkinter.END
       )
-      self.CatalogNBREntry.delete(
+      self.catalog_nbr_entry.delete(
         0,
         customtkinter.END
       )
-      self.AcademicCareerEntry.delete(
+      self.academic_career_entry.delete(
         0,
         customtkinter.END
       )
-      self.OfferingNBREntry.delete(
+      self.offering_nbr_entry.delete(
         0,
         customtkinter.END
       )
-      self.StartTimeEntry.delete(
+      self.start_time_entry.delete(
         0,
         customtkinter.END
       )
-      self.EndTimeEntry.delete(
+      self.end_time_entry.delete(
         0,
         customtkinter.END
       )
-      self.SectionEntry.delete(
+      self.section_entry.delete(
         0,
         customtkinter.END
       )
-      self.ComponentEntry.delete(
+      self.component_entry.delete(
         0,
         customtkinter.END
       )
-      self.CampusEntry.delete(
+      self.campus_entry.delete(
         0,
         customtkinter.END
       )
-      self.InstructorIDEntry.delete(
+      self.instructor_id_entry.delete(
         0,
         customtkinter.END
       )
-      self.InstructorTypeEntry.delete(
+      self.instructor_type_entry.delete(
         0,
         customtkinter.END
       )
 
-      self.RefreshClassesTable()
+      self.refresh_classes_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -205,8 +190,8 @@ class Classes():
 
   def search(self, term):
     try:
-      SearchClass(term)
-      self.DisplayClassesTable()
+      search_class(term)
+      self.display_classes_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -214,312 +199,312 @@ class Classes():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def AddClassInputWindow(self):
+  def add_class_pop_window(self):
     try:
-      self.course_id_title_map = {x.title: x.ID for x in GlobalData.courses}
+      self.course_id_title_map = {course.title: course.course_id for course in GlobalData.courses}
 
-      self.PopWindow = customtkinter.CTkToplevel()
-      self.PopWindow.grab_set()
+      self.pop_window = customtkinter.CTkToplevel()
+      self.pop_window.grab_set()
 
-      self.PopWindow.geometry("520x550")
-      self.PopWindow.resizable(False, False)
+      self.pop_window.geometry("520x550")
+      self.pop_window.resizable(False, False)
 
-      self.PopWindow.title("Add New Class")
+      self.pop_window.title("Add New Class")
 
-      ClasseIDLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      class_id_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Class ID:"
       )
-      ClasseIDLabel.grid(
+      class_id_label.grid(
         row=0,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.ClasseIDEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.class_id_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.ClasseIDEntry.grid(
+      self.class_id_entry.grid(
         row=0,
         column=1,
         padx=10,
         pady=5
       )
 
-      SubjectLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      subject_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Subject:"
       )
-      SubjectLabel.grid(
+      subject_label.grid(
         row=1,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.SubjectEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.subject_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.SubjectEntry.grid(
+      self.subject_entry.grid(
         row=1,
         column=1,
         padx=10,
         pady=5
       )
 
-      CatalogNBRLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      catalog_nbr_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Catalog NBR:"
       )
-      CatalogNBRLabel.grid(
+      catalog_nbr_label.grid(
         row=2,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.CatalogNBREntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.catalog_nbr_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.CatalogNBREntry.grid(
+      self.catalog_nbr_entry.grid(
         row=2,
         column=1,
         padx=10,
         pady=5
       )
 
-      AcademicCareerLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      academic_career_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Academic Career:"
       )
-      AcademicCareerLabel.grid(
+      academic_career_label.grid(
         row=4,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.AcademicCareerEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.academic_career_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.AcademicCareerEntry.grid(
+      self.academic_career_entry.grid(
         row=4,
         column=1,
         padx=10,
         pady=5
       )
 
-      OfferingNBRLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      offering_nbr_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Course Offering NBR:"
       )
-      OfferingNBRLabel.grid(
+      offering_nbr_label.grid(
         row=5,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.OfferingNBREntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.offering_nbr_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.OfferingNBREntry.grid(
+      self.offering_nbr_entry.grid(
         row=5,
         column=1,
         padx=10,
         pady=5
       )
 
-      StartTimeLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      start_time_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Start Time:"
       )
-      StartTimeLabel.grid(
+      start_time_label.grid(
         row=6,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.StartTimeEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.start_time_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.StartTimeEntry.grid(
+      self.start_time_entry.grid(
         row=6,
         column=1,
         padx=10,
         pady=5
       )
 
-      EndTimeLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      end_time_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="End Time:"
       )
-      EndTimeLabel.grid(
+      end_time_label.grid(
         row=7,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.EndTimeEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.end_time_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.EndTimeEntry.grid(
+      self.end_time_entry.grid(
         row=7,
         column=1,
         padx=10,
         pady=5
       )
 
-      SectionLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      section_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Section:"
       )
-      SectionLabel.grid(
+      section_label.grid(
         row=8,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.SectionEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.section_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.SectionEntry.grid(
+      self.section_entry.grid(
         row=8,
         column=1,
         padx=10,
         pady=5
       )
 
-      ComponentLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      component_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Component:"
       )
-      ComponentLabel.grid(
+      component_label.grid(
         row=9,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.ComponentEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.component_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.ComponentEntry.grid(
+      self.component_entry.grid(
         row=9,
         column=1,
         padx=10,
         pady=5
       )
 
-      CampusLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      campus_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Campus:"
       )
-      CampusLabel.grid(
+      campus_label.grid(
         row=10,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.CampusEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.campus_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.CampusEntry.grid(
+      self.campus_entry.grid(
         row=10,
         column=1,
         padx=10,
         pady=5
       )
 
-      InstructorIDLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      instructor_id_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Instructor ID:"
       )
-      InstructorIDLabel.grid(
+      instructor_id_label.grid(
         row=11,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.InstructorIDEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.instructor_id_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.InstructorIDEntry.grid(
+      self.instructor_id_entry.grid(
         row=11,
         column=1,
         padx=10,
         pady=5
       )
 
-      InstructorTypeLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      instructor_type_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Instructor Type:"
       )
-      InstructorTypeLabel.grid(
+      instructor_type_label.grid(
         row=12,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.InstructorTypeEntry = customtkinter.CTkEntry(
-        self.PopWindow,
+      self.instructor_type_entry = customtkinter.CTkEntry(
+        self.pop_window,
         width=350
       )
-      self.InstructorTypeEntry.grid(
+      self.instructor_type_entry.grid(
         row=12,
         column=1,
         padx=10,
         pady=5
       )
 
-      ClassesCourseLabel = customtkinter.CTkLabel(
-        self.PopWindow,
+      course_label = customtkinter.CTkLabel(
+        self.pop_window,
         text="Course:"
       )
-      ClassesCourseLabel.grid(
+      course_label.grid(
         row=13,
         column=0,
         padx=10,
         pady=5
       )
 
-      self.ClassesCourseEntry = customtkinter.CTkComboBox(
-        self.PopWindow,
-        values=[x.title for x in GlobalData.courses],
+      self.course_id_entry = customtkinter.CTkComboBox(
+        self.pop_window,
+        values=[course.title for course in GlobalData.courses],
         width=350
       )
-      self.ClassesCourseEntry.grid(
+      self.course_id_entry.grid(
         row=13,
         column=1,
         padx=10,
         pady=5
       )
-      self.ClassesCourseEntry.set(GlobalData.courses[0].title)
+      self.course_id_entry.set(GlobalData.courses[0].title)
 
-      SaveButton = customtkinter.CTkButton(
-        self.PopWindow,
+      submit_button = customtkinter.CTkButton(
+        self.pop_window,
         text="Save Class",
-        command=self.SubmitNewClass
+        command=self.submit_new_class
       )
-      SaveButton.grid(
+      submit_button.grid(
         row=14,
         columnspan=2,
         sticky="nsew",
@@ -533,23 +518,23 @@ class Classes():
       print(ExceptionType,FileName,ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def LunchGUI(self,parent):
+  def lunch_view(self, parent):
     try:
-      SearchBarFrame = customtkinter.CTkFrame(
+      search_bar_frame = customtkinter.CTkFrame(
         parent,
         bg_color="transparent"
       )
-      SearchBarFrame.pack(
+      search_bar_frame.pack(
         fill="x",
         expand=False
       )
 
-      SearchButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        command=lambda: self.search(SearchBar.get()),
+      search_button = customtkinter.CTkButton(
+        search_bar_frame,
+        command=lambda: self.search(search_bar.get()),
         text="Search"
       )
-      SearchButton.grid(
+      search_button.grid(
         row=0,
         column=0,
         sticky="nsew",
@@ -557,25 +542,25 @@ class Classes():
         padx=5
       )
 
-      SearchBar = customtkinter.CTkEntry(
-        SearchBarFrame,
+      search_bar = customtkinter.CTkEntry(
+        search_bar_frame,
         width=400,
         placeholder_text="Search for Classes..."
       )
-      SearchBar.grid(
+      search_bar.grid(
         row=0,
         column=1,
         sticky="nsew",
         pady=10
       )
 
-      RefreshButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        command=self.RefreshClassesTable,
+      refresh_button = customtkinter.CTkButton(
+        search_bar_frame,
+        command=self.refresh_classes_table,
         width=100,
         text="Refresh"
       )
-      RefreshButton.grid(
+      refresh_button.grid(
         row=0,
         column=4,
         sticky="nsew",
@@ -583,13 +568,13 @@ class Classes():
         padx=5
       )
 
-      AddClassesButton = customtkinter.CTkButton(
-        SearchBarFrame,
-        command=self.AddClassInputWindow,
+      add_class_button = customtkinter.CTkButton(
+        search_bar_frame,
+        command=self.add_class_pop_window,
         width=100,
         text="Add Class"
       )
-      AddClassesButton.grid(
+      add_class_button.grid(
         row=0,
         column=5,
         sticky="nsew",
@@ -597,37 +582,37 @@ class Classes():
         padx=5
       )
 
-      self.ResultsCount = customtkinter.CTkLabel(SearchBarFrame)
-      self.ResultsCount.grid(
+      self.classes_count = customtkinter.CTkLabel(search_bar_frame)
+      self.classes_count.grid(
         row=0,
         column=6,
         padx=10,
         pady=5
       )
 
-      self.ClassesTableFrame = customtkinter.CTkScrollableFrame(parent)
-      self.ClassesTableFrame.pack(
+      self.classes_table_frame = customtkinter.CTkScrollableFrame(parent)
+      self.classes_table_frame.pack(
         fill="both",
         expand=True
       )
 
       for col, header in enumerate(self.headers):
-        HeaderLabel = customtkinter.CTkLabel(
-          self.ClassesTableFrame,
+        header_label = customtkinter.CTkLabel(
+          self.classes_table_frame,
           text=header,
           padx=10,
           pady=10
         )
-        HeaderLabel.grid(
+        header_label.grid(
           row=0,
           column=col,
           sticky="nsew"
         )
 
       for col in range(len(self.headers)):
-        self.ClassesTableFrame.columnconfigure(col, weight=1)
+        self.classes_table_frame.columnconfigure(col, weight=1)
 
-      self.DisplayClassesTable()
+      self.display_classes_table()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

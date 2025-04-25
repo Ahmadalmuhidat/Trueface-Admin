@@ -7,26 +7,65 @@ from CTkMessagebox import CTkMessagebox
 from app.models import course
 from app.core.GlobalData import GlobalData
 
-def AddCourse(course_object):
+def get_courses():
+	try:
+		response = requests.get(GlobalData.config.get_base_url() + "/admin/get_courses").content
+		response = json.loads(response.decode('utf-8'))
+
+		if response.get("status_code") == 200:
+			GlobalData.courses = [
+				course.Course(
+					data['ID'],
+					data['Title'],
+					data['Credit'],
+					data['MaximumUnits'], 
+					data['LongCourseTitle'],
+					data['OfferingNBR'],
+					data['AcademicGroup'], 
+					data['SubjectArea'],
+					data['CatalogNBR'],
+					data['Campus'], 
+					data['AcademicOrganization'],
+					data['Component']
+				) for data in response.get("data")
+			]
+		else:
+			title = "Error"
+			message = response.get("error")
+			icon = "cancel"
+			CTkMessagebox(
+				title = title,
+				message = message if message else "Something went wrong while getting the courses",
+				icon = icon
+			)
+
+	except Exception as e:
+		ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
+		FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
+		print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
+		print(ExceptionObject)
+		pass 
+
+def add_course(course_object):
     try:
       data = {
-        "course_id": course_object.ID,
+        "course_id": course_object.course_id,
         "title": course_object.title,
         "credit": course_object.credit,
-        "maximum_units": course_object.MaximumUnits,
-        "long_course_title": course_object.LongCourseTitle,
-        "offering_nbr": course_object.OfferingNBR,
-        "academic_group": course_object.AcademicGroup,
-        "subject_area": course_object.SubjectArea,
-        "catalog_nbr": course_object.CatalogNBR,
+        "maximum_units": course_object.maximum_units,
+        "long_course_title": course_object.long_course_title,
+        "offering_nbr": course_object.offering_nbr,
+        "academic_group": course_object.academic_group,
+        "subject_area": course_object.subject_area,
+        "catalog_nbr": course_object.catalog_nbr,
         "campus": course_object.campus,
-        "academic_organization": course_object.AcademicOrganization,
+        "academic_organization": course_object.academic_organization,
         "component": course_object.component
       }
 
       response = requests.post(
-        GlobalData.config.getBaseURL() + "/admin/insert_course",
-        params = data
+        GlobalData.config.get_base_url() + "/admin/insert_course",
+        data = data
       ).content
       response = json.loads(response.decode('utf-8'))
 
@@ -49,7 +88,7 @@ def AddCourse(course_object):
       print(ExceptionObject)
       pass 
 
-def RemoveCourse(course_id, refresh_table_function: None):
+def remove_course(course_id, refresh_table_function: None):
     try:
       title = "Conformation"
       message = "Are you sure you want to delete the course"
@@ -67,8 +106,8 @@ def RemoveCourse(course_id, refresh_table_function: None):
           "course_id": course_id
         }
         response = requests.post(
-          GlobalData.config.getBaseURL() + "/admin/remove_course",
-          params = data
+          GlobalData.config.get_base_url() + "/admin/remove_course",
+          data = data
         ).content
         response = json.loads(response.decode('utf-8'))
 
@@ -95,13 +134,13 @@ def RemoveCourse(course_id, refresh_table_function: None):
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-def SearchCourses(course_id):
+def search_course(course_id):
 	try:
 		data = {
 			"course_id": course_id
 		}
 		response = requests.get(
-			GlobalData.config.getBaseURL() + "/admin/search_courses",
+			GlobalData.config.get_base_url() + "/admin/search_courses",
 			params = data
 		).content
 		response = json.loads(response.decode('utf-8'))
@@ -138,43 +177,4 @@ def SearchCourses(course_id):
 		FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
 		print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
 		print(ExceptionObject)
-		pass
-
-def GetCourses():
-	try:
-		response = requests.get(GlobalData.config.getBaseURL() + "/admin/get_courses").content
-		response = json.loads(response.decode('utf-8'))
-
-		if response.get("status_code") == 200:
-			GlobalData.courses = [
-				course.Course(
-					data['ID'],
-					data['Title'],
-					data['Credit'],
-					data['MaximumUnits'], 
-					data['LongCourseTitle'],
-					data['OfferingNBR'],
-					data['AcademicGroup'], 
-					data['SubjectArea'],
-					data['CatalogNBR'],
-					data['Campus'], 
-					data['AcademicOrganization'],
-					data['Component']
-				) for data in response.get("data")
-			]
-		else:
-			title = "Error"
-			message = response.get("error")
-			icon = "cancel"
-			CTkMessagebox(
-				title = title,
-				message = message if message else "Something went wrong while getting the courses",
-				icon = icon
-			)
-
-	except Exception as e:
-		ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
-		FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
-		print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
-		print(ExceptionObject)
-		pass  
+		pass 

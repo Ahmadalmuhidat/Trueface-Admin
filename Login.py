@@ -25,7 +25,7 @@ class Login():
     if result:
       GlobalData.config.token = result
       self.window.destroy()
-      Main().StartTheProgram()
+      Main().start_program()
 
   def create(self):
     try:
