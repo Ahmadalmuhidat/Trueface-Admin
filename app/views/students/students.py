@@ -407,7 +407,7 @@ class Students():
         self.student_gender_entry.get(),
         CreateDate = ""
       )
-      new_student.ValidateStudentsData()
+      new_student.validate_students_data()
       add_student(new_student)
 
       self.student_id_entry.delete(

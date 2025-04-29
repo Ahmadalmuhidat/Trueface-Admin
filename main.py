@@ -40,7 +40,7 @@ class Main():
       classes_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command=lambda:  self.config.router.navigate(Classes.Classes),
+        command= lambda: self.config.router.navigate(Classes.Classes),
         text="Classes"
       )
       classes_view.pack(side=customtkinter.LEFT)
@@ -48,7 +48,7 @@ class Main():
       courses_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command=lambda:  self.config.router.navigate(Courses.Courses),
+        command= lambda: self.config.router.navigate(Courses.Courses),
         text="Courses"
       )
       courses_view.pack(side=customtkinter.LEFT)
@@ -56,7 +56,7 @@ class Main():
       users_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command=lambda:  self.config.router.navigate(Users.Users),
+        command= lambda:  self.config.router.navigate(Users.Users),
         text="Users"
       )
       users_view.pack(side=customtkinter.LEFT)

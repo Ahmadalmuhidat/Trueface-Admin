@@ -10,8 +10,8 @@ import app.config.configrations as Configrations
 from CTkMessagebox import CTkMessagebox
 
 class Student:
-  def __init__(self, ID, first_name, middle_name, last_name, gender, create_date, picture = None):
-    self.student_id = ID
+  def __init__(self, student_id, first_name, middle_name, last_name, gender, create_date, picture = None):
+    self.student_id = student_id
     self.first_name = first_name
     self.middle_name = middle_name
     self.last_name = last_name
@@ -21,7 +21,9 @@ class Student:
 
     self.config  = Configrations.Configrations()
 
-  def CheckDuplicatedID(self):
+    self.classes = []
+
+  def check_duplicated_id(self):
     try:
       data = {
         "student_id": self.student_id
@@ -51,7 +53,7 @@ class Student:
       print(ExceptionObject)
       pass
   
-  def GetFaceEncode(self):
+  def get_face_encode(self):
     try:
       load_stored_image = face_recognition.load_image_file(self.picture)
       return pickle.dumps(numpy.array(
@@ -65,12 +67,12 @@ class Student:
       print(ExceptionObject)
       pass
 
-  def CheckFaceInImage(self):
+  def check_face_in_image(self):
     try:
       load_stored_image = face_recognition.load_image_file(self.picture)
-      FaceFound = face_recognition.face_locations(load_stored_image)
+      face_found = face_recognition.face_locations(load_stored_image)
 
-      if FaceFound:
+      if face_found:
         return True
       else:
         return False
@@ -82,7 +84,7 @@ class Student:
       print(ExceptionObject)
       pass
 
-  def ValidateStudentsData(self):
+  def validate_students_data(self):
     try:
       if not self.student_id:
         title = "Missing Entry"
@@ -126,13 +128,13 @@ class Student:
         icon = "cancel"
         CTkMessagebox(title=title, message=message, icon=icon)  
         return False
-      elif not self.CheckFaceInImage():
+      elif not self.check_face_in_image():
         title = "Face Not Found"
         message = "the uploaded image does not contain face"
         icon = "cancel"
         CTkMessagebox(title=title, message=message, icon=icon)  
         return False
-      elif self.CheckDuplicatedID():
+      elif self.check_duplicated_id():
         title = "Duplicated ID"
         message = "the entered id has been already assigned to another Student"
         icon = "cancel"

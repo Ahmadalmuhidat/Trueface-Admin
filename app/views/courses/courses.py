@@ -121,7 +121,7 @@ class Courses():
         self.course_academic_organization_entry.get(),
         self.course_component_entry.get()
       )
-      new_course.ValidateCourseData()
+      new_course.validate_course_data()
       add_course(new_course)
 
       self.course_id_entry.delete(

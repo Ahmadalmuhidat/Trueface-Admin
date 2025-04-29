@@ -24,7 +24,7 @@ class Course:
 
     self.config  = Configrations.Configrations() 
 
-  def ValidateCourseData(self):
+  def validate_course_data(self):
     try:
       if not self.course_id:
         title = "Missing Entry"
