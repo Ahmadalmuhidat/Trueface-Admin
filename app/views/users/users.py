@@ -43,8 +43,8 @@ class Users():
       for label in self.users:
         label.destroy()
 
-      if len(GlobalData.users) > 0:
-        for row, user in enumerate(GlobalData.users, start=1):
+      if len(GlobalData.get_users()) > 0:
+        for row, user in enumerate(GlobalData.get_users(), start=1):
           user_row = [
             user.user_id,
             user.name,
@@ -82,7 +82,7 @@ class Users():
             self.users.append(delete_button)
 
       self.users_count.configure(
-        text="Results: " + str(len(GlobalData.users))
+        text="Results: " + str(len(GlobalData.get_users()))
       )
 
     except Exception as e:
@@ -111,7 +111,7 @@ class Users():
         self.user_email_entry.get(),
         self.user_role_entry.get()
       )
-      new_user.validate_user_data()
+
       add_user(new_user)
       
       self.user_id_entry.delete(
@@ -281,7 +281,7 @@ class Users():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def lunch_view(self, parent):
+  def lunch_view(self, parent: customtkinter.CTkFrame):
     try:
       search_bar_frame = customtkinter.CTkFrame(
         parent,

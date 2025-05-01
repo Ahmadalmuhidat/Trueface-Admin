@@ -306,8 +306,8 @@ class Students():
       for label in self.students:
         label.destroy()
 
-      if len(GlobalData.students) > 0:
-        for row, student in enumerate(GlobalData.students, start=1):
+      if len(GlobalData.get_students()) > 0:
+        for row, student in enumerate(GlobalData.get_students(), start=1):
           student_row = [
             student.student_id,
             student.first_name,
@@ -361,7 +361,7 @@ class Students():
           )
           self.students.append(delete_button)
 
-      self.students_count.configure(text="Results: " + str(len(GlobalData.students)))
+      self.students_count.configure(text="Results: " + str(len(GlobalData.get_students())))
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -407,7 +407,7 @@ class Students():
         self.student_gender_entry.get(),
         CreateDate = ""
       )
-      new_student.validate_students_data()
+
       add_student(new_student)
 
       self.student_id_entry.delete(
@@ -604,7 +604,7 @@ class Students():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def lunch_view(self, parent):
+  def lunch_view(self, parent: customtkinter.CTkFrame):
     try:
       search_bar_frame = customtkinter.CTkFrame(
         parent,

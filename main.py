@@ -94,21 +94,19 @@ class Main():
       customtkinter.set_appearance_mode("dark")
 
       self.window = customtkinter.CTk()
-      self.config.set_window(self.window)
 
-      width = self.config.window.winfo_screenwidth()
-      height = self.config.window.winfo_screenheight()
-      self.config.window.geometry("%dx%d" % (width, height))
-      self.config.window.title("TrueFace Admin")
+      width = self.window.winfo_screenwidth()
+      height = self.window.winfo_screenheight()
+      self.window.geometry("%dx%d" % (width, height))
+      self.window.title("TrueFace Admin")
       # self.window.iconbitmap("logo.ico")
-      # self.window.protocol("WM_DELETE_WINDOW", self.OnClosing)
-
-      self.config.window.protocol("WM_DELETE_WINDOW", self.when_app_close)
+      self.window.protocol("WM_DELETE_WINDOW", self.when_app_close)
+      self.config.set_window(self.window)
 
       self.create_navbar()
       self.config.router.navigate(Students.Students)
 
-      self.config.window.mainloop()
+      self.window.mainloop()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -120,4 +118,4 @@ class Main():
 
 if __name__ == "__main__":
   Main().start_program()
-  # login = Login.Login().create()
+  # Login.Login().lunch_view()

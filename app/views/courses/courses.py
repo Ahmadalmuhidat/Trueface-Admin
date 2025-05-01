@@ -40,8 +40,8 @@ class Courses():
       for label in self.courses:
         label.destroy()
 
-      if len(GlobalData.courses) > 0:
-        for row, course in enumerate(GlobalData.courses, start = 1):
+      if len(GlobalData.get_courses()) > 0:
+        for row, course in enumerate(GlobalData.get_courses(), start = 1):
           course_row = [
             course.course_id,
             course.title,
@@ -86,7 +86,7 @@ class Courses():
             )
             self.courses.append(delete_button)
 
-      self.courses_count.configure(text="Results: " + str(len(GlobalData.courses)))
+      self.courses_count.configure(text="Results: " + str(len(GlobalData.get_courses())))
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -121,7 +121,7 @@ class Courses():
         self.course_academic_organization_entry.get(),
         self.course_component_entry.get()
       )
-      new_course.validate_course_data()
+
       add_course(new_course)
 
       self.course_id_entry.delete(
@@ -484,7 +484,7 @@ class Courses():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def lunch_view(self, parent):
+  def lunch_view(self, parent: customtkinter.CTkFrame):
     try:
       search_bar_frame = customtkinter.CTkFrame(
         parent,

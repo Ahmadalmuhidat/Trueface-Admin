@@ -43,8 +43,8 @@ class Classes():
       for label in self.classes:
         label.destroy()
 
-      if len(GlobalData.classes) > 0:
-        for row, class_ in enumerate(GlobalData.classes, start=1):
+      if len(GlobalData.get_classes()) > 0:
+        for row, class_ in enumerate(GlobalData.get_classes(), start=1):
           class_row = [
             class_.class_id,
             class_.subject_area,
@@ -91,7 +91,7 @@ class Classes():
             self.classes.append(delete_button)
 
       self.classes_count.configure(
-        text="Results: " + str(len(GlobalData.classes))
+        text="Results: " + str(len(GlobalData.get_classes()))
       )
 
     except Exception as e:
@@ -128,7 +128,6 @@ class Classes():
         self.instructor_id_entry.get()
       )
 
-      new_class.validate_class_data()
       add_class(new_class)
  
       self.class_id_entry.delete(
@@ -188,7 +187,7 @@ class Classes():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def search(self, term):
+  def search(self, term: str) -> None:
     try:
       search_class(term)
       self.display_classes_table()
@@ -201,7 +200,7 @@ class Classes():
 
   def add_class_pop_window(self):
     try:
-      self.course_id_title_map = {course.title: course.course_id for course in GlobalData.courses}
+      self.course_id_title_map = {course.title: course.course_id for course in GlobalData.get_courses()}
 
       self.pop_window = customtkinter.CTkToplevel()
       self.pop_window.grab_set()
@@ -488,7 +487,7 @@ class Classes():
 
       self.course_id_entry = customtkinter.CTkComboBox(
         self.pop_window,
-        values=[course.title for course in GlobalData.courses],
+        values=[course.title for course in GlobalData.get_courses()],
         width=350
       )
       self.course_id_entry.grid(
@@ -497,7 +496,7 @@ class Classes():
         padx=10,
         pady=5
       )
-      self.course_id_entry.set(GlobalData.courses[0].title)
+      self.course_id_entry.set(GlobalData.get_courses()[0].title)
 
       submit_button = customtkinter.CTkButton(
         self.pop_window,
@@ -518,7 +517,7 @@ class Classes():
       print(ExceptionType,FileName,ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def lunch_view(self, parent):
+  def lunch_view(self, parent: customtkinter.CTkFrame):
     try:
       search_bar_frame = customtkinter.CTkFrame(
         parent,
