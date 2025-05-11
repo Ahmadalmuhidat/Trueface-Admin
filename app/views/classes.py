@@ -3,15 +3,13 @@ import os
 import customtkinter
 
 from app.models import class_
-from app.core.GlobalData import GlobalData
+from app.core.data_manager import Data_Manager
 from app.controllers.classes import get_classes, search_class, add_class, remove_class
 from app.controllers.courses import get_courses
 
 class Classes():
   def __init__(self):
     try:
-      super().__init__()
-
       self.classes = []
       self.headers = [
         "Classe ID",
@@ -28,6 +26,7 @@ class Classes():
         "Instructor ID",	
         "Instructor Type"
       ]
+      self.data_manager = Data_Manager()
 
       get_classes()
       get_courses()
@@ -43,22 +42,22 @@ class Classes():
       for label in self.classes:
         label.destroy()
 
-      if len(GlobalData.get_classes()) > 0:
-        for row, class_ in enumerate(GlobalData.get_classes(), start=1):
+      if len(self.data_manager.get_classes()) > 0:
+        for row, class_ in enumerate(self.data_manager.get_classes(), start=1):
           class_row = [
-            class_.class_id,
-            class_.subject_area,
-            class_.catalog_nbr,	
-            class_.academic_career,	
-            class_.Course,	
-            class_.offering_nbr,	
-            class_.start_time,	
-            class_.end_time,	
-            class_.section,	
-            class_.component,	
-            class_.campus,	
-            class_.instructor_id,	
-            class_.instructor_type
+            class_.get_class_id(),
+            class_.get_subject_area(),
+            class_.get_catalog_nbr(),	
+            class_.get_academic_career(),	
+            class_.get_course(),	
+            class_.get_offering_nbr(),	
+            class_.get_start_time(),	
+            class_.get_end_time(),	
+            class_.get_section(),	
+            class_.get_component(),	
+            class_.get_campus(),	
+            class_.get_instructor_id(),	
+            class_.get_instructor_type()
           ]
 
           for col, data in enumerate(class_row):
@@ -79,7 +78,7 @@ class Classes():
               self.classes_table_frame,
                 text = "Delete",
                 fg_color = "red",
-                command = lambda: remove_class(class_.class_id, self.refresh_classes_table),
+                command = lambda class_id=class_.get_class_id(): remove_class(class_id, self.refresh_classes_table),
               )
             delete_button.grid(
                 row = row,
@@ -91,7 +90,7 @@ class Classes():
             self.classes.append(delete_button)
 
       self.classes_count.configure(
-        text="Results: " + str(len(GlobalData.get_classes()))
+        text="Results: " + str(len(self.data_manager.get_classes()))
       )
 
     except Exception as e:
@@ -200,7 +199,7 @@ class Classes():
 
   def add_class_pop_window(self):
     try:
-      self.course_id_title_map = {course.title: course.course_id for course in GlobalData.get_courses()}
+      self.course_id_title_map = {course.get_title(): course.get_course_id() for course in self.data_manager.get_courses()}
 
       self.pop_window = customtkinter.CTkToplevel()
       self.pop_window.grab_set()
@@ -487,7 +486,7 @@ class Classes():
 
       self.course_id_entry = customtkinter.CTkComboBox(
         self.pop_window,
-        values=[course.title for course in GlobalData.get_courses()],
+        values=[course.get_title() for course in self.data_manager.get_courses()],
         width=350
       )
       self.course_id_entry.grid(
@@ -496,7 +495,7 @@ class Classes():
         padx=10,
         pady=5
       )
-      self.course_id_entry.set(GlobalData.get_courses()[0].title)
+      self.course_id_entry.set(self.data_manager.get_courses()[0].get_title())
 
       submit_button = customtkinter.CTkButton(
         self.pop_window,

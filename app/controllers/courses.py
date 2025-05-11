@@ -4,39 +4,18 @@ import json
 import requests
 
 from CTkMessagebox import CTkMessagebox
-from app.models import course
-from app.core.GlobalData import GlobalData
+from app.models.course import Course
+from app.core.data_manager import Data_Manager
 
 def get_courses() -> list:
-  """
-  Retrieves the list of courses from the backend API and stores them in the GlobalData object.
-
-  Args: None
-
-  Returns:
-    list: A list of `course.Course` objects.
-  """
   try:
-    response = requests.get(GlobalData.config.get_base_url() + "/admin/get_courses").content
+    data_manager = Data_Manager()
+    response = requests.get(data_manager.get_config().get_base_url() + "/admin/get_courses").content
     response = json.loads(response.decode('utf-8'))
+    data_manager = Data_Manager()
 
     if response.get("status_code") == 200:
-      GlobalData.get_courses() = [
-        course.Course(
-          data['ID'],
-          data['Title'],
-          data['Credit'],
-          data['MaximumUnits'], 
-          data['LongCourseTitle'],
-          data['OfferingNBR'],
-          data['AcademicGroup'], 
-          data['SubjectArea'],
-          data['CatalogNBR'],
-          data['Campus'], 
-          data['AcademicOrganization'],
-          data['Component']
-        ) for data in response.get("data")
-      ]
+      data_manager.set_courses(response.get("data"))
     else:
       title = "Error"
       message = response.get("error")
@@ -54,33 +33,25 @@ def get_courses() -> list:
     print(ExceptionObject)
     pass 
 
-def add_course(course_object: course) -> None:
-  """
-  Sends a POST request to the backend API to insert a new course into the system.
-
-  Args:
-    course_object (course): An instance of the `course` class containing all necessary course attributes such as ID, title, credit, and academic details.
-
-  Returns: None
-  """
+def add_course(course_object: Course) -> None:
   try:
     data = {
-      "course_id": course_object.course_id,
-      "title": course_object.title,
-      "credit": course_object.credit,
-      "maximum_units": course_object.maximum_units,
-      "long_course_title": course_object.long_course_title,
-      "offering_nbr": course_object.offering_nbr,
-      "academic_group": course_object.academic_group,
-      "subject_area": course_object.subject_area,
-      "catalog_nbr": course_object.catalog_nbr,
-      "campus": course_object.campus,
-      "academic_organization": course_object.academic_organization,
-      "component": course_object.component
+      "course_id": course_object.get_course_id(),
+      "title": course_object.get_title(),
+      "credit": course_object.get_credit(),
+      "maximum_units": course_object.get_maximum_units(),
+      "long_course_title": course_object.get_long_course_title(),
+      "offering_nbr": course_object.get_offering_nbr(),
+      "academic_group": course_object.get_academic_group(),
+      "subject_area": course_object.get_subject_area(),
+      "catalog_nbr": course_object.get_catalog_nbr(),
+      "campus": course_object.get_campus(),
+      "academic_organization": course_object.get_academic_organization(),
+      "component": course_object.get_component()
     }
-
+    data_manager = Data_Manager()
     response = requests.post(
-      GlobalData.config.get_base_url() + "/admin/insert_course",
+      data_manager.get_config().get_base_url() + "/admin/insert_course",
       data = data
     ).content
     response = json.loads(response.decode('utf-8'))
@@ -104,18 +75,7 @@ def add_course(course_object: course) -> None:
     print(ExceptionObject)
     pass
 
-def remove_course(course_id: str, refresh_table_function: function) -> None:
-  """
-  Removes a course from the system and refreshes the course table upon successful deletion.
-
-  This function first asks for user confirmation before attempting to delete the course. If confirmed, it sends a POST request to the backend API to delete the specified course. After deletion, the table is refreshed by calling the provided `refresh_table_function`.
-
-  Args:
-    course_id (str): The ID of the course to be deleted.
-    refresh_table_function (function): A function that refreshes the table of courses upon successful deletion.
-
-  Returns: None
-  """
+def remove_course(course_id: str, refresh_table_function) -> None:
   try:
     title = "Conformation"
     message = "Are you sure you want to delete the course"
@@ -132,8 +92,9 @@ def remove_course(course_id: str, refresh_table_function: function) -> None:
       data = {
         "course_id": course_id
       }
+      data_manager = Data_Manager()
       response = requests.post(
-        GlobalData.config.get_base_url() + "/admin/remove_course",
+        data_manager.get_config().get_base_url() + "/admin/remove_course",
         data = data
       ).content
       response = json.loads(response.decode('utf-8'))
@@ -162,44 +123,20 @@ def remove_course(course_id: str, refresh_table_function: function) -> None:
     print(ExceptionObject)
 
 def search_course(course_id: str) -> list:
-  """
-  Searches for a specific course by its ID from the backend API and stores the result in the GlobalData object.
-
-  This function sends a GET request to the backend API to search for a course using the provided course ID. If the course is found, the course details are retrieved and stored in the `GlobalData.get_courses()` list. If the course is not found or there is an error, an error message is displayed.
-
-  Args:
-    course_id (str): The ID of the course to search for.
-
-  Returns:
-    list: A list of `course.Course` objects representing the search results.
-  """
   try:
     data = {
       "course_id": course_id
     }
+    data_manager = Data_Manager()
     response = requests.get(
-      GlobalData.config.get_base_url() + "/admin/search_courses",
+      data_manager.get_config().get_base_url() + "/admin/search_courses",
       params = data
     ).content
     response = json.loads(response.decode('utf-8'))
+    data_manager = Data_Manager()
 
     if response.get("status_code") == 200:
-      GlobalData.get_courses() = [
-        course.Course(
-          data['ID'],
-          data['Title'],
-          data['Credit'],
-          data['MaximumUnits'], 
-          data['LongCourseTitle'],
-          data['OfferingNBR'],
-          data['AcademicGroup'], 
-          data['SubjectArea'],
-          data['CatalogNBR'],
-          data['Campus'], 
-          data['AcademicOrganization'],
-          data['Component']
-        ) for data in response.get("data")
-      ]
+      data_manager.set_courses(response.get("data"))
     else:
       title = "Error"
       message = response.get("error")

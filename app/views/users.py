@@ -3,14 +3,12 @@ import os
 import customtkinter
 
 from app.models import user
-from app.core.GlobalData import GlobalData
+from app.core.data_manager import Data_Manager
 from app.controllers.users import get_users, search_user, add_user, remove_user
 
 class Users():
   def __init__(self):
     try:
-      super().__init__()
-
       self.users = []
       self.headers = [
         "Users ID",
@@ -18,6 +16,7 @@ class Users():
         "Email",
         "Role",
       ]
+      self.data_manager = Data_Manager()
 
       get_users()
 
@@ -43,13 +42,13 @@ class Users():
       for label in self.users:
         label.destroy()
 
-      if len(GlobalData.get_users()) > 0:
-        for row, user in enumerate(GlobalData.get_users(), start=1):
+      if len(self.data_manager.get_users()) > 0:
+        for row, user in enumerate(self.data_manager.get_users(), start=1):
           user_row = [
-            user.user_id,
-            user.name,
-            user.email,
-            user.role
+            user.get_user_id(),
+            user.get_name(),
+            user.get_email(),
+            user.get_role()
           ]
 
           for col, data in enumerate(user_row):
@@ -70,7 +69,7 @@ class Users():
               self.users_table_frame,
                 text="Delete",
                 fg_color="red",
-                command= lambda: remove_user(user.user_id, self.refresh_users_table)
+                command= lambda user_id=user.get_user_id(): remove_user(user_id, self.refresh_users_table)
               )
             delete_button.grid(
                 row=row,
@@ -82,7 +81,7 @@ class Users():
             self.users.append(delete_button)
 
       self.users_count.configure(
-        text="Results: " + str(len(GlobalData.get_users()))
+        text="Results: " + str(len(self.data_manager.get_users()))
       )
 
     except Exception as e:

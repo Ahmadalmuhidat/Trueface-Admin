@@ -4,7 +4,7 @@ import customtkinter
 
 from main import Main
 from app.controllers.auth import login
-from app.core.GlobalData import GlobalData
+from app.core.data_manager import Data_Manager
 
 class Login():
   def login(self):
@@ -12,8 +12,9 @@ class Login():
       self.email_entry.get(),
       self.password_entry.get()
     )
+    data_manager = Data_Manager()
     if result:
-      GlobalData.config.token = result
+      data_manager.get_config().set_token(result)
       self.window.destroy()
       Main().start_program()
 

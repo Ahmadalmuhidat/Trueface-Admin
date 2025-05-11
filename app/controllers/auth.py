@@ -4,29 +4,18 @@ import json
 import requests
 
 from CTkMessagebox import CTkMessagebox
-from app.core.GlobalData import GlobalData
+from app.core.data_manager import Data_Manager
 
 def login(email, password) -> str:
-  """
-  Sends a login request to verify the user credentials.
-
-  Args:
-    email (str): The email address entered by the user.
-    password (str): The password entered by the user.
-
-  Returns:
-    dict or None: 
-      - If successful (status code 200), returns a dictionary containing user data.
-      - If an error occurs or login fails, shows a CTkMessagebox with the error and returns None.
-  """
   try:
     data = {
       "email": email,
       "password": password
     }
+    data_manager = Data_Manager()
 
     response = requests.get(
-      GlobalData.config.get_base_url() + "/admin/check_user",
+      data_manager.get_config().get_base_url() + "/admin/check_user",
       params=data
     ).content
     response = json.loads(response.decode('utf-8'))

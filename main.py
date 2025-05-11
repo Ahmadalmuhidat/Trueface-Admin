@@ -4,19 +4,21 @@ import customtkinter
 import threading
 
 from app.config.configrations import Configrations
+from app.config.router import Router
 
-import app.views.students.students as Students
-import app.views.classes.classes as Classes
-import app.views.courses.courses as Courses
-import app.views.users.users as Users
-import app.views.login.login as Login
+import app.views.students as Students
+import app.views.classes as Classes
+import app.views.courses as Courses
+import app.views.users as Users
+import app.views.login as Login
+
+customtkinter.set_appearance_mode("dark")
 
 class Main():
   def __init__(self):
     try:
-      super().__init__()
-
-      self.config = Configrations()
+      self._config = Configrations()
+      self._router = Router()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -26,13 +28,13 @@ class Main():
 
   def create_navbar(self):
     try:
-      navbar = customtkinter.CTkFrame(self.config.window)
+      navbar = customtkinter.CTkFrame(self._config.window)
       navbar.pack(fill=customtkinter.X)
 
       students_view = customtkinter.CTkButton(
         navbar,
         corner_radius = 0,
-        command = lambda: self.config.router.navigate(Students.Students),
+        command = lambda: self._router.navigate(Students.Students),
         text = "Students"
       )
       students_view.pack(side=customtkinter.LEFT)
@@ -40,7 +42,7 @@ class Main():
       classes_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command= lambda: self.config.router.navigate(Classes.Classes),
+        command= lambda: self._router.navigate(Classes.Classes),
         text="Classes"
       )
       classes_view.pack(side=customtkinter.LEFT)
@@ -48,7 +50,7 @@ class Main():
       courses_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command= lambda: self.config.router.navigate(Courses.Courses),
+        command= lambda: self._router.navigate(Courses.Courses),
         text="Courses"
       )
       courses_view.pack(side=customtkinter.LEFT)
@@ -56,7 +58,7 @@ class Main():
       users_view = customtkinter.CTkButton(
         navbar,
         corner_radius=0,
-        command= lambda:  self.config.router.navigate(Users.Users),
+        command= lambda:  self._router.navigate(Users.Users),
         text="Users"
       )
       users_view.pack(side=customtkinter.LEFT)
@@ -69,7 +71,7 @@ class Main():
 
   def when_app_close(self):
     try:
-      self.config.window.destroy()
+      self._config.window.destroy()
 
       threadsToTerminate = [
         thread for thread in 
@@ -91,20 +93,20 @@ class Main():
 
   def start_program(self):
     try:
-      customtkinter.set_appearance_mode("dark")
-
       self.window = customtkinter.CTk()
+
+      self._config.set_window(self.window)
 
       width = self.window.winfo_screenwidth()
       height = self.window.winfo_screenheight()
       self.window.geometry("%dx%d" % (width, height))
       self.window.title("TrueFace Admin")
       # self.window.iconbitmap("logo.ico")
+
       self.window.protocol("WM_DELETE_WINDOW", self.when_app_close)
-      self.config.set_window(self.window)
 
       self.create_navbar()
-      self.config.router.navigate(Students.Students)
+      self._router.navigate(Students.Students)
 
       self.window.mainloop()
 

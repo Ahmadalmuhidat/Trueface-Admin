@@ -3,14 +3,12 @@ import os
 import customtkinter
 
 from app.models import course
-from app.core.GlobalData import GlobalData
+from app.core.data_manager import Data_Manager
 from app.controllers.courses import get_courses, search_course, add_course, remove_course
 
 class Courses():
   def __init__(self):
     try:
-      super().__init__()
-
       self.courses = []
       self.headers = [
         "Course ID",
@@ -26,6 +24,7 @@ class Courses():
         "Academic Organization",
         "Component"
       ]
+      self.data_manager = Data_Manager()
 
       get_courses()
 
@@ -40,21 +39,21 @@ class Courses():
       for label in self.courses:
         label.destroy()
 
-      if len(GlobalData.get_courses()) > 0:
-        for row, course in enumerate(GlobalData.get_courses(), start = 1):
+      if len(self.data_manager.get_courses()) > 0:
+        for row, course in enumerate(self.data_manager.get_courses(), start = 1):
           course_row = [
-            course.course_id,
-            course.title,
-            course.credit,
-            course.maximum_units,
-            course.long_course_title,
-            course.offering_nbr,
-            course.academic_group,
-            course.subject_area,
-            course.catalog_nbr,
-            course.campus,
-            course.academic_organization,
-            course.component
+            course.get_course_id(),
+            course.get_title(),
+            course.get_credit(),
+            course.get_maximum_units(),
+            course.get_long_course_title(),
+            course.get_offering_nbr(),
+            course.get_academic_group(),
+            course.get_subject_area(),
+            course.get_catalog_nbr(),
+            course.get_campus(),
+            course.get_academic_organization(),
+            course.get_component()
           ]
 
           for col, data in enumerate(course_row):
@@ -75,7 +74,7 @@ class Courses():
               self.courses_table_frame,
                 text = "Delete",
                 fg_color = "red",
-                command = lambda: remove_course(course.course_id, self.refresh_courses_table)
+                command = lambda course_id=course.get_course_id(): remove_course(course_id, self.refresh_courses_table)
               )
             delete_button.grid(
                 row = row,
@@ -86,7 +85,7 @@ class Courses():
             )
             self.courses.append(delete_button)
 
-      self.courses_count.configure(text="Results: " + str(len(GlobalData.get_courses())))
+      self.courses_count.configure(text="Results: " + str(len(self.data_manager.get_courses())))
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

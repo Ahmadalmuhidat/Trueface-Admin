@@ -1,8 +1,4 @@
-import sys
-import os
 import app.config.configrations as Configrations
-
-from CTkMessagebox import CTkMessagebox
 
 class User:
   def __init__(self, user_id, name, email, role):
@@ -12,3 +8,18 @@ class User:
     self.role = role
 
     self.config = Configrations.Configrations()
+
+  def get_user_id(self):
+    return self.user_id
+
+  def get_name(self):
+    return self.name
+
+  def get_email(self):
+    return self.email
+
+  def get_role(self):
+    return self.role
+
+  def get_config(self):
+    return self.config

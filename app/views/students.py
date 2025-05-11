@@ -5,7 +5,8 @@ import tkinter
 import uuid
 
 from PIL import Image
-from app.core.GlobalData import GlobalData
+from datetime import datetime
+from app.core.data_manager import Data_Manager
 from app.models import student
 from app.controllers.students import get_students, search_student, add_student, remove_student
 from app.controllers.classes import add_student_to_class, get_classes_for_selection, get_student_classes, remove_student_from_class, remove_student_from_all_classes
@@ -13,8 +14,6 @@ from app.controllers.classes import add_student_to_class, get_classes_for_select
 class Students():
   def __init__(self):
     try:
-      super().__init__()
-
       self.students = []
       self.headers = [
         "Student ID",
@@ -24,6 +23,7 @@ class Students():
         "Gender",
         "Create Date",
       ]
+      self.data_manager = Data_Manager()
 
       get_students()
 
@@ -138,7 +138,7 @@ class Students():
                 classes_table_frame,
                 text="Remove",
                 fg_color="red",
-                command= lambda: remove_relation(class_.relation_id)
+                command= lambda relation_id=class_.relation_id : remove_relation(relation_id)
               )
               delete_button.grid(
                 row=row,
@@ -242,7 +242,7 @@ class Students():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def StudentProfile(self, student_id):
+  def student_profile(self, student_id):
     try:
       pop_window = customtkinter.CTkToplevel()
       pop_window.grab_set()
@@ -306,15 +306,15 @@ class Students():
       for label in self.students:
         label.destroy()
 
-      if len(GlobalData.get_students()) > 0:
-        for row, student in enumerate(GlobalData.get_students(), start=1):
+      if len(self.data_manager.get_students()) > 0:
+        for row, student in enumerate(self.data_manager.get_students(), start=1):
           student_row = [
-            student.student_id,
-            student.first_name,
-            student.middle_name,
-            student.last_name,
-            student.gender,
-            student.create_date
+            student.get_student_id(),
+            student.get_first_name(),
+            student.get_middle_name(),
+            student.get_last_name(),
+            student.get_gender(),
+            student.get_create_date()
           ]
 
           for col, data in enumerate(student_row):
@@ -335,7 +335,7 @@ class Students():
           profile_button = customtkinter.CTkButton(
             self.students_table_frame,
             text="Profile",
-            command = lambda: self.StudentProfile(student.student_id)
+            command = lambda student_id=student.get_student_id(): self.student_profile(student_id)
           )
           profile_button.grid(
             row=row,
@@ -350,7 +350,7 @@ class Students():
             self.students_table_frame,
               text = "Delete",
               fg_color = "red",
-              command = lambda: remove_student(student.student_id, self.refresh_students_table)
+              command = lambda student_id=student.get_student_id(): remove_student(student_id, self.refresh_students_table)
             )
           delete_button.grid(
             row = row,
@@ -361,7 +361,7 @@ class Students():
           )
           self.students.append(delete_button)
 
-      self.students_count.configure(text="Results: " + str(len(GlobalData.get_students())))
+      self.students_count.configure(text="Results: " + str(len(self.data_manager.get_students())))
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -405,7 +405,7 @@ class Students():
         self.student_middle_name_entry.get(),
         self.student_last_name_entry.get(),
         self.student_gender_entry.get(),
-        CreateDate = ""
+        picture= self.student_image_entry.get()
       )
 
       add_student(new_student)
