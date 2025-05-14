@@ -1,9 +1,11 @@
 import sys
 import os
 import customtkinter
+import threading
 
 from app.models import user
 from app.core.data_manager import Data_Manager
+from app.config.configrations import Configrations
 from app.controllers.users import get_users, search_user, add_user, remove_user
 
 class Users():
@@ -17,8 +19,7 @@ class Users():
         "Role",
       ]
       self.data_manager = Data_Manager()
-
-      get_users()
+      self._config = Configrations()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -39,6 +40,12 @@ class Users():
 
   def display_users_table(self):
     try:
+      self._config.loading_cursor_on()
+
+      get_users()
+
+      self._config.loading_cursor_off()
+
       for label in self.users:
         label.destroy()
 
@@ -103,6 +110,8 @@ class Users():
   
   def submit_new_user(self):
     try:
+      self._config.loading_cursor_on()
+
       # UserPassword = self.user_pass_word.get()
       new_user = user.User(
         self.user_id_entry.get(),
@@ -130,6 +139,7 @@ class Users():
         customtkinter.END
       )
 
+      self._config.loading_cursor_off()
       self.refresh_users_table()
 
     except Exception as e:
@@ -376,7 +386,7 @@ class Users():
       for col in range(len(self.headers)):
         self.users_table_frame.columnconfigure(col, weight=1)
 
-      self.display_users_table()
+      threading.Thread(target=self.display_users_table).start()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

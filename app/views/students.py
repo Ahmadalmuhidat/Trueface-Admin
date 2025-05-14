@@ -3,10 +3,11 @@ import os
 import customtkinter
 import tkinter
 import uuid
+import threading
 
 from PIL import Image
-from datetime import datetime
 from app.core.data_manager import Data_Manager
+from app.config.configrations import Configrations
 from app.models import student
 from app.controllers.students import get_students, search_student, add_student, remove_student
 from app.controllers.classes import add_student_to_class, get_classes_for_selection, get_student_classes, remove_student_from_class, remove_student_from_all_classes
@@ -24,8 +25,7 @@ class Students():
         "Create Date",
       ]
       self.data_manager = Data_Manager()
-
-      get_students()
+      self._config = Configrations()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -33,7 +33,7 @@ class Students():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def display_student_classes(self, window, navbar, student_id):
+  def student_classes_window(self, window, navbar, student_id):
     try:
       for widget in window.winfo_children():
         if widget not in (navbar,):
@@ -49,27 +49,27 @@ class Students():
         ""
       ]
 
-      search_bar_frame = customtkinter.CTkFrame(
-        window,
-        bg_color="transparent"
-      )
-      search_bar_frame.pack(
-        fill="x",
-        expand=False
-      )
+      # search_bar_frame = customtkinter.CTkFrame(
+      #   window,
+      #   bg_color="transparent"
+      # )
+      # search_bar_frame.pack(
+      #   fill="x",
+      #   expand=False
+      # )
 
-      search_button = customtkinter.CTkButton(
-        search_bar_frame,
-        command=lambda: remove_student_from_all_classes(student_id),
-        text="Clear"
-      )
-      search_button.grid(
-        row=0,
-        column=0,
-        sticky="nsew",
-        pady=10,
-        padx=5
-      )
+      # search_button = customtkinter.CTkButton(
+      #   search_bar_frame,
+      #   command=lambda: remove_student_from_all_classes(student_id),
+      #   text="Clear"
+      # )
+      # search_button.grid(
+      #   row=0,
+      #   column=0,
+      #   sticky="nsew",
+      #   pady=10,
+      #   padx=5
+      # )
       
       classes_table_frame = customtkinter.CTkScrollableFrame(window)
       classes_table_frame.pack(
@@ -95,10 +95,14 @@ class Students():
 
       def remove_relation(relation_id):
         try:
+          self._config.loading_cursor_on()
+
           remove_student_from_class(relation_id)
           nonlocal classes
           classes = get_student_classes(student_id)
           display_classes_table()
+        
+          self._config.loading_cursor_off()
 
         except Exception as e:
           ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -108,6 +112,8 @@ class Students():
     
       def display_classes_table():
         try:
+          self._config.loading_cursor_on()
+
           for label in classes_rows:
             label.destroy()
 
@@ -138,7 +144,10 @@ class Students():
                 classes_table_frame,
                 text="Remove",
                 fg_color="red",
-                command= lambda relation_id=class_.relation_id : remove_relation(relation_id)
+                command= lambda relation_id=class_.relation_id: threading.Thread(
+                  target=remove_relation,
+                  args=(relation_id)
+                ).start()
               )
               delete_button.grid(
                 row=row,
@@ -149,20 +158,23 @@ class Students():
               )
               classes_rows.append(delete_button)
 
+          self._config.loading_cursor_off()
+
         except Exception as e:
           ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
           FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
           print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
           print(ExceptionObject)
 
-      display_classes_table()
+      threading.Thread(target=display_classes_table).start()
+
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
       FileName = os.path.split(ExceptionTraceBack.tb_frame.f_code.co_filename)[1]
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def add_class_pop_window(self, window, navbar, student_id):
+  def class_entry_window(self, window, navbar, student_id):
     try:
       classes_for_selection = get_classes_for_selection()
       class_id_title_map = {
@@ -224,12 +236,12 @@ class Students():
       submit_button = customtkinter.CTkButton(
         window,
         text="Save Class",
-        command=lambda: add_student_to_class(
+        command= lambda: threading.Thread(target=add_student_to_class(
           str(uuid.uuid4()),
           student_id,
           class_id_title_map[class_entry.get()],
           day_entry.get()
-        )
+        ))
       )
       submit_button.pack(
         padx=10,
@@ -242,7 +254,7 @@ class Students():
       print(ExceptionType, FileName, ExceptionTraceBack.tb_lineno)
       print(ExceptionObject)
 
-  def student_profile(self, student_id):
+  def student_profile_pop_window(self, student_id):
     try:
       pop_window = customtkinter.CTkToplevel()
       pop_window.grab_set()
@@ -258,7 +270,7 @@ class Students():
         navbar,
         corner_radius=0,
         text="Add Class",
-        command=lambda: self.add_class_pop_window(
+        command=lambda: self.class_entry_window(
           pop_window,
           navbar,
           student_id
@@ -270,7 +282,7 @@ class Students():
           navbar,
           corner_radius = 0,
           text = "Classes",
-          command = lambda: self.display_student_classes(
+          command = lambda: self.student_classes_window(
             pop_window,
             navbar,
             student_id
@@ -278,7 +290,7 @@ class Students():
       )
       classes_button.pack(side=customtkinter.LEFT)
 
-      self.add_class_pop_window(
+      self.class_entry_window(
         pop_window,
         navbar,
         student_id
@@ -303,6 +315,12 @@ class Students():
 
   def display_students_table(self):
     try:
+      self._config.loading_cursor_on()
+
+      get_students()
+
+      self._config.loading_cursor_off()
+
       for label in self.students:
         label.destroy()
 
@@ -335,7 +353,7 @@ class Students():
           profile_button = customtkinter.CTkButton(
             self.students_table_frame,
             text="Profile",
-            command = lambda student_id=student.get_student_id(): self.student_profile(student_id)
+            command = lambda student_id=student.get_student_id(): self.student_profile_pop_window(student_id)
           )
           profile_button.grid(
             row=row,
@@ -399,6 +417,8 @@ class Students():
 
   def submit_new_student(self):
     try:
+      self._config.loading_cursor_on()
+
       new_student = student.Student(
         self.student_id_entry.get(),
         self.student_first_name_entry.get(),
@@ -431,6 +451,7 @@ class Students():
         customtkinter.END
       )
 
+      self._config.loading_cursor_on()
       self.refresh_students_table()
 
     except Exception as e:
@@ -698,7 +719,7 @@ class Students():
       for col in range(len(self.headers)):
         self.students_table_frame.columnconfigure(col, weight=1)
 
-      self.display_students_table()
+      threading.Thread(target=self.display_students_table).start()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

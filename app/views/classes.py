@@ -1,9 +1,11 @@
 import sys
 import os
 import customtkinter
+import threading
 
 from app.models import class_
 from app.core.data_manager import Data_Manager
+from app.config.configrations import Configrations
 from app.controllers.classes import get_classes, search_class, add_class, remove_class
 from app.controllers.courses import get_courses
 
@@ -27,9 +29,7 @@ class Classes():
         "Instructor Type"
       ]
       self.data_manager = Data_Manager()
-
-      get_classes()
-      get_courses()
+      self._config = Configrations()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -39,6 +39,13 @@ class Classes():
 
   def display_classes_table(self):
     try:
+      self._config.loading_cursor_on()
+
+      get_courses()
+      get_classes()
+
+      self._config.loading_cursor_off()
+
       for label in self.classes:
         label.destroy()
 
@@ -101,7 +108,6 @@ class Classes():
 
   def refresh_classes_table(self):
     try:
-      get_classes()
       self.display_classes_table()
 
     except Exception as e:
@@ -112,6 +118,8 @@ class Classes():
 
   def submit_new_class(self):
     try:
+      self._config.loading_cursor_on()
+
       new_class = class_.Class(
         self.class_id_entry.get(),
         self.subject_entry.get(),
@@ -178,6 +186,7 @@ class Classes():
         customtkinter.END
       )
 
+      self._config.loading_cursor_off()
       self.refresh_classes_table()
 
     except Exception as e:
@@ -500,7 +509,7 @@ class Classes():
       submit_button = customtkinter.CTkButton(
         self.pop_window,
         text="Save Class",
-        command=self.submit_new_class
+        command= lambda _: threading.Thread(target=self.submit_new_class).start()
       )
       submit_button.grid(
         row=14,
@@ -610,7 +619,7 @@ class Classes():
       for col in range(len(self.headers)):
         self.classes_table_frame.columnconfigure(col, weight=1)
 
-      self.display_classes_table()
+      threading.Thread(target=self.display_classes_table).start()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

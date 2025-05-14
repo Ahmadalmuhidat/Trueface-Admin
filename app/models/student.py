@@ -2,7 +2,7 @@ import sys
 import os
 import requests
 import json
-import numpy
+import base64
 import face_recognition
 import pickle
 import app.config.configrations as Configrations
@@ -82,9 +82,7 @@ class Student:
   def get_face_encode(self):
     try:
       load_stored_image = face_recognition.load_image_file(self.picture)
-      return pickle.dumps(numpy.array(
-        face_recognition.face_encodings(load_stored_image)[0])
-      )
+      return base64.b64encode(pickle.dumps(face_recognition.face_encodings(load_stored_image)[0])).decode('utf-8')
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()

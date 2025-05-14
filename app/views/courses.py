@@ -1,9 +1,11 @@
 import sys
 import os
+import threading
 import customtkinter
 
 from app.models import course
 from app.core.data_manager import Data_Manager
+from app.config.configrations import Configrations
 from app.controllers.courses import get_courses, search_course, add_course, remove_course
 
 class Courses():
@@ -25,8 +27,7 @@ class Courses():
         "Component"
       ]
       self.data_manager = Data_Manager()
-
-      get_courses()
+      self._config = Configrations()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
@@ -36,6 +37,12 @@ class Courses():
 
   def display_courses_table(self):
     try:
+      self._config.loading_cursor_on()
+
+      get_courses()
+
+      self._config.loading_cursor_off()
+
       for label in self.courses:
         label.destroy()
 
@@ -95,7 +102,6 @@ class Courses():
 
   def refresh_courses_table(self):
     try:
-      get_courses()
       self.display_courses_table()
 
     except Exception as e:
@@ -106,6 +112,8 @@ class Courses():
 
   def submit_new_course(self):
     try:
+      self._config.loading_cursor_on()
+
       new_course = course.Course(
         self.course_id_entry.get(),
         self.course_title_entry.get(),
@@ -172,6 +180,7 @@ class Courses():
         customtkinter.END
       )
 
+      self._config.loading_cursor_off()
       self.refresh_courses_table()
 
     except Exception as e:
@@ -579,7 +588,7 @@ class Courses():
       for col in range(len(self.headers)):
         self.courses_table_frame.columnconfigure(col, weight=1)
 
-      self.display_courses_table()
+      threading.Thread(target=self.display_courses_table).start()
 
     except Exception as e:
       ExceptionType, ExceptionObject, ExceptionTraceBack = sys.exc_info()
